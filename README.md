@@ -1,54 +1,107 @@
-# React + TypeScript + Vite
+# Multiplications Mental Game
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This project is a fun and interactive **mental math game** built with **React**, **TypeScript**, and **Vite**. The goal is to solve as many multiplication problems as possible within a time limit. The app tracks your scores and provides statistics to help you improve your skills.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- 🎮 **Play Mode**: Solve multiplication problems within a 60-second timer.
+- 📊 **Statistics**: View average scores for each multiplication pair based on your last 5 games.
+- 🏆 **Score Tracking**: Previous scores are saved and displayed on the home page.
+- 🚀 **Responsive Design**: Child-friendly interface with bold, playful components.
 
-## Expanding the ESLint configuration
+## Pages
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### 1. **Home Page**
+- Displays the 5 most recent scores.
+- Option to expand and view all previous scores.
+- A "Start Game" button to begin a new session.
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+### 2. **Play Page**
+- Solve multiplication problems within a 60-second timer.
+- Tracks correct and incorrect answers.
+- Saves your score and results to local storage after the game ends.
+
+### 3. **Stats Page**
+- Displays the average score for each multiplication pair based on the last 5 games.
+- Helps identify strengths and areas for improvement.
+
+## Technologies Used
+
+- **React**: For building the user interface.
+- **TypeScript**: For type-safe development.
+- **Vite**: For fast development and build tooling.
+- **React Router**: For navigation between pages.
+- **Local Storage**: For saving scores and results.
+
+## Getting Started
+
+### Prerequisites
+
+Make sure you have the following installed:
+- [Node.js](https://nodejs.org/) (v16 or higher)
+- [npm](https://www.npmjs.com/) or [yarn](https://yarnpkg.com/)
+
+### Installation
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/your-username/multiplications-mental.git
+   cd multiplications-mental
+   ```
+
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+3. Start the development server:
+   ```bash
+   npm run dev
+   ```
+
+4. Open the app in your browser at [http://localhost:5173](http://localhost:5173).
+
+### Build for Production
+
+To build the app for production, run:
+```bash
+npm run build
+```
+The production-ready files will be in the `dist` folder.
+
+## Project Structure
+
+```
+multiplications_mental/
+├── src/
+│   ├── components/       # Reusable components (e.g., ProgressBar, MultiplicationQuestion)
+│   ├── hooks/            # Custom hooks (e.g., useTimer)
+│   ├── pages/            # Page components (HomePage, PlayPage, StatsPage)
+│   ├── App.tsx           # Main app component
+│   └── main.tsx          # Entry point
+├── public/               # Static assets
+├── package.json          # Project dependencies and scripts
+├── tsconfig.json         # TypeScript configuration
+└── vite.config.ts        # Vite configuration
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Scripts
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+- `npm run dev`: Start the development server.
+- `npm run build`: Build the app for production.
+- `npm run preview`: Preview the production build.
+- `npm run lint`: Run ESLint to check for code quality issues.
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+## Future Improvements
+
+- Add difficulty levels (e.g., easy, medium, hard).
+- Include division, addition, and subtraction problems.
+- Add user authentication to save scores across devices.
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
+
+---
+
+Enjoy the game and improve your mental math skills! 🎉
