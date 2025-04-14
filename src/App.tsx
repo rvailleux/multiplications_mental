@@ -1,14 +1,15 @@
+import React from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import HomePage from './pages/HomePage'
 import PlayPage from './pages/PlayPage'
 
-function App() {
+export default function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<PlayPage />} />
+        <Route path="/" element={<HomePage />} />
+        <Route path="/play" element={<PlayPage />} />
       </Routes>
     </Router>
   )
 }
-
-export default App

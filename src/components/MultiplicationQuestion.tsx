@@ -35,11 +35,11 @@ const MultiplicationQuestion: React.FC<MultiplicationQuestionProps> = ({ onCorre
   }, [])
 
   return (
-    <div>
-      <p>
-        What is {factorA} x {factorB}?
+    <div style={styles.container}>
+      <p style={styles.question}>
+        {factorA} x {factorB}?
       </p>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} style={styles.form}>
         <input
           type="number"
           value={userAnswer}
@@ -48,11 +48,52 @@ const MultiplicationQuestion: React.FC<MultiplicationQuestionProps> = ({ onCorre
           required
           inputMode="numeric"
           pattern="[0-9]*"
+          style={styles.input}
         />
-        <button type="submit">Submit</button>
+        <button type="submit" style={styles.button}>✅ Validate</button>
       </form>
     </div>
   )
+}
+
+const styles = {
+  container: {
+    textAlign: 'center' as const,
+    margin: '0 0',
+  },
+  question: {
+    fontSize: '3rem',
+    fontWeight: 'bold' as const,
+    color: '#333',
+    marginBottom: '20px',
+  },
+  form: {
+    display: 'flex',
+    flexDirection: 'column' as const,
+    alignItems: 'center',
+  },
+  input: {
+    fontSize: '2rem',
+    padding: '10px',
+    width: '100px',
+    textAlign: 'center' as const,
+    border: '2px solid #ccc',
+    borderRadius: '5px',
+    outline: 'none',
+    appearance: 'none', // Removes up/down selectors
+    MozAppearance: 'textfield', // Removes selectors in Firefox
+  },
+  button: {
+    marginTop: '20px',
+    padding: '10px 20px',
+    fontSize: '1.5rem',
+    fontWeight: 'bold' as const,
+    color: '#fff',
+    backgroundColor: '#4caf50',
+    border: 'none',
+    borderRadius: '5px',
+    cursor: 'pointer',
+  },
 }
 
 export default MultiplicationQuestion

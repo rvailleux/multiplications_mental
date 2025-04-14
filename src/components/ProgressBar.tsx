@@ -5,19 +5,34 @@ interface ProgressBarProps {
 }
 
 const ProgressBar: React.FC<ProgressBarProps> = ({ progress }) => {
+  const isBlinking = progress >= 80
+
   return (
     <div style={styles.container}>
-      <div style={{ ...styles.bar, width: `${progress}%` }} />
+      <div
+        style={{
+          ...styles.bar,
+          width: `${progress}%`,
+          backgroundColor: isBlinking ? '#ffa500' : '#4285f4', // Orange when blinking
+          animation: isBlinking ? 'blink 1s infinite' : 'none', // Apply blinking animation
+        }}
+      />
+      <style>
+        {`
+          @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+          }
+        `}
+      </style>
     </div>
   )
 }
 
-
-
 const styles = {
   container: {
     width: '100%',
-    height: '5px', // Thin height
+    height: '10px', // Slightly thicker for better visibility
     backgroundColor: '#e0e0e0', // Light gray background
     position: 'fixed', // Sticks to the top
     top: 0,
@@ -26,7 +41,6 @@ const styles = {
   },
   bar: {
     height: '100%',
-    backgroundColor: '#4285f4', // Blue color for the progress
     transition: 'width 0.2s ease-in-out', // Smooth transition
   },
 }
