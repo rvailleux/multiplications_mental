@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { useTimer } from '../hooks/useTimer'
 import ProgressBar from '../components/ProgressBar'
 import MultiplicationQuestion from '../components/MultiplicationQuestion'

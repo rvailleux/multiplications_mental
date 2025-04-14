@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react'
 
 interface MultiplicationQuestionProps {
-  onCorrectAnswer: () => void // Callback when the user answers correctly
-  onBadAnswer: () => void // Callback when the user answers incorrectly
+  onCorrectAnswer: (question: string) => void // Callback when the user answers correctly
+  onBadAnswer: (question: string) => void // Callback when the user answers incorrectly
 }
 
 const MultiplicationQuestion: React.FC<MultiplicationQuestionProps> = ({ onCorrectAnswer, onBadAnswer }) => {
@@ -22,10 +22,10 @@ const MultiplicationQuestion: React.FC<MultiplicationQuestionProps> = ({ onCorre
     e.preventDefault()
     const correctAnswer = factorA * factorB
     if (parseInt(userAnswer) === correctAnswer) {
-      onCorrectAnswer() // Notify parent component of the correct answer
+      onCorrectAnswer(`${factorA} x ${factorB}`) // Notify parent component of the correct answer
       generateNewQuestion() // Generate a new question
     } else {
-      onBadAnswer()
+      onBadAnswer(`${factorA} x ${factorB}`) // Notify parent component of the incorrect answer
     }
   }
 
@@ -48,7 +48,6 @@ const MultiplicationQuestion: React.FC<MultiplicationQuestionProps> = ({ onCorre
           required
           inputMode="numeric"
           pattern="[0-9]*"
-          style={styles.input}
         />
         <button type="submit" style={styles.button}>✅ Validate</button>
       </form>
@@ -80,7 +79,7 @@ const styles = {
     border: '2px solid #ccc',
     borderRadius: '5px',
     outline: 'none',
-    appearance: 'none', // Removes up/down selectors
+    appearance: 'none' as const, // Removes up/down selectors
     MozAppearance: 'textfield', // Removes selectors in Firefox
   },
   button: {

@@ -1,4 +1,5 @@
 import React from 'react'
+import { CSSProperties } from 'react'
 
 interface ProgressBarProps {
   progress: number // Progress value between 0 and 100
@@ -8,7 +9,7 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ progress }) => {
   const isBlinking = progress >= 80
 
   return (
-    <div style={styles.container}>
+    <div style={styles.container as CSSProperties}>
       <div
         style={{
           ...styles.bar,
