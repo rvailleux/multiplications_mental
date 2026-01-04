@@ -107,7 +107,7 @@ export default function PlayPage() {
         </div>
       </div>
 
-      <ProgressBar progress={progress} />
+      <ProgressBar progress={progress} timeRemaining={secondsLeft} />
 
       <MultiplicationQuestion
         onCorrectAnswer={question => handleCorrectAnswer(question)}
