@@ -18,7 +18,10 @@
     "test:ui": "vitest --ui",
     "test:run": "vitest run",
     "test:coverage": "vitest run --coverage",
-    "prepare": "husky"
+    "prepare": "husky",
+    "quality-check": "npm run type-check && npm run lint:fix && npm run test:run && npm run build",
+    "pre-feature": "echo '⚠️  REMINDER: Write tests FIRST, then implement feature' && npm run test",
+    "post-feature": "npm run quality-check && npm run docs"
   },
   "dependencies": {
     "react": "^19.0.0",

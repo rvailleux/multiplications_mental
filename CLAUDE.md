@@ -234,7 +234,71 @@ describe('ComponentName', () => {
 - **Husky not working**: Run `npm run prepare` to reinstall hooks
 - **Tests slow**: Happy-DOM is faster than jsdom for most cases
 
-## Development Workflow
+## Feature Development Workflow
+
+### 🔄 MANDATORY Process for New Features
+Claude Code MUST follow this exact workflow for ALL feature development:
+
+#### 1. Planning & Analysis (REQUIRED)
+```bash
+# ALWAYS start with TodoWrite for complex features
+TodoWrite -> Break down feature into tasks
+Grep/Task -> Analyze existing patterns  
+Read -> Review related components/files
+```
+
+#### 2. Test-First Development (REQUIRED)
+```bash
+# Write tests BEFORE implementation
+Write failing tests -> Component.test.tsx
+Validate approach with user -> Ensure coverage
+Test edge cases -> Error conditions, boundaries
+```
+
+#### 3. Implementation Phase (REQUIRED)
+```bash
+# Follow existing patterns strictly
+Read existing components -> Understand patterns
+Implement feature -> Maintain consistency
+Add JSDoc comments -> Document while coding
+Use TypeScript strictly -> Leverage type safety
+```
+
+#### 4. Quality Assurance (REQUIRED - ALL COMMANDS)
+```bash
+npm run test         # MUST pass all tests
+npm run type-check   # MUST have no type errors  
+npm run lint:fix     # MUST fix all lint issues
+npm run build        # MUST build successfully
+```
+
+#### 5. Documentation Updates (REQUIRED)
+```bash
+Update JSDoc -> All new functions documented
+npm run docs -> Regenerate API documentation
+Update ARCHITECTURE.md -> Document arch changes
+Update CLAUDE.md -> Add new patterns if needed
+```
+
+#### 6. Final Verification (REQUIRED)
+```bash
+npm run test:coverage -> Ensure adequate coverage
+Manual testing -> Verify in browser
+Performance check -> No bundle size regression
+```
+
+#### 7. Commit Preparation (REQUIRED)
+```bash
+git status -> Verify intended changes only
+Descriptive commit -> Follow project conventions
+```
+
+### 🚨 ENFORCEMENT Rules
+- **NEVER skip tests** - All features must have tests first
+- **NEVER commit without running quality commands** - All 4 QA commands required
+- **NEVER implement without JSDoc** - Document as you code
+- **ALWAYS use TodoWrite** for multi-step features
+- **ALWAYS validate approach** with user before major implementation
 
 ### Daily Development
 1. **Start development**: `npm run dev`

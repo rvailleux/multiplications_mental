@@ -1,1 +1,3 @@
+echo "🔍 Running pre-commit quality checks..."
 npx lint-staged
+echo "✅ Quality checks passed. Remember to follow feature workflow!"
