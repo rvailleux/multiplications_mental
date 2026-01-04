@@ -4,25 +4,49 @@ import ProgressBar from '../components/ProgressBar'
 import MultiplicationQuestion from '../components/MultiplicationQuestion'
 import { useNavigate } from 'react-router-dom'
 
+/**
+ * Game result structure for tracking user answers
+ * @public
+ */
+export type GameResult = {
+  /** The multiplication question (e.g., "3 x 7") */
+  question: string
+  /** Whether the user answered correctly */
+  correct: boolean
+}
+
+/**
+ * Main game page component that orchestrates the multiplication game experience
+ * @returns {JSX.Element} The complete game interface with timer, score, and question
+ * @example
+ * // Used in React Router
+ * <Route path="/play" element={<PlayPage />} />
+ */
 export default function PlayPage() {
   const navigate = useNavigate()
   const totalTime = 60 // Total time in seconds
   const { secondsLeft, reset } = useTimer(totalTime)
   const [score, setScore] = useState(0)
-  const [results, setResults] = useState<{ question: string; correct: boolean }[]>([])
+  const [results, setResults] = useState<GameResult[]>([])
 
-  // Calculate progress percentage
+  /** Calculate progress percentage based on elapsed time */
   const progress = ((totalTime - secondsLeft) / totalTime) * 100
 
-  // Handle correct answer
+  /**
+   * Handles correct answer submission by incrementing score and recording result
+   * @param {string} question - The multiplication question that was answered correctly
+   */
   const handleCorrectAnswer = (question: string) => {
-    setScore((prev) => prev + 1)
-    setResults((prev) => [...prev, { question, correct: true }])
+    setScore(prev => prev + 1)
+    setResults(prev => [...prev, { question, correct: true }])
   }
 
-  // Handle incorrect answer
+  /**
+   * Handles incorrect answer submission by recording the failed attempt
+   * @param {string} question - The multiplication question that was answered incorrectly
+   */
   const handleBadAnswer = (question: string) => {
-    setResults((prev) => [...prev, { question, correct: false }])
+    setResults(prev => [...prev, { question, correct: false }])
   }
 
   // Save score to local storage when time is up
@@ -40,8 +64,8 @@ export default function PlayPage() {
       <p style={styles.timer}>⏳ Time Left: {secondsLeft}s</p>
       <p style={styles.score}>🏆 Score: {score}</p>
       <MultiplicationQuestion
-        onCorrectAnswer={(question) => handleCorrectAnswer(question)}
-        onBadAnswer={(question) => handleBadAnswer(question)}
+        onCorrectAnswer={question => handleCorrectAnswer(question)}
+        onBadAnswer={question => handleBadAnswer(question)}
       />
       <button
         style={styles.resetButton}

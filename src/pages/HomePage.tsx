@@ -1,11 +1,34 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
+/**
+ * Score data structure stored in localStorage
+ * @public
+ */
+export type ScoreEntry = {
+  /** Final score achieved in the game */
+  score: number
+  /** Array of all questions and results from the game session */
+  results: Array<{
+    question: string
+    correct: boolean
+  }>
+}
+
+/**
+ * Landing page component that displays game start button and score history
+ * @returns {JSX.Element} Home page with start game button and previous scores list
+ * @example
+ * // Used in React Router as the main route
+ * <Route path="/" element={<HomePage />} />
+ */
 export default function HomePage() {
   const navigate = useNavigate()
-  const scores = JSON.parse(localStorage.getItem('scores') || '[]').reverse() // Reverse to show latest first
+  /** Load and reverse score history from localStorage to show newest first */
+  const scores: ScoreEntry[] = JSON.parse(localStorage.getItem('scores') || '[]').reverse()
   const [showAll, setShowAll] = useState(false)
 
+  /** Determine which scores to display based on showAll state */
   const visibleScores = showAll ? scores : scores.slice(0, 5)
 
   return (

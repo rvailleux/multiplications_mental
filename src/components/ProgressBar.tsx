@@ -1,10 +1,24 @@
 import React from 'react'
 import { CSSProperties } from 'react'
 
-interface ProgressBarProps {
-  progress: number // Progress value between 0 and 100
+/**
+ * Props for the ProgressBar component
+ * @public
+ */
+export interface ProgressBarProps {
+  /** Progress value between 0 and 100 representing completion percentage */
+  progress: number
 }
 
+/**
+ * Fixed position progress bar that shows game completion progress with visual alerts
+ * @param {ProgressBarProps} props - Component properties
+ * @param {number} props.progress - Progress percentage (0-100), triggers orange blinking at ≥80%
+ * @returns {JSX.Element} Fixed progress bar at top of screen
+ * @example
+ * <ProgressBar progress={75} />  // Blue progress bar
+ * <ProgressBar progress={85} />  // Orange blinking progress bar
+ */
 const ProgressBar: React.FC<ProgressBarProps> = ({ progress }) => {
   const isBlinking = progress >= 80
 

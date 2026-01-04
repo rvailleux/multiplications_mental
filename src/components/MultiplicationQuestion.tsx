@@ -1,23 +1,49 @@
 import React, { useState, useEffect } from 'react'
 
-interface MultiplicationQuestionProps {
-  onCorrectAnswer: (question: string) => void // Callback when the user answers correctly
-  onBadAnswer: (question: string) => void // Callback when the user answers incorrectly
+/**
+ * Props for the MultiplicationQuestion component
+ * @public
+ */
+export interface MultiplicationQuestionProps {
+  /** Callback function triggered when user provides correct answer */
+  onCorrectAnswer: (question: string) => void
+  /** Callback function triggered when user provides incorrect answer */
+  onBadAnswer: (question: string) => void
 }
 
-const MultiplicationQuestion: React.FC<MultiplicationQuestionProps> = ({ onCorrectAnswer, onBadAnswer }) => {
+/**
+ * Interactive multiplication question component that generates random problems and validates user answers
+ * @param {MultiplicationQuestionProps} props - Component properties
+ * @param {Function} props.onCorrectAnswer - Callback for correct answers, receives question string
+ * @param {Function} props.onBadAnswer - Callback for incorrect answers, receives question string
+ * @returns {JSX.Element} Rendered multiplication question interface
+ * @example
+ * <MultiplicationQuestion
+ *   onCorrectAnswer={(q) => setScore(score + 1)}
+ *   onBadAnswer={(q) => console.log(`Wrong: ${q}`)}
+ * />
+ */
+const MultiplicationQuestion: React.FC<MultiplicationQuestionProps> = ({
+  onCorrectAnswer,
+  onBadAnswer,
+}) => {
   const [factorA, setFactorA] = useState(1)
   const [factorB, setFactorB] = useState(1)
   const [userAnswer, setUserAnswer] = useState('')
 
-  // Generate a new question
+  /**
+   * Generates a new multiplication question with random factors (1-10) and clears user input
+   */
   const generateNewQuestion = () => {
     setFactorA(Math.floor(Math.random() * 10) + 1) // Random number between 1 and 10
     setFactorB(Math.floor(Math.random() * 10) + 1)
     setUserAnswer('') // Reset the input field
   }
 
-  // Handle form submission
+  /**
+   * Handles form submission, validates user answer, and triggers appropriate callbacks
+   * @param {React.FormEvent} e - Form submission event
+   */
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     const correctAnswer = factorA * factorB
@@ -43,13 +69,15 @@ const MultiplicationQuestion: React.FC<MultiplicationQuestionProps> = ({ onCorre
         <input
           type="number"
           value={userAnswer}
-          onChange={(e) => setUserAnswer(e.target.value)}
+          onChange={e => setUserAnswer(e.target.value)}
           autoFocus
           required
           inputMode="numeric"
           pattern="[0-9]*"
         />
-        <button type="submit" style={styles.button}>✅ Validate</button>
+        <button type="submit" style={styles.button}>
+          ✅ Validate
+        </button>
       </form>
     </div>
   )
