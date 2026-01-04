@@ -9,6 +9,12 @@ export interface MultiplicationQuestionProps {
   onCorrectAnswer: (question: string) => void
   /** Callback function triggered when user provides incorrect answer */
   onBadAnswer: (question: string) => void
+  /** Current combo count for score multiplier display */
+  combo?: number
+  /** Score popup text to display */
+  scorePopup?: string
+  /** Whether to show score popup animation */
+  showPopup?: boolean
 }
 
 /**
@@ -26,6 +32,9 @@ export interface MultiplicationQuestionProps {
 const MultiplicationQuestion: React.FC<MultiplicationQuestionProps> = ({
   onCorrectAnswer,
   onBadAnswer,
+  combo = 0,
+  scorePopup = '',
+  showPopup = false,
 }) => {
   const [factorA, setFactorA] = useState(1)
   const [factorB, setFactorB] = useState(1)
@@ -61,65 +70,120 @@ const MultiplicationQuestion: React.FC<MultiplicationQuestionProps> = ({
   }, [])
 
   return (
-    <div style={styles.container}>
-      <p style={styles.question}>
-        {factorA} x {factorB}?
-      </p>
-      <form onSubmit={handleSubmit} style={styles.form}>
-        <input
-          type="number"
-          value={userAnswer}
-          onChange={e => setUserAnswer(e.target.value)}
-          autoFocus
-          required
-          inputMode="numeric"
-          pattern="[0-9]*"
-        />
-        <button type="submit" style={styles.button}>
-          ✅ Validate
-        </button>
-      </form>
-    </div>
+    <>
+      {/* Combo Display */}
+      {combo > 1 && (
+        <div
+          style={{
+            ...styles.comboDisplay,
+            animation: combo > 1 ? 'comboShake 0.5s ease' : 'none',
+          }}
+        >
+          🔥 COMBO x{combo} 🔥
+        </div>
+      )}
+
+      {/* Question Area */}
+      <div style={styles.questionArea}>
+        <div style={styles.questionText}>
+          {factorA} x {factorB}?
+        </div>
+        <form onSubmit={handleSubmit} style={styles.form}>
+          <input
+            type="number"
+            value={userAnswer}
+            onChange={e => setUserAnswer(e.target.value)}
+            style={styles.answerInput}
+            autoFocus
+            required
+            inputMode="numeric"
+            pattern="[0-9]*"
+            placeholder="?"
+            maxLength={4}
+          />
+          <button type="submit" style={styles.pixelButton}>
+            ✓ Valider
+          </button>
+        </form>
+
+        {/* Score Popup */}
+        <div
+          style={{
+            ...styles.scorePopup,
+            animation: showPopup ? 'scorePopup 0.8s ease-out' : 'none',
+            color: scorePopup.includes('✗') ? '#ff6b6b' : '#4ecdc4',
+          }}
+        >
+          {scorePopup}
+        </div>
+      </div>
+    </>
   )
 }
 
 const styles = {
-  container: {
+  comboDisplay: {
     textAlign: 'center' as const,
-    margin: '0 0',
+    marginBottom: '15px',
+    color: '#ff6b6b',
+    fontSize: '12px',
+    minHeight: '20px',
   },
-  question: {
-    fontSize: '3rem',
-    fontWeight: 'bold' as const,
-    color: '#333',
-    marginBottom: '20px',
+  questionArea: {
+    background: 'linear-gradient(180deg, #87ceeb 0%, #fff 100%)',
+    border: '6px solid #000',
+    padding: '40px',
+    marginBottom: '25px',
+    textAlign: 'center' as const,
+    position: 'relative' as const,
+    boxShadow: 'inset 0 4px 0 rgba(255,255,255,0.5)',
+  },
+  questionText: {
+    fontSize: '42px',
+    color: '#000',
+    textShadow: '3px 3px 0 rgba(255,255,255,0.8)',
+    marginBottom: '30px',
   },
   form: {
     display: 'flex',
     flexDirection: 'column' as const,
     alignItems: 'center',
+    gap: '20px',
   },
-  input: {
-    fontSize: '2rem',
-    padding: '10px',
-    width: '100px',
+  answerInput: {
+    width: '200px',
+    height: '60px',
+    fontSize: '28px',
     textAlign: 'center' as const,
-    border: '2px solid #ccc',
-    borderRadius: '5px',
+    border: '4px solid #000',
+    background: '#fff',
+    boxShadow: 'inset 0 4px 0 rgba(0,0,0,0.1)',
     outline: 'none',
-    appearance: 'none' as const, // Removes up/down selectors
-    MozAppearance: 'textfield', // Removes selectors in Firefox
+    transition: 'all 0.2s',
   },
-  button: {
-    marginTop: '20px',
-    padding: '10px 20px',
-    fontSize: '1.5rem',
-    fontWeight: 'bold' as const,
+  pixelButton: {
+    background: 'linear-gradient(180deg, #4ecdc4 0%, #44b3aa 100%)',
     color: '#fff',
-    backgroundColor: '#4caf50',
-    border: 'none',
-    borderRadius: '5px',
+    fontSize: '14px',
+    padding: '18px 30px',
+    border: '4px solid #000',
     cursor: 'pointer',
+    position: 'relative' as const,
+    transition: 'all 0.1s',
+    textTransform: 'uppercase' as const,
+    letterSpacing: '1px',
+    boxShadow: '0 6px 0 #000',
+  },
+  scorePopup: {
+    position: 'absolute' as const,
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    fontSize: '48px',
+    fontWeight: 'bold' as const,
+    opacity: 0,
+    pointerEvents: 'none' as const,
+    zIndex: 100,
   },
 }
 

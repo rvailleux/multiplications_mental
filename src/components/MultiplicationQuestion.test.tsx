@@ -1,5 +1,5 @@
 import { render, screen, fireEvent } from '@testing-library/react'
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
 import MultiplicationQuestion from './MultiplicationQuestion'
 
 describe('MultiplicationQuestion', () => {
@@ -18,7 +18,7 @@ describe('MultiplicationQuestion', () => {
     // Should show a multiplication question format
     expect(screen.getByText(/\d+ x \d+\?/)).toBeInTheDocument()
     expect(screen.getByRole('spinbutton')).toBeInTheDocument()
-    expect(screen.getByText('✅ Validate')).toBeInTheDocument()
+    expect(screen.getByText('✓ Valider')).toBeInTheDocument()
   })
 
   it('calls onCorrectAnswer when answer is correct', () => {
@@ -32,7 +32,7 @@ describe('MultiplicationQuestion', () => {
     const correctAnswer = a * b
 
     const input = screen.getByRole('spinbutton')
-    const submitButton = screen.getByText('✅ Validate')
+    const submitButton = screen.getByText('✓ Valider')
 
     fireEvent.change(input, { target: { value: correctAnswer.toString() } })
     fireEvent.click(submitButton)
@@ -50,7 +50,7 @@ describe('MultiplicationQuestion', () => {
     const [a, b] = questionText.match(/\d+/g)!.map(Number)
 
     const input = screen.getByRole('spinbutton')
-    const submitButton = screen.getByText('✅ Validate')
+    const submitButton = screen.getByText('✓ Valider')
 
     fireEvent.change(input, { target: { value: '999' } }) // Definitely wrong
     fireEvent.click(submitButton)
