@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 /**
@@ -22,14 +21,58 @@ export type ScoreEntry = {
  * // Used in React Router as the main route
  * <Route path="/" element={<HomePage />} />
  */
+/**
+ * Represents a score with its rank information
+ */
+interface RankedScore extends ScoreEntry {
+  rank: number
+  medal?: string
+}
+
+/**
+ * Calculate ranks for scores, handling ties appropriately
+ * @param {ScoreEntry[]} scores - Array of score entries
+ * @returns {RankedScore[]} Scores with rank and medal information
+ */
+const calculateRanks = (scores: ScoreEntry[]): RankedScore[] => {
+  // Sort scores by value (highest first)
+  const sortedScores = [...scores].sort((a, b) => b.score - a.score)
+
+  const rankedScores: RankedScore[] = []
+  let currentRank = 1
+
+  for (let i = 0; i < sortedScores.length; i++) {
+    const score = sortedScores[i]
+
+    // If not the first score and different from previous, update rank
+    if (i > 0 && score.score !== sortedScores[i - 1].score) {
+      currentRank = i + 1
+    }
+
+    // Assign medal for top 3 unique scores
+    let medal: string | undefined
+    if (currentRank === 1) medal = '🥇'
+    else if (currentRank === 2) medal = '🥈'
+    else if (currentRank === 3) medal = '🥉'
+
+    rankedScores.push({
+      ...score,
+      rank: currentRank,
+      medal,
+    })
+  }
+
+  return rankedScores
+}
+
 export default function HomePage() {
   const navigate = useNavigate()
-  /** Load and reverse score history from localStorage to show newest first */
-  const scores: ScoreEntry[] = JSON.parse(localStorage.getItem('scores') || '[]').reverse()
-  const [showAll, setShowAll] = useState(false)
+  /** Load score history from localStorage and limit to top 100 */
+  const scores: ScoreEntry[] = JSON.parse(localStorage.getItem('scores') || '[]').slice(-100) // Keep only last 100 scores to prevent memory issues
 
-  /** Determine which scores to display based on showAll state */
-  const visibleScores = showAll ? scores : scores.slice(0, 5)
+  /** Calculate ranks and sort by score (highest first) */
+  const rankedScores = calculateRanks(scores)
+  const visibleScores = rankedScores
 
   return (
     <div style={styles.gameContainer}>
@@ -54,18 +97,33 @@ export default function HomePage() {
         <>
           <h2 style={styles.scoresTitle}>🏆 Previous Scores 🏆</h2>
           <div style={styles.scoresContainer}>
-            {visibleScores.map((entry: { score: number }, index: number) => (
-              <div key={index} style={styles.scoreCard}>
-                <span style={styles.scoreNumber}>#{scores.length - index}</span>
-                <span style={styles.scoreValue}>{entry.score} pts</span>
+            {visibleScores.map((entry: RankedScore, index: number) => (
+              <div
+                key={index}
+                style={{
+                  ...styles.scoreCard,
+                  ...(entry.rank <= 3 ? styles.topRankCard : {}),
+                }}
+              >
+                <span
+                  style={{
+                    ...styles.scoreNumber,
+                    ...(entry.rank <= 3 ? styles.topRankNumber : {}),
+                  }}
+                >
+                  {entry.medal ? `${entry.medal} #${entry.rank}` : `#${entry.rank}`}
+                </span>
+                <span
+                  style={{
+                    ...styles.scoreValue,
+                    ...(entry.rank <= 3 ? styles.topRankValue : {}),
+                  }}
+                >
+                  {entry.score} pts
+                </span>
               </div>
             ))}
           </div>
-          {scores.length > 5 && !showAll && (
-            <button style={styles.expandButton} onClick={() => setShowAll(true)}>
-              Show More...
-            </button>
-          )}
         </>
       )}
 
@@ -158,7 +216,7 @@ const styles = {
     gap: '10px',
     marginBottom: '20px',
     width: '100%',
-    maxHeight: '200px',
+    maxHeight: '300px', // Increased height for better scrolling experience
     overflowY: 'auto' as const,
   },
   scoreCard: {
@@ -170,24 +228,35 @@ const styles = {
     alignItems: 'center',
     boxShadow: 'inset 0 4px 0 rgba(255,255,255,0.5)',
   },
+  topRankCard: {
+    background: 'linear-gradient(180deg, #ffd700 0%, #fff8dc 100%)',
+    border: '4px solid #b8860b',
+    boxShadow: `
+      inset 0 4px 0 rgba(255,255,255,0.7),
+      0 0 12px rgba(255, 215, 0, 0.5)
+    `,
+    animation: 'goldGlow 2s ease-in-out infinite alternate',
+  },
   scoreNumber: {
     fontSize: '14px',
     color: '#000',
     fontWeight: 'bold' as const,
+  },
+  topRankNumber: {
+    color: '#8b4513',
+    fontSize: '16px',
+    textShadow: '2px 2px 0 #fff',
   },
   scoreValue: {
     fontSize: '14px',
     color: '#ffd700',
     textShadow: '2px 2px 0 #000',
   },
-  expandButton: {
-    background: 'linear-gradient(180deg, #3498db 0%, #2980b9 100%)',
-    color: '#fff',
-    fontSize: '12px',
-    padding: '10px 20px',
-    border: '4px solid #000',
-    cursor: 'pointer',
-    boxShadow: '0 4px 0 #000',
+  topRankValue: {
+    color: '#ff6b47',
+    fontSize: '16px',
+    textShadow: '2px 2px 0 #fff',
+    fontWeight: 'bold' as const,
   },
   characterSprite: {
     position: 'absolute' as const,
