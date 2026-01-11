@@ -16,10 +16,10 @@ src/
 ├── components/     # Reusable UI components
 │   ├── *.tsx          # React components with JSDoc
 │   └── *.test.tsx     # Component tests
-├── pages/          # Route-level components  
+├── pages/          # Route-level components
 ├── hooks/          # Custom React hooks
+├── types/          # Shared TypeScript types and utilities
 ├── test/           # Test configuration and utilities
-└── types/          # Shared TypeScript types (future)
 ```
 
 ### Component Conventions
@@ -37,9 +37,9 @@ src/
 
 ### State Management
 - **React useState** for component state
-- **localStorage** for persistent score data
+- **localStorage** for persistent data (scores, players, current player)
 - **React Router** for navigation state
-- **Custom hooks** for shared stateful logic
+- **Custom hooks** for shared stateful logic (useTimer, usePlayerManagement, useBackgroundMusic)
 
 ## Development Commands
 
@@ -117,6 +117,11 @@ export function useCustomHook(parameter: type) {
 }
 ```
 
+### Available Custom Hooks
+- **useTimer(totalTime)** - Countdown timer management with reset functionality
+- **usePlayerManagement()** - Player selection state and localStorage persistence
+- **useBackgroundMusic()** - Background music control (start, stop, volume)
+
 ## File Organization
 
 ### Naming Conventions
@@ -134,6 +139,14 @@ export function useCustomHook(parameter: type) {
 
 ## Data Structures
 
+### Player Data
+```typescript
+type Player = {
+  id: string        // Unique identifier (e.g., "jules", "achille")
+  name: string      // Display name
+}
+```
+
 ### Score Data
 ```typescript
 type ScoreEntry = {
@@ -148,14 +161,23 @@ type GameResult = {
 ```
 
 ### localStorage Keys
-- `scores`: Array of ScoreEntry objects
+- `players`: Array of Player objects (default: Jules and Achille)
+- `currentPlayer`: String ID of currently selected player
+- `scores`: Array of ScoreEntry objects (global, will be per-player in future)
 
 ## Game Logic
 
 ### Core Game Flow
-1. **HomePage** → Start game button → Navigate to PlayPage
-2. **PlayPage** → 60-second timer + random multiplication questions
-3. **Timer expires** → Save score to localStorage → Navigate to HomePage
+1. **PlayerSelectPage** → Select player (keyboard navigation ↑/↓ + Enter) → Navigate to HomePage
+2. **HomePage** → Welcome [player name] + Start game button → Navigate to PlayPage
+3. **PlayPage** → 60-second timer + random multiplication questions
+4. **Timer expires** → Save score to localStorage → Navigate back to HomePage
+
+### Player Selection Flow
+- Arrow Up/Down keys navigate between players
+- Enter key or mouse click validates selection
+- Selected player saved to `localStorage['currentPlayer']`
+- HomePage and PlayPage redirect to PlayerSelectPage if no player selected
 
 ### Question Generation
 - Random factors between 1-10
@@ -320,9 +342,63 @@ Descriptive commit -> Follow project conventions
 - **Test patterns** - Follow MultiplicationQuestion.test.tsx example
 - **Type definitions** - Export interfaces for reusability
 
+## Player Management Utilities
+
+### Player Type and Utilities (src/types/player.ts)
+```typescript
+// Get all players from localStorage
+const players = getPlayers()
+
+// Get/set current player ID
+const playerId = getCurrentPlayerId()
+setCurrentPlayerId('jules')
+
+// Get current player object
+const player = getCurrentPlayer()
+
+// Initialize default players if needed
+initializePlayers()
+```
+
+### usePlayerManagement Hook Pattern
+```typescript
+const {
+  players,           // Array of available players
+  currentPlayer,     // Currently selected Player or null
+  selectedIndex,     // Index for keyboard navigation
+  setSelectedIndex,  // Update selected index
+  selectPlayer,      // Select player and save to localStorage
+  hasPlayerSelected  // Boolean flag
+} = usePlayerManagement()
+```
+
+### Keyboard Navigation Pattern
+```typescript
+useEffect(() => {
+  const handleKeyDown = (e: KeyboardEvent): void => {
+    if (e.key === 'ArrowUp') {
+      setSelectedIndex(Math.max(0, selectedIndex - 1))
+    }
+    if (e.key === 'ArrowDown') {
+      setSelectedIndex(Math.min(players.length - 1, selectedIndex + 1))
+    }
+    if (e.key === 'Enter') {
+      selectPlayer(selectedIndex)
+      navigate('/home')
+    }
+  }
+  window.addEventListener('keydown', handleKeyDown)
+  return () => window.removeEventListener('keydown', handleKeyDown)
+}, [selectedIndex, players.length])
+```
+
 ## Future Improvements
+- **Add new players** dynamically with name input (max 12 chars alphanumeric)
+- **Per-player score history** - separate leaderboards for each player
+- **Last game stats display** - show recent game performance above leaderboard
+- **Sound effects** - positive/negative feedback sounds (8-bit style, /public/audio/sfx/)
 - **Difficulty levels** (different number ranges)
-- **Statistics page** with performance analytics  
+- **Statistics page** with performance analytics
 - **PWA capabilities** for offline play
 - **Other math operations** (division, addition)
 - **User authentication** for cross-device scores

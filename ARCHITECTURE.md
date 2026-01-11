@@ -36,25 +36,28 @@ Jeu de mathématiques mentales développé avec React, TypeScript et Vite. L'app
 L'application suit une architecture **Component-Based** avec séparation des responsabilités :
 
 ```
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│      Pages      │    │   Components    │    │     Hooks       │
-│                 │    │                 │    │                 │
-│ - HomePage      │◄───┤ - ProgressBar   │◄───┤ - useTimer      │
-│ - PlayPage      │    │ - MultiQuestion │    │                 │
-└─────────────────┘    └─────────────────┘    └─────────────────┘
-         │                       │                       │
-         ▼                       ▼                       ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                    React Router + State                         │
-└─────────────────────────────────────────────────────────────────┘
-         │                       │                       │
-         ▼                       ▼                       ▼
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│  localStorage   │    │   Browser APIs  │    │   CSS-in-JS     │
-│                 │    │                 │    │                 │
-│ - Scores        │    │ - Timer APIs    │    │ - Inline Styles │
-│ - Game Results  │    │ - DOM Events    │    │ - Responsive    │
-└─────────────────┘    └─────────────────┘    └─────────────────┘
+┌──────────────────┐   ┌─────────────────┐   ┌──────────────────────┐
+│      Pages       │   │   Components    │   │       Hooks          │
+│                  │   │                 │   │                      │
+│ - PlayerSelect   │◄──┤ - ProgressBar   │◄──┤ - useTimer           │
+│ - HomePage       │   │ - MultiQuestion │   │ - usePlayerMgmt      │
+│ - PlayPage       │   │                 │   │ - useBackgroundMusic │
+└──────────────────┘   └─────────────────┘   └──────────────────────┘
+         │                      │                       │
+         ▼                      ▼                       ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│                      React Router + State                           │
+└─────────────────────────────────────────────────────────────────────┘
+         │                      │                       │
+         ▼                      ▼                       ▼
+┌──────────────────┐   ┌─────────────────┐   ┌─────────────────┐
+│   localStorage   │   │   Browser APIs  │   │   CSS-in-JS     │
+│                  │   │                 │   │                 │
+│ - Players        │   │ - Timer APIs    │   │ - Inline Styles │
+│ - CurrentPlayer  │   │ - DOM Events    │   │ - Pixel Art     │
+│ - Scores         │   │ - Keyboard      │   │ - Animations    │
+│ - Game Results   │   │ - Audio APIs    │   │ - Responsive    │
+└──────────────────┘   └─────────────────┘   └─────────────────┘
 ```
 
 ### Structure des Dossiers
@@ -62,15 +65,23 @@ L'application suit une architecture **Component-Based** avec séparation des res
 ```
 src/
 ├── components/          # Composants réutilisables
-│   ├── ProgressBar.tsx     # Barre de progression visuelle
-│   └── MultiplicationQuestion.tsx  # Interface de question
+│   ├── ProgressBar.tsx              # Barre de progression visuelle
+│   ├── MultiplicationQuestion.tsx   # Interface de question
+│   └── *.test.tsx                   # Tests des composants
 ├── pages/              # Composants de niveau route
-│   ├── HomePage.tsx        # Page d'accueil avec historique
-│   └── PlayPage.tsx        # Page de jeu principale
+│   ├── PlayerSelectPage.tsx         # Sélection du joueur
+│   ├── HomePage.tsx                 # Page d'accueil avec historique
+│   ├── PlayPage.tsx                 # Page de jeu principale
+│   └── *.test.tsx                   # Tests des pages
 ├── hooks/              # Hooks personnalisés
-│   └── useTimer.ts         # Gestion du minuteur
+│   ├── useTimer.ts                  # Gestion du minuteur
+│   ├── usePlayerManagement.ts       # Gestion des joueurs
+│   ├── useBackgroundMusic.ts        # Contrôle de la musique
+│   └── *.test.ts                    # Tests des hooks
+├── types/              # Types et utilitaires TypeScript
+│   └── player.ts                    # Types Player + utils localStorage
 ├── test/               # Configuration des tests
-│   └── setup.ts           # Setup global pour les tests
+│   └── setup.ts                     # Setup global pour les tests
 ├── App.tsx             # Composant racine avec routage
 └── main.tsx            # Point d'entrée de l'application
 ```
@@ -79,9 +90,14 @@ src/
 
 #### 1. Navigation Flow
 ```
-HomePage → [Start Game] → PlayPage → [Timer Ends] → HomePage
-   ↑                                                      ↓
-   └── [Display Scores] ← localStorage ← [Save Score] ────┘
+PlayerSelectPage → [Select Player] → HomePage → [Start Game] → PlayPage
+      ↑                                  ↑                         ↓
+      │                                  │                  [Timer Ends]
+      │                                  │                         ↓
+      │                                  └───────── [Save Score] ──┘
+      │                                             localStorage
+      │
+      └──── [No Player Selected] ← HomePage/PlayPage redirect
 ```
 
 #### 2. Game State Management
@@ -94,9 +110,32 @@ PlayPage
     └── onBadAnswer → record result only
 ```
 
-#### 3. Data Persistence
+#### 3. Player Management Flow
+```
+PlayerSelectPage
+├── usePlayerManagement()
+│   ├── getPlayers() → Player[]
+│   ├── getCurrentPlayer() → Player | null
+│   └── selectPlayer(index) → setCurrentPlayerId(id)
+│
+└── Keyboard Navigation
+    ├── ArrowUp → selectedIndex--
+    ├── ArrowDown → selectedIndex++
+    └── Enter → selectPlayer() → navigate('/home')
+
+type Player = {
+  id: string      // "jules", "achille"
+  name: string    // "Jules", "Achille"
+}
+```
+
+#### 4. Data Persistence
 ```
 Game Session → GameResult[] → ScoreEntry → localStorage['scores']
+
+Player Selection → Player.id → localStorage['currentPlayer']
+
+Default Players → Player[] → localStorage['players']
 
 type GameResult = {
   question: string    // "3 x 7"
@@ -118,8 +157,10 @@ type ScoreEntry = {
 
 ### 2. Custom Hooks Pattern
 - **useTimer** : Encapsulation de la logique de minuteur
+- **usePlayerManagement** : Gestion de l'état des joueurs et localStorage
+- **useBackgroundMusic** : Contrôle de la musique de fond
 - **Séparation des préoccupations** : logique métier vs présentation
-- **Réutilisabilité** : hook indépendant du contexte UI
+- **Réutilisabilité** : hooks indépendants du contexte UI
 
 ### 3. Event-Driven Pattern
 - **Callbacks props** : `onCorrectAnswer`, `onBadAnswer`
@@ -131,6 +172,12 @@ type ScoreEntry = {
 - **Single source of truth** : état centralisé au niveau approprié
 - **Props interface** : communication typée entre composants
 
+### 5. Keyboard Navigation Pattern
+- **Event listeners** : addEventListener/removeEventListener dans useEffect
+- **Cleanup pattern** : return cleanup function pour éviter les fuites mémoire
+- **Bounded navigation** : Math.max/Math.min pour limiter l'index
+- **Multi-key support** : ArrowUp, ArrowDown, Enter
+
 ## Gestion des États
 
 ### État Local (useState)
@@ -138,8 +185,13 @@ type ScoreEntry = {
 // PlayPage.tsx
 const [score, setScore] = useState(0)              // Score actuel
 const [results, setResults] = useState<GameResult[]>([])  // Historique des tentatives
+const [combo, setCombo] = useState(0)              // Combo de réponses correctes
+const [lives, setLives] = useState(3)              // Vies restantes
 
-// MultiplicationQuestion.tsx  
+// PlayerSelectPage.tsx
+const [selectedIndex, setSelectedIndex] = useState(0)  // Index du joueur sélectionné
+
+// MultiplicationQuestion.tsx
 const [factorA, setFactorA] = useState(1)          // Premier facteur
 const [factorB, setFactorB] = useState(1)          // Deuxième facteur
 const [userAnswer, setUserAnswer] = useState('')   // Réponse utilisateur
@@ -148,12 +200,25 @@ const [userAnswer, setUserAnswer] = useState('')   // Réponse utilisateur
 ### État Persistant (localStorage)
 ```typescript
 // Structure de données
+interface Player {
+  id: string
+  name: string
+}
+
 interface ScoreEntry {
   score: number
   results: GameResult[]
 }
 
-// Storage pattern
+// Storage pattern - Players
+const players: Player[] = JSON.parse(localStorage.getItem('players') || '[]')
+localStorage.setItem('players', JSON.stringify(players))
+
+// Storage pattern - Current Player
+const currentPlayerId = localStorage.getItem('currentPlayer')
+localStorage.setItem('currentPlayer', 'jules')
+
+// Storage pattern - Scores
 const scores: ScoreEntry[] = JSON.parse(localStorage.getItem('scores') || '[]')
 localStorage.setItem('scores', JSON.stringify([...scores, newScore]))
 ```

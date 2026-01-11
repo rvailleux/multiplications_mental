@@ -1,4 +1,6 @@
 import { useNavigate } from 'react-router-dom'
+import { useEffect } from 'react'
+import { getCurrentPlayer } from '../types/player'
 
 /**
  * Score data structure stored in localStorage
@@ -67,12 +69,26 @@ const calculateRanks = (scores: ScoreEntry[]): RankedScore[] => {
 
 export default function HomePage() {
   const navigate = useNavigate()
+  const currentPlayer = getCurrentPlayer()
+
+  /** Redirect to player selection if no player is selected */
+  useEffect(() => {
+    if (!currentPlayer) {
+      navigate('/')
+    }
+  }, [currentPlayer, navigate])
+
   /** Load score history from localStorage and limit to top 100 */
   const scores: ScoreEntry[] = JSON.parse(localStorage.getItem('scores') || '[]').slice(-100) // Keep only last 100 scores to prevent memory issues
 
   /** Calculate ranks and sort by score (highest first) */
   const rankedScores = calculateRanks(scores)
   const visibleScores = rankedScores
+
+  // Don't render if no player selected (will redirect)
+  if (!currentPlayer) {
+    return null
+  }
 
   return (
     <div style={styles.gameContainer}>
@@ -84,7 +100,7 @@ export default function HomePage() {
 
       <div style={styles.gameHeader}>
         <h1 style={styles.gameTitle}>⭐ MATH QUEST ⭐</h1>
-        <div style={styles.subtitle}>Welcome to Mental Maths!</div>
+        <div style={styles.subtitle}>Welcome {currentPlayer.name}!</div>
       </div>
 
       <div style={styles.startButtonContainer}>

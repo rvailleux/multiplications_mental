@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react'
 import { useTimer } from '../hooks/useTimer'
+import { useBackgroundMusic } from '../hooks/useBackgroundMusic'
 import ProgressBar from '../components/ProgressBar'
 import MultiplicationQuestion from '../components/MultiplicationQuestion'
 import { useNavigate } from 'react-router-dom'
+import { getCurrentPlayer } from '../types/player'
 
 /**
  * Game result structure for tracking user answers
@@ -24,14 +26,23 @@ export type GameResult = {
  */
 export default function PlayPage() {
   const navigate = useNavigate()
+  const currentPlayer = getCurrentPlayer()
   const totalTime = 60 // Total time in seconds
   const { secondsLeft, reset } = useTimer(totalTime)
+  const { startMusic, stopMusic } = useBackgroundMusic()
   const [score, setScore] = useState(0)
   const [results, setResults] = useState<GameResult[]>([])
   const [combo, setCombo] = useState(0)
   const [scorePopup, setScorePopup] = useState('')
   const [showPopup, setShowPopup] = useState(false)
   const [lives, setLives] = useState(3)
+
+  /** Redirect to player selection if no player is selected */
+  useEffect(() => {
+    if (!currentPlayer) {
+      navigate('/')
+    }
+  }, [currentPlayer, navigate])
 
   /** Calculate progress percentage based on elapsed time */
   const progress = ((totalTime - secondsLeft) / totalTime) * 100
@@ -68,14 +79,30 @@ export default function PlayPage() {
     setTimeout(() => setShowPopup(false), 800)
   }
 
-  // Save score to local storage when time is up
+  // Start background music when component mounts
+  useEffect(() => {
+    startMusic()
+
+    // Cleanup music when component unmounts
+    return () => {
+      stopMusic()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []) // Empty dependencies - run only once on mount
+
+  // Save score to local storage when time is up (only if score > 0)
   useEffect(() => {
     if (secondsLeft === 0) {
-      const previousScores = JSON.parse(localStorage.getItem('scores') || '[]')
-      localStorage.setItem('scores', JSON.stringify([...previousScores, { score, results }]))
-      navigate('/') // Redirect to home page
+      // Only save scores greater than zero to prevent empty games cluttering leaderboard
+      if (score > 0) {
+        const previousScores = JSON.parse(localStorage.getItem('scores') || '[]')
+        localStorage.setItem('scores', JSON.stringify([...previousScores, { score, results }]))
+      }
+      stopMusic() // Stop music before navigation
+      navigate('/home') // Redirect to home page
     }
-  }, [secondsLeft, score, results, navigate])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [secondsLeft]) // Only depend on secondsLeft to prevent duplicate saves
 
   return (
     <div style={styles.gameContainer}>
@@ -126,6 +153,7 @@ export default function PlayPage() {
             setResults([]) // Clear the results
             setCombo(0) // Reset combo
             setLives(3) // Reset lives
+            startMusic() // Start new random music
           }}
         >
           ↻ Restart

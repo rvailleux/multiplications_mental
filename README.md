@@ -4,34 +4,51 @@ This project is a fun and interactive **mental math game** built with **React**,
 
 ## Features
 
-- 🎮 **Play Mode**: Solve multiplication problems within a 60-second timer.
-- 📊 **Statistics**: View average scores for each multiplication pair based on your last 5 games.
-- 🏆 **Score Tracking**: Previous scores are saved and displayed on the home page.
-- 🚀 **Responsive Design**: Child-friendly interface with bold, playful components.
+- 👥 **Player Selection**: Choose between Jules and Achille with keyboard navigation (Arrow keys + Enter)
+- 🎮 **Play Mode**: Solve multiplication problems within a 60-second timer
+- 🏆 **Ranked Leaderboard**: Previous scores ranked with gold/silver/bronze medals for top 3
+- 🎨 **Retro Pixel Art Design**: 1990s Nintendo-style aesthetics with pixel borders and animations
+- 🎵 **Background Music**: Immersive gaming experience with background music during gameplay
+- ⭐ **Combo System**: Earn bonus points with consecutive correct answers
+- ❤️ **Lives System**: Track your mistakes with a visual lives indicator
+- 💾 **Persistent Data**: Player selection and scores saved in localStorage
 
 ## Pages
 
-### 1. **Home Page**
-- Displays the 5 most recent scores.
-- Option to expand and view all previous scores.
-- A "Start Game" button to begin a new session.
+### 1. **Player Select Page** (New! ✨)
+- Choose between Jules and Achille before starting
+- Keyboard navigation: Arrow Up/Down to select, Enter to confirm
+- Mouse click also supported for player selection
+- Retro NES-style design with pixel art borders
+- Selected player persists across sessions
 
-### 2. **Play Page**
-- Solve multiplication problems within a 60-second timer.
-- Tracks correct and incorrect answers.
-- Saves your score and results to local storage after the game ends.
+### 2. **Home Page**
+- Displays personalized welcome message for selected player
+- Shows ranked leaderboard with top 100 scores
+- Gold/silver/bronze medals for top 3 positions
+- Handles tied scores with same rank
+- "Start Game" button to begin a new session
 
-### 3. **Stats Page**
-- Displays the average score for each multiplication pair based on the last 5 games.
-- Helps identify strengths and areas for improvement.
+### 3. **Play Page**
+- Solve multiplication problems within a 60-second timer
+- Visual progress bar with time-based color indicators
+- Combo system rewards consecutive correct answers
+- Lives system tracks mistakes
+- Background music during gameplay
+- Saves score to localStorage when timer ends (scores > 0 only)
 
 ## Technologies Used
 
-- **React**: For building the user interface.
-- **TypeScript**: For type-safe development.
-- **Vite**: For fast development and build tooling.
-- **React Router**: For navigation between pages.
-- **Local Storage**: For saving scores and results.
+- **React 19.0.0**: Modern UI library with hooks
+- **TypeScript 5.7.2**: Type-safe development
+- **Vite 6.2.0**: Lightning-fast build tool and dev server
+- **React Router DOM 7.5.0**: Client-side routing and navigation
+- **Vitest 4.0.16**: Fast unit testing framework
+- **React Testing Library 16.3.1**: Component testing utilities
+- **ESLint & Prettier**: Code quality and formatting
+- **Husky & lint-staged**: Pre-commit hooks for automated quality checks
+- **TypeDoc**: Automated API documentation generation
+- **Local Storage**: Persistent data for players and scores
 
 ## Getting Started
 
@@ -72,31 +89,81 @@ The production-ready files will be in the `dist` folder.
 ## Project Structure
 
 ```
-multiplications_mental/
+multiplication_game/
 ├── src/
-│   ├── components/       # Reusable components (e.g., ProgressBar, MultiplicationQuestion)
-│   ├── hooks/            # Custom hooks (e.g., useTimer)
-│   ├── pages/            # Page components (HomePage, PlayPage, StatsPage)
-│   ├── App.tsx           # Main app component
-│   └── main.tsx          # Entry point
-├── public/               # Static assets
-├── package.json          # Project dependencies and scripts
-├── tsconfig.json         # TypeScript configuration
-└── vite.config.ts        # Vite configuration
+│   ├── components/           # Reusable UI components
+│   │   ├── ProgressBar.tsx
+│   │   ├── MultiplicationQuestion.tsx
+│   │   └── *.test.tsx        # Component tests
+│   ├── pages/                # Route-level components
+│   │   ├── PlayerSelectPage.tsx  # Player selection screen
+│   │   ├── HomePage.tsx          # Home with leaderboard
+│   │   ├── PlayPage.tsx          # Main game page
+│   │   └── *.test.tsx        # Page tests
+│   ├── hooks/                # Custom React hooks
+│   │   ├── useTimer.ts
+│   │   ├── usePlayerManagement.ts
+│   │   ├── useBackgroundMusic.ts
+│   │   └── *.test.ts         # Hook tests
+│   ├── types/                # TypeScript types and utilities
+│   │   └── player.ts         # Player types and localStorage utils
+│   ├── test/                 # Test configuration
+│   │   └── setup.ts
+│   ├── App.tsx               # Root component with routing
+│   ├── main.tsx              # Application entry point
+│   └── index.css             # Global styles and animations
+├── public/                   # Static assets
+│   └── audio/                # Audio files (music, SFX)
+├── docs/                     # Auto-generated API documentation
+├── ARCHITECTURE.md           # Detailed technical architecture
+├── CLAUDE.md                 # Project context for Claude Code
+├── package.json              # Dependencies and scripts
+├── tsconfig.json             # TypeScript configuration
+├── vite.config.ts            # Vite build configuration
+└── vitest.config.ts          # Vitest test configuration
 ```
 
 ## Scripts
 
-- `npm run dev`: Start the development server.
-- `npm run build`: Build the app for production.
-- `npm run preview`: Preview the production build.
-- `npm run lint`: Run ESLint to check for code quality issues.
+### Development
+- `npm run dev`: Start development server with hot reload
+- `npm run dev:clean`: Clear Vite cache and start dev server
+
+### Testing
+- `npm run test`: Run tests in watch mode
+- `npm run test:run`: Run tests once (CI mode)
+- `npm run test:ui`: Open Vitest UI interface
+- `npm run test:coverage`: Run tests with coverage report
+
+### Code Quality
+- `npm run type-check`: TypeScript validation only
+- `npm run lint`: ESLint code analysis
+- `npm run lint:fix`: Auto-fix ESLint issues
+- `npm run format`: Format code with Prettier
+- `npm run format:check`: Check formatting without changes
+
+### Build & Documentation
+- `npm run build`: Type check + production build
+- `npm run preview`: Preview the production build
+- `npm run docs`: Generate TypeDoc API documentation
 
 ## Future Improvements
 
-- Add difficulty levels (e.g., easy, medium, hard).
-- Include division, addition, and subtraction problems.
-- Add user authentication to save scores across devices.
+### In Progress (todo.md)
+- ✅ Player selection screen with keyboard navigation (Completed!)
+- 🔄 Display last game score above leaderboard with stats
+- 🔄 Add positive/negative feedback sound effects (8-bit style)
+- 🔄 Enable adding new players dynamically
+- 🔄 Separate score histories per player
+
+### Planned Features
+- Difficulty levels (easy, medium, hard number ranges)
+- Other math operations (division, addition, subtraction)
+- Statistics page with performance analytics
+- PWA capabilities for offline play
+- User authentication for cross-device syncing
+- Multiplayer mode with real-time competition
+- Achievement system and badges
 
 ## License
 
