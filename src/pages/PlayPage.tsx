@@ -5,6 +5,7 @@ import ProgressBar from '../components/ProgressBar'
 import MultiplicationQuestion from '../components/MultiplicationQuestion'
 import { useNavigate } from 'react-router-dom'
 import { getCurrentPlayer } from '../types/player'
+import PlayerNameDisplay from '../components/PlayerNameDisplay'
 
 /**
  * Game result structure for tracking user answers
@@ -106,6 +107,7 @@ export default function PlayPage() {
 
   return (
     <div style={styles.gameContainer}>
+      <PlayerNameDisplay player={currentPlayer} />
       <div style={styles.clouds}>
         <div style={styles.cloud}>☁️</div>
         <div style={styles.cloud}>☁️</div>

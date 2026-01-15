@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import { useEffect } from 'react'
 import { getCurrentPlayer } from '../types/player'
+import PlayerNameDisplay from '../components/PlayerNameDisplay'
 
 /**
  * Score data structure stored in localStorage
@@ -92,6 +93,7 @@ export default function HomePage() {
 
   return (
     <div style={styles.gameContainer}>
+      <PlayerNameDisplay player={currentPlayer} />
       <div style={styles.clouds}>
         <div style={styles.cloud}>☁️</div>
         <div style={styles.cloud}>☁️</div>
