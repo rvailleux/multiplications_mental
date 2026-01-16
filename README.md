@@ -1,5 +1,7 @@
 # Multiplications Mental Game
 
+**🎮 [Play Live Demo](https://rvailleux.github.io/multiplications_mental/)**
+
 This project is a fun and interactive **mental math game** built with **React**, **TypeScript**, and **Vite**. The goal is to solve as many multiplication problems as possible within a time limit. The app tracks your scores and provides statistics to help you improve your skills.
 
 ## Features
@@ -85,6 +87,18 @@ To build the app for production, run:
 npm run build
 ```
 The production-ready files will be in the `dist` folder.
+
+### Deployment
+
+The app is automatically deployed to **GitHub Pages** when changes are pushed to the `main` branch.
+
+**Quality Gates**: Every deployment must pass:
+- ✅ Type checking (`npm run type-check`)
+- ✅ Linting (`npm run lint:fix`)
+- ✅ All tests (`npm run test:run`)
+- ✅ Production build (`npm run build`)
+
+Deployment is **blocked** if any check fails. This ensures only quality-verified code reaches production.
 
 ## Project Structure
 

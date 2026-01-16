@@ -3,7 +3,8 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
+  base: mode === 'production' ? '/multiplications_mental/' : '/',
   plugins: [
     react(),
     VitePWA({
@@ -12,7 +13,7 @@ export default defineConfig({
       manifest: {
         name: 'Multiplication Challenge',
         short_name: 'Multiplications',
-        start_url: '/',
+        start_url: mode === 'production' ? '/multiplications_mental/' : '/',
         display: 'standalone',
         background_color: '#ffffff',
         theme_color: '#4285f4',
@@ -31,4 +32,4 @@ export default defineConfig({
       },
     }),
   ],
-})
+}))
