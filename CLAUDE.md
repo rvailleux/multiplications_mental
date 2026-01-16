@@ -4,9 +4,25 @@
 React TypeScript multiplication game with 60-second timer challenges, score tracking, and statistics.
 
 **📋 Key Documentation:**
+- **`.specify/memory/constitution.md`** - Project constitution (NON-NEGOTIABLE principles)
 - **ARCHITECTURE.md** - Detailed technical architecture, patterns, and scalability
 - **README.md** - Project overview, features, and setup instructions
 - **docs/api/** - Auto-generated JSDoc documentation (run `npm run docs`)
+
+**⚖️ Constitutional Authority**: This file provides **runtime development guidance** following the principles established in `.specify/memory/constitution.md`. When in doubt, the constitution supersedes this file.
+
+## Constitutional Principles (Quick Reference)
+
+The project follows six core non-negotiable principles:
+
+1. **Test-First Development (NON-NEGOTIABLE)** - TDD with red-green-refactor cycle
+2. **TypeScript Type Safety** - Strict mode, explicit types, no `any`
+3. **Component-Based Architecture** - Functional components, custom hooks, single responsibility
+4. **Automated Quality Gates** - Type check, lint, test, build before every commit
+5. **Documentation-Driven Development** - JSDoc required, auto-generated API docs
+6. **Retro Gaming UX (Super NES 8-bit Aesthetic)** - Keyboard-first navigation, mouse support, pixel art
+
+See `.specify/memory/constitution.md` for full details.
 
 ## Architecture & Patterns
 
@@ -41,6 +57,231 @@ src/
 - **React Router** for navigation state
 - **Custom hooks** for shared stateful logic (useTimer, usePlayerManagement, useBackgroundMusic)
 
+## Retro Gaming UX Design (Super NES 8-bit Aesthetic)
+
+### Constitutional Requirement
+All UI/UX MUST follow retro gaming design principles with **keyboard-first interaction** (Constitution Principle VI).
+
+### Keyboard Navigation (PRIMARY Input Method)
+
+#### Supported Keys
+- **Arrow Up/Down** - Navigate menu items vertically
+- **Arrow Left/Right** - Navigate options horizontally (if applicable)
+- **Enter** - Confirm selection, start action
+- **Escape** - Cancel, go back, close dialog
+
+#### Implementation Pattern
+```typescript
+useEffect(() => {
+  const handleKeyDown = (e: KeyboardEvent): void => {
+    // Prevent default browser behavior for game keys
+    if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Enter', 'Escape'].includes(e.key)) {
+      e.preventDefault()
+    }
+
+    switch (e.key) {
+      case 'ArrowUp':
+        setSelectedIndex(prev => Math.max(0, prev - 1))
+        break
+      case 'ArrowDown':
+        setSelectedIndex(prev => Math.min(maxIndex, prev + 1))
+        break
+      case 'ArrowLeft':
+        // Handle horizontal navigation if applicable
+        break
+      case 'ArrowRight':
+        // Handle horizontal navigation if applicable
+        break
+      case 'Enter':
+        handleConfirmSelection()
+        break
+      case 'Escape':
+        handleCancel()
+        break
+    }
+  }
+
+  window.addEventListener('keydown', handleKeyDown)
+  return () => window.removeEventListener('keydown', handleKeyDown)
+}, [selectedIndex, maxIndex])
+```
+
+#### Keyboard Navigation Best Practices
+- **Always cleanup** event listeners in useEffect return function
+- **Prevent default** browser scrolling for arrow keys in game contexts
+- **Bound checking** with Math.max/Math.min to prevent index out of range
+- **Visual feedback** - highlight selected item with distinct styling
+- **Debouncing** if rapid key presses cause issues (usually not needed)
+
+### Mouse Support (SECONDARY Input Method)
+
+#### Constitutional Requirement
+All keyboard interactions MUST also work with mouse clicks. Users should be able to:
+- **Click** to select menu items (same as Arrow keys + Enter)
+- **Click** to confirm actions (same as Enter)
+- **Click** close/cancel buttons (same as Escape)
+
+#### Implementation Pattern
+```typescript
+// Dual input: keyboard AND mouse for same action
+const handleSelectOption = (index: number): void => {
+  setSelectedIndex(index)
+}
+
+const handleConfirmSelection = (): void => {
+  // This function is called by both Enter key AND mouse click
+  navigate('/next-page')
+}
+
+return (
+  <div>
+    {options.map((option, index) => (
+      <div
+        key={option.id}
+        onClick={() => {
+          handleSelectOption(index)
+          handleConfirmSelection()
+        }}
+        style={{
+          backgroundColor: selectedIndex === index ? '#ffcc00' : '#fff'
+        }}
+      >
+        {option.label}
+      </div>
+    ))}
+  </div>
+)
+```
+
+### Visual Design Guidelines (Super NES 8-bit Aesthetic)
+
+#### Color Palette
+- **Primary colors**: Bold, saturated colors (NES/SNES era)
+- **Backgrounds**: Solid colors or simple gradients
+- **Highlights**: High contrast for selected items
+- **Text**: Readable pixel fonts or web-safe sans-serif
+
+#### Pixel Art Styling
+```typescript
+const pixelArtStyles = {
+  border: '4px solid #000',
+  boxShadow: '8px 8px 0 rgba(0, 0, 0, 0.3)',
+  imageRendering: 'pixelated' as const,
+  fontFamily: 'monospace', // Or pixel font via @font-face
+  textTransform: 'uppercase' as const,
+}
+
+const retroButtonStyles = {
+  padding: '16px 32px',
+  fontSize: '20px',
+  fontWeight: 'bold',
+  border: '4px solid #000',
+  borderRadius: '0', // Sharp corners, no border-radius
+  cursor: 'pointer',
+  transition: 'transform 0.1s',
+  ':hover': {
+    transform: 'scale(1.05)',
+  },
+  ':active': {
+    transform: 'scale(0.95)',
+  },
+}
+```
+
+#### Animation Guidelines
+- **Sprite-based** animations (frame-by-frame, not smooth transitions)
+- **Short durations** - keep animations snappy (100-300ms)
+- **Discrete steps** - avoid smooth easing, use `steps()` timing function
+- **Pixel-perfect** - align to pixel grid, avoid sub-pixel rendering
+
+```css
+/* Retro animation example */
+.retro-animation {
+  animation: blink 0.5s steps(2) infinite;
+}
+
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+```
+
+#### Focus Indicators
+```typescript
+const focusedItemStyles = {
+  backgroundColor: '#ffcc00', // Bright yellow highlight
+  color: '#000',
+  border: '4px solid #ff0000', // Red border for extra emphasis
+  boxShadow: '0 0 20px rgba(255, 204, 0, 0.8)', // Glow effect
+}
+
+const unfocusedItemStyles = {
+  backgroundColor: '#4a4a4a',
+  color: '#fff',
+  border: '4px solid #000',
+}
+```
+
+### UX Testing Checklist (Dual Input Support)
+
+#### For Every Interactive Component:
+- [ ] **Keyboard navigation works**
+  - [ ] Arrow keys navigate correctly
+  - [ ] Enter key confirms selection
+  - [ ] Escape key cancels/goes back
+  - [ ] Tab key navigation works (accessibility)
+  - [ ] No keyboard traps (can always navigate away)
+
+- [ ] **Mouse navigation works**
+  - [ ] Click events fire correctly
+  - [ ] Hover states provide visual feedback
+  - [ ] All keyboard actions have mouse equivalents
+
+- [ ] **Visual feedback**
+  - [ ] Current selection clearly highlighted
+  - [ ] Hover states distinct from selected states
+  - [ ] Pixel art aesthetic maintained
+  - [ ] Retro color palette consistent
+
+- [ ] **Accessibility**
+  - [ ] Focus visible for keyboard users
+  - [ ] Click targets minimum 44x44px (mobile)
+  - [ ] No motion sickness triggers (rapid flashing)
+  - [ ] Color contrast meets WCAG guidelines
+
+#### Test Scenarios
+```typescript
+// Test example for dual input support
+describe('RetroMenuComponent', () => {
+  it('should navigate with arrow keys', () => {
+    render(<RetroMenu items={mockItems} />)
+    fireEvent.keyDown(window, { key: 'ArrowDown' })
+    expect(screen.getByText('Item 2')).toHaveStyle({ backgroundColor: '#ffcc00' })
+  })
+
+  it('should confirm selection with Enter key', () => {
+    const onSelect = vi.fn()
+    render(<RetroMenu items={mockItems} onSelect={onSelect} />)
+    fireEvent.keyDown(window, { key: 'Enter' })
+    expect(onSelect).toHaveBeenCalled()
+  })
+
+  it('should select item on mouse click', () => {
+    const onSelect = vi.fn()
+    render(<RetroMenu items={mockItems} onSelect={onSelect} />)
+    fireEvent.click(screen.getByText('Item 1'))
+    expect(onSelect).toHaveBeenCalledWith('item-1')
+  })
+
+  it('should cancel with Escape key', () => {
+    const onCancel = vi.fn()
+    render(<RetroMenu items={mockItems} onCancel={onCancel} />)
+    fireEvent.keyDown(window, { key: 'Escape' })
+    expect(onCancel).toHaveBeenCalled()
+  })
+})
+```
+
 ## Development Commands
 
 ### Essential Commands
@@ -49,17 +290,14 @@ src/
 npm run dev              # Start development server
 npm run dev:clean        # Clean Vite cache + start dev
 
-# Code Quality
+# Code Quality (Constitutional Requirement - ALL 4 MUST PASS)
 npm run type-check       # TypeScript validation only
-npm run build           # Type check + production build
-npm run lint            # ESLint code analysis
-npm run lint:fix        # Auto-fix ESLint issues
-npm run format          # Format code with Prettier
-npm run format:check    # Check formatting without changes
+npm run lint:fix         # Auto-fix ESLint issues
+npm run test:run         # Run tests once (all must pass)
+npm run build            # Type check + production build
 
 # Testing
 npm run test            # Run tests in watch mode
-npm run test:run        # Run tests once
 npm run test:ui         # Open Vitest UI interface
 npm run test:coverage   # Run tests with coverage report
 
@@ -168,14 +406,14 @@ type GameResult = {
 ## Game Logic
 
 ### Core Game Flow
-1. **PlayerSelectPage** → Select player (keyboard navigation ↑/↓ + Enter) → Navigate to HomePage
+1. **PlayerSelectPage** → Select player (keyboard navigation ↑/↓ + Enter OR mouse click) → Navigate to HomePage
 2. **HomePage** → Welcome [player name] + Start game button → Navigate to PlayPage
 3. **PlayPage** → 60-second timer + random multiplication questions
 4. **Timer expires** → Save score to localStorage → Navigate back to HomePage
 
 ### Player Selection Flow
-- Arrow Up/Down keys navigate between players
-- Enter key or mouse click validates selection
+- **Keyboard**: Arrow Up/Down keys navigate between players, Enter confirms
+- **Mouse**: Click player to select and navigate
 - Selected player saved to `localStorage['currentPlayer']`
 - HomePage and PlayPage redirect to PlayerSelectPage if no player selected
 
@@ -190,6 +428,9 @@ type GameResult = {
 - All attempts saved to results array
 
 ## Testing Strategy
+
+### Constitutional Requirement
+**Test-First Development (NON-NEGOTIABLE)** - Tests MUST be written BEFORE implementation.
 
 ### Current Testing Setup
 - **Vitest 4.0.16** - Modern test runner (faster than Jest)
@@ -208,6 +449,20 @@ describe('ComponentName', () => {
     render(<Component prop="value" />)
     expect(screen.getByText('Expected Text')).toBeInTheDocument()
   })
+
+  // UX Testing: Verify keyboard AND mouse interactions
+  it('should handle keyboard navigation', () => {
+    render(<Component />)
+    fireEvent.keyDown(window, { key: 'ArrowDown' })
+    expect(screen.getByRole('button')).toHaveFocus()
+  })
+
+  it('should handle mouse clicks', () => {
+    const onClick = vi.fn()
+    render(<Component onClick={onClick} />)
+    fireEvent.click(screen.getByRole('button'))
+    expect(onClick).toHaveBeenCalled()
+  })
 })
 ```
 
@@ -216,11 +471,14 @@ describe('ComponentName', () => {
 - Test setup: `src/test/setup.ts`
 - Test config: `vitest.config.ts`
 
-### Testing Best Practices
+### Testing Best Practices (Constitutional Compliance)
 - **Test user behavior**, not implementation details
 - **Use descriptive test names** that explain the expected behavior
 - **Mock external dependencies** (timers, localStorage, etc.)
 - **Test accessibility** with screen readers in mind
+- **Test dual input** - Verify both keyboard AND mouse interactions work
+- **Write tests FIRST** - Red-Green-Refactor cycle mandatory
+- **Tests MUST fail** initially to prove they test the right behavior
 
 ## Performance Considerations
 
@@ -234,7 +492,7 @@ describe('ComponentName', () => {
 ### Monitoring & Metrics
 - **Bundle analysis**: Use `npm run build` to check bundle size
 - **Type checking**: `npm run type-check` for fast validation
-- **Test coverage**: `npm run test:coverage` for quality metrics
+- **Test coverage**: `npm run test:coverage` for quality metrics (target >80%)
 - **Build performance**: Vite provides build timing information
 
 ## Common Issues & Solutions
@@ -256,25 +514,34 @@ describe('ComponentName', () => {
 - **Husky not working**: Run `npm run prepare` to reinstall hooks
 - **Tests slow**: Happy-DOM is faster than jsdom for most cases
 
+### UX Issues
+- **Keyboard navigation not working**: Check event listener cleanup in useEffect
+- **Focus not visible**: Ensure focus styles are defined and contrast meets WCAG
+- **Mouse and keyboard out of sync**: Ensure both call same handler functions
+
 ## Feature Development Workflow
 
 ### 🔄 MANDATORY Process for New Features
-Claude Code MUST follow this exact workflow for ALL feature development:
+**Constitutional Requirement**: Claude Code MUST follow this exact workflow for ALL feature development.
 
-#### 1. Planning & Analysis (REQUIRED)
+#### 1. Planning & Analysis (REQUIRED for complex features)
 ```bash
 # ALWAYS start with TodoWrite for complex features
 TodoWrite -> Break down feature into tasks
-Grep/Task -> Analyze existing patterns  
+Grep/Task -> Analyze existing patterns
 Read -> Review related components/files
 ```
 
-#### 2. Test-First Development (REQUIRED)
+#### 2. Test-First Development (REQUIRED - NON-NEGOTIABLE)
 ```bash
 # Write tests BEFORE implementation
 Write failing tests -> Component.test.tsx
+  - Test keyboard navigation
+  - Test mouse interactions
+  - Test edge cases
+  - Test error conditions
 Validate approach with user -> Ensure coverage
-Test edge cases -> Error conditions, boundaries
+Tests MUST FAIL initially -> Proves they test the right behavior
 ```
 
 #### 3. Implementation Phase (REQUIRED)
@@ -282,14 +549,17 @@ Test edge cases -> Error conditions, boundaries
 # Follow existing patterns strictly
 Read existing components -> Understand patterns
 Implement feature -> Maintain consistency
-Add JSDoc comments -> Document while coding
+  - Keyboard-first navigation
+  - Mouse support for all actions
+  - Retro pixel art styling
+  - JSDoc comments while coding
 Use TypeScript strictly -> Leverage type safety
 ```
 
-#### 4. Quality Assurance (REQUIRED - ALL COMMANDS)
+#### 4. Quality Assurance (REQUIRED - ALL 4 COMMANDS MANDATORY)
 ```bash
 npm run test         # MUST pass all tests
-npm run type-check   # MUST have no type errors  
+npm run type-check   # MUST have no type errors
 npm run lint:fix     # MUST fix all lint issues
 npm run build        # MUST build successfully
 ```
@@ -304,8 +574,11 @@ Update CLAUDE.md -> Add new patterns if needed
 
 #### 6. Final Verification (REQUIRED)
 ```bash
-npm run test:coverage -> Ensure adequate coverage
+npm run test:coverage -> Ensure adequate coverage (>80%)
 Manual testing -> Verify in browser
+  - Test keyboard navigation (ArrowUp/Down/Left/Right, Enter, Esc)
+  - Test mouse clicks
+  - Verify retro aesthetic consistency
 Performance check -> No bundle size regression
 ```
 
@@ -313,19 +586,22 @@ Performance check -> No bundle size regression
 ```bash
 git status -> Verify intended changes only
 Descriptive commit -> Follow project conventions
+Pre-commit hooks -> Will auto-run (do not bypass)
 ```
 
-### 🚨 ENFORCEMENT Rules
-- **NEVER skip tests** - All features must have tests first
-- **NEVER commit without running quality commands** - All 4 QA commands required
+### 🚨 ENFORCEMENT Rules (Constitutional Compliance)
+- **NEVER skip tests** - All features must have tests first (TDD)
+- **NEVER commit without running ALL 4 quality commands** - type-check, lint:fix, test:run, build
 - **NEVER implement without JSDoc** - Document as you code
 - **ALWAYS use TodoWrite** for multi-step features
 - **ALWAYS validate approach** with user before major implementation
+- **ALWAYS test dual input** - Keyboard AND mouse must both work
+- **ALWAYS follow retro UX** - Super NES 8-bit aesthetic is mandatory
 
 ### Daily Development
 1. **Start development**: `npm run dev`
-2. **Write code** with auto-formatting and linting
-3. **Write tests** for new components/features
+2. **Write tests first** - TDD is mandatory
+3. **Write code** with auto-formatting and linting
 4. **Run tests**: `npm run test` (watch mode)
 5. **Commit changes** (pre-commit hooks auto-run)
 
@@ -337,6 +613,7 @@ Descriptive commit -> Follow project conventions
 5. **Documentation**: `npm run docs`
 
 ### Architecture References
+- **`.specify/memory/constitution.md`** - Non-negotiable principles
 - **ARCHITECTURE.md** - Complete technical architecture
 - **Component patterns** - See existing components for examples
 - **Test patterns** - Follow MultiplicationQuestion.test.tsx example
@@ -370,26 +647,6 @@ const {
   selectPlayer,      // Select player and save to localStorage
   hasPlayerSelected  // Boolean flag
 } = usePlayerManagement()
-```
-
-### Keyboard Navigation Pattern
-```typescript
-useEffect(() => {
-  const handleKeyDown = (e: KeyboardEvent): void => {
-    if (e.key === 'ArrowUp') {
-      setSelectedIndex(Math.max(0, selectedIndex - 1))
-    }
-    if (e.key === 'ArrowDown') {
-      setSelectedIndex(Math.min(players.length - 1, selectedIndex + 1))
-    }
-    if (e.key === 'Enter') {
-      selectPlayer(selectedIndex)
-      navigate('/home')
-    }
-  }
-  window.addEventListener('keydown', handleKeyDown)
-  return () => window.removeEventListener('keydown', handleKeyDown)
-}, [selectedIndex, players.length])
 ```
 
 ## Future Improvements
@@ -445,15 +702,34 @@ The project includes `.vscode/settings.json` with:
 ### Most Used Commands
 ```bash
 npm run dev          # Start development
-npm run test         # Run tests in watch mode  
+npm run test         # Run tests in watch mode
 npm run lint:fix     # Fix code issues
 npm run docs         # Generate documentation
 ```
 
 ### Key Files to Know
+- **`.specify/memory/constitution.md`** - Project constitution (NON-NEGOTIABLE)
 - **ARCHITECTURE.md** - Complete technical documentation
 - **vitest.config.ts** - Test configuration
-- **CLAUDE.md** - This file (project context)
+- **CLAUDE.md** - This file (runtime development guidance)
 - **.vscode/settings.json** - IDE automation settings
 
-This file helps Claude Code understand the project context, patterns, and conventions for efficient development with full tooling support.
+### Constitutional Principles Quick Check
+Before committing, verify:
+- ✅ Tests written FIRST and passed
+- ✅ TypeScript strict mode compliance
+- ✅ Functional components with JSDoc
+- ✅ All 4 quality commands passed (type-check, lint:fix, test:run, build)
+- ✅ Documentation updated
+- ✅ Keyboard-first navigation implemented
+- ✅ Mouse support for all actions
+- ✅ Retro pixel art aesthetic maintained
+
+This file helps Claude Code understand the project context, patterns, and conventions for efficient development with full constitutional compliance.
+
+## Active Technologies
+- TypeScript 5.7.2 (strict mode enabled) + React 19.0.0, React Router DOM 7.5.0 (010-player-name-display)
+- localStorage (browser-based persistence) (010-player-name-display)
+
+## Recent Changes
+- 010-player-name-display: Added TypeScript 5.7.2 (strict mode enabled) + React 19.0.0, React Router DOM 7.5.0
