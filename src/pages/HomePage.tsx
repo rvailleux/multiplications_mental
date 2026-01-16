@@ -79,6 +79,20 @@ export default function HomePage() {
     }
   }, [currentPlayer, navigate])
 
+  /** Keyboard navigation: ESC to go back, ENTER to start game */
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent): void => {
+      if (e.key === 'Escape') {
+        navigate('/')
+      } else if (e.key === 'Enter') {
+        navigate('/play')
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [navigate])
+
   /** Load score history from localStorage and limit to top 100 */
   const scores: ScoreEntry[] = JSON.parse(localStorage.getItem('scores') || '[]').slice(-100) // Keep only last 100 scores to prevent memory issues
 
@@ -221,6 +235,7 @@ const styles = {
     textTransform: 'uppercase' as const,
     letterSpacing: '1px',
     boxShadow: '0 6px 0 #000',
+    animation: 'softBlink 2s ease-in-out infinite',
   },
   scoresTitle: {
     color: '#ff6b6b',

@@ -317,3 +317,77 @@ describe('HomePage - Edge Cases', () => {
     expect(scoreElements[2]).toHaveTextContent('100 pts')
   })
 })
+
+describe('HomePage - Keyboard Navigation', () => {
+  beforeEach(() => {
+    localStorage.clear()
+    vi.clearAllMocks()
+
+    localStorage.setItem('players', JSON.stringify([{ id: 'jules', name: 'Jules' }]))
+    setCurrentPlayerId('jules')
+    localStorage.setItem('scores', JSON.stringify([]))
+  })
+
+  it('should navigate to player selection when ESC key is pressed', () => {
+    render(
+      <MemoryRouter>
+        <HomePage />
+      </MemoryRouter>
+    )
+
+    // Press ESC key
+    const escapeEvent = new KeyboardEvent('keydown', { key: 'Escape' })
+    window.dispatchEvent(escapeEvent)
+
+    // Should navigate back to player selection
+    expect(mockNavigate).toHaveBeenCalledWith('/')
+  })
+
+  it('should start game when ENTER key is pressed', () => {
+    render(
+      <MemoryRouter>
+        <HomePage />
+      </MemoryRouter>
+    )
+
+    // Press ENTER key
+    const enterEvent = new KeyboardEvent('keydown', { key: 'Enter' })
+    window.dispatchEvent(enterEvent)
+
+    // Should navigate to play page
+    expect(mockNavigate).toHaveBeenCalledWith('/play')
+  })
+
+  it('should cleanup keyboard event listeners on unmount', () => {
+    const removeEventListenerSpy = vi.spyOn(window, 'removeEventListener')
+
+    const { unmount } = render(
+      <MemoryRouter>
+        <HomePage />
+      </MemoryRouter>
+    )
+
+    unmount()
+
+    // Should remove event listener
+    expect(removeEventListenerSpy).toHaveBeenCalledWith('keydown', expect.any(Function))
+  })
+
+  it('should not respond to other keys', () => {
+    render(
+      <MemoryRouter>
+        <HomePage />
+      </MemoryRouter>
+    )
+
+    // Clear any previous navigation calls
+    mockNavigate.mockClear()
+
+    // Press random key
+    const randomKeyEvent = new KeyboardEvent('keydown', { key: 'a' })
+    window.dispatchEvent(randomKeyEvent)
+
+    // Should not navigate
+    expect(mockNavigate).not.toHaveBeenCalled()
+  })
+})
