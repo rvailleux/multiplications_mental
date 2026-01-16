@@ -16,6 +16,7 @@ export interface PlayerNameDisplayProps {
 /**
  * Displays the current player's name in the top right corner with retro 8-bit styling.
  * Truncates names longer than 12 characters with ellipsis.
+ * Positioned fixed at the top right of the screen (viewport), not the game container.
  * @param {PlayerNameDisplayProps} props - Component props
  * @returns {React.ReactElement | null} Player name display or null if no player
  * @public
@@ -26,7 +27,7 @@ export default function PlayerNameDisplay({
   if (!player) return null
 
   return (
-    <div style={styles.playerNameContainer}>
+    <div style={styles.playerNameContainer} className="player-name-display">
       <span style={styles.playerNameText}>{player.name}</span>
     </div>
   )
@@ -34,10 +35,10 @@ export default function PlayerNameDisplay({
 
 const styles = {
   playerNameContainer: {
-    position: 'absolute' as const,
+    position: 'fixed' as const,
     top: '20px',
     right: '20px',
-    zIndex: 100,
+    zIndex: 1000,
     background: 'linear-gradient(180deg, #4ecdc4 0%, #44b3aa 100%)',
     border: '4px solid #000',
     padding: '8px 16px',

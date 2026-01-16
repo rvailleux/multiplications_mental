@@ -20,11 +20,11 @@ describe('PlayerNameDisplay', () => {
     expect(screen.getByText('Achille')).toBeInTheDocument()
   })
 
-  it('should have correct styling structure', () => {
+  it('should have correct styling structure with fixed positioning', () => {
     const player = { id: 'jules', name: 'Jules' }
     const { container } = render(<PlayerNameDisplay player={player} />)
     const playerNameDiv = container.firstChild as HTMLElement
-    expect(playerNameDiv).toHaveStyle({ position: 'absolute' })
+    expect(playerNameDiv).toHaveStyle({ position: 'fixed' })
   })
 
   it('should match retro styling with pixel border and gradient', () => {

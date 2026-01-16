@@ -726,3 +726,10 @@ Before committing, verify:
 - ✅ Retro pixel art aesthetic maintained
 
 This file helps Claude Code understand the project context, patterns, and conventions for efficient development with full constitutional compliance.
+
+## Active Technologies
+- TypeScript 5.7.2 (strict mode enabled) + React 19.0.0, React Router DOM 7.5.0 (010-player-name-display)
+- localStorage (browser-based persistence) (010-player-name-display)
+
+## Recent Changes
+- 010-player-name-display: Added TypeScript 5.7.2 (strict mode enabled) + React 19.0.0, React Router DOM 7.5.0
