@@ -320,6 +320,88 @@ npx tsc --noEmit            # TypeScript check without build
 npm run format:check        # Verify code formatting
 ```
 
+## GitHub Pages Deployment
+
+### Production URL
+**Live Demo**: [https://rvailleux.github.io/multiplications_mental/](https://rvailleux.github.io/multiplications_mental/)
+
+### Automated Deployment Workflow
+
+The app is automatically deployed to GitHub Pages when changes are pushed to the `main` branch.
+
+**Constitutional Compliance**: The deployment workflow enforces ALL 4 quality gates:
+1. **Type checking** (`npm run type-check`) - Zero TypeScript errors
+2. **Linting** (`npm run lint:fix`) - ESLint rules enforced
+3. **Testing** (`npm run test:run`) - All tests must pass
+4. **Building** (`npm run build`) - Production build succeeds
+
+**Deployment is blocked** if any check fails - there is NO bypass mechanism.
+
+### Workflow Architecture
+
+```
+┌─────────────────┐
+│  quality-check  │  ← Job 1: Run all 4 quality gates
+└────────┬────────┘
+         │ (blocks on failure)
+         ▼
+┌─────────────────┐
+│     deploy      │  ← Job 2: Deploy to GitHub Pages
+└─────────────────┘
+```
+
+**Typical deployment time**: 3-5 minutes
+
+### Local Testing of Production Build
+
+To test the production build locally before deploying:
+
+```bash
+# Build with production base path
+npm run build
+
+# Preview production build locally
+npm run preview
+# Visit: http://localhost:4173/multiplications_mental/
+```
+
+### Base Path Configuration
+
+The app uses environment-aware base paths for GitHub Pages subdirectory deployment:
+
+- **Development**: `BASE_URL = '/'` (runs on `localhost:5173/`)
+- **Production**: `BASE_URL = '/multiplications_mental/'` (GitHub Pages subdirectory)
+
+**Configuration files**:
+- `vite.config.ts` - Sets `base` path based on build mode
+- `src/App.tsx` - Router uses `basename={import.meta.env.BASE_URL}`
+
+**Why this matters**: GitHub Pages serves project sites from a subdirectory (`/multiplications_mental/`), not from the root. Without proper base path configuration, routing and asset loading would fail in production.
+
+### Workflow Triggers
+
+- **Automatic**: Push to `main` branch
+- **Manual**: Run workflow from GitHub Actions tab
+
+### Quality Gate Enforcement
+
+The workflow uses a two-job architecture:
+
+**Job 1: quality-check**
+- Runs on Node.js v20
+- Uses `npm ci` with dependency caching
+- Executes `npm run quality-check` (all 4 gates)
+- Uploads build artifacts on success
+- **Fails entire workflow** if any check fails
+
+**Job 2: deploy**
+- Depends on `quality-check` success
+- Downloads pre-built artifacts
+- Deploys to GitHub Pages
+- **Never runs** if quality-check fails
+
+This architecture ensures that only code that passes ALL constitutional quality requirements can be deployed to production.
+
 ## Component Patterns
 
 ### Standard Component Template
