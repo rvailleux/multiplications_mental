@@ -97,6 +97,16 @@ describe('GameResultsPage - Rendering and Stats Display', () => {
     expect(screen.getByText(/80%/)).toBeInTheDocument()
   })
 
+  it('should calculate and display speed (average time per correct answer)', () => {
+    render(
+      <MemoryRouter>
+        <GameResultsPage />
+      </MemoryRouter>
+    )
+    // 4 correct answers, 60 seconds total: 60/4 = 15.0"
+    expect(screen.getByText(/Speed: 15\.0"/)).toBeInTheDocument()
+  })
+
   it('should display 0% accuracy when no questions answered', () => {
     mockLocationState = {
       score: 0,
@@ -186,6 +196,61 @@ describe('GameResultsPage - Edge Cases', () => {
     )
     // Should fallback to 0 score and empty results
     expect(screen.getByText(/0\/0/)).toBeInTheDocument()
+  })
+
+  it('should display "-" for speed when no correct answers', () => {
+    mockLocationState = {
+      score: 0,
+      results: [
+        { question: '3 x 7', correct: false },
+        { question: '5 x 8', correct: false },
+      ],
+    }
+
+    render(
+      <MemoryRouter>
+        <GameResultsPage />
+      </MemoryRouter>
+    )
+    // When zero correct answers, speed should show "-"
+    expect(screen.getByText(/Speed: -/)).toBeInTheDocument()
+  })
+
+  it('should calculate speed with single correct answer', () => {
+    mockLocationState = {
+      score: 100,
+      results: [
+        { question: '3 x 7', correct: true },
+        { question: '5 x 8', correct: false },
+      ],
+    }
+
+    render(
+      <MemoryRouter>
+        <GameResultsPage />
+      </MemoryRouter>
+    )
+    // 1 correct answer in 60 seconds: 60/1 = 60.0"
+    expect(screen.getByText(/Speed: 60\.0"/)).toBeInTheDocument()
+  })
+
+  it('should display speed with one decimal place', () => {
+    mockLocationState = {
+      score: 300,
+      results: [
+        { question: '3 x 7', correct: true },
+        { question: '5 x 8', correct: true },
+        { question: '2 x 9', correct: true },
+      ],
+    }
+
+    render(
+      <MemoryRouter>
+        <GameResultsPage />
+      </MemoryRouter>
+    )
+    // 3 correct answers in 60 seconds: 60/3 = 20.0"
+    expect(screen.getByText(/Speed: 20\.0"/)).toBeInTheDocument()
   })
 })
 

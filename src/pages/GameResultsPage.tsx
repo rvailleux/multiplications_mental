@@ -18,7 +18,7 @@ export interface GameResultsState {
 
 /**
  * Game results screen displayed after 60-second timer expires
- * Shows final score, correct/total questions, accuracy percentage
+ * Shows final score, correct/total questions, accuracy percentage, and speed (avg time per correct answer)
  * Includes gold/yellow retro aesthetic with soft fading blink animation
  * ENTER key or Continue button navigates back to homepage
  *
@@ -46,6 +46,15 @@ export default function GameResultsPage() {
    * Returns rounded integer percentage (0-100)
    */
   const accuracy = totalQuestions > 0 ? Math.round((correctCount / totalQuestions) * 100) : 0
+
+  /**
+   * Calculate average time per correct answer (speed metric)
+   * Total game time is fixed at 60 seconds
+   * Returns formatted string with 1 decimal place and " character for seconds
+   * Returns "-" when no correct answers to avoid division by zero
+   */
+  const GAME_DURATION_SECONDS = 60
+  const speed = correctCount > 0 ? `${(GAME_DURATION_SECONDS / correctCount).toFixed(1)}"` : '-'
 
   // Animation state management
   const [isBlinking, setIsBlinking] = useState<boolean>(true)
@@ -154,6 +163,8 @@ export default function GameResultsPage() {
         </div>
 
         <div style={statStyles}>Accuracy: {accuracy}%</div>
+
+        <div style={statStyles}>Speed: {speed}</div>
 
         <button
           onClick={() => navigate('/home')}
