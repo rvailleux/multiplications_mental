@@ -391,3 +391,246 @@ describe('HomePage - Keyboard Navigation', () => {
     expect(mockNavigate).not.toHaveBeenCalled()
   })
 })
+
+describe('HomePage - Game Metrics Display', () => {
+  beforeEach(() => {
+    localStorage.clear()
+    vi.clearAllMocks()
+
+    localStorage.setItem('players', JSON.stringify([{ id: 'jules', name: 'Jules' }]))
+    setCurrentPlayerId('jules')
+  })
+
+  it('should display accuracy metric for each score', () => {
+    const mockScores = [
+      {
+        score: 500,
+        results: [
+          { question: '3 x 7', correct: true },
+          { question: '5 x 8', correct: true },
+          { question: '2 x 9', correct: false },
+          { question: '4 x 6', correct: true },
+        ],
+      },
+    ]
+    localStorage.setItem('scores', JSON.stringify(mockScores))
+
+    render(
+      <MemoryRouter>
+        <HomePage />
+      </MemoryRouter>
+    )
+
+    // 3 correct out of 4 = 75% accuracy
+    expect(screen.getByText(/75%/)).toBeInTheDocument()
+  })
+
+  it('should display speed metric for each score', () => {
+    const mockScores = [
+      {
+        score: 400,
+        results: [
+          { question: '3 x 7', correct: true },
+          { question: '5 x 8', correct: true },
+          { question: '2 x 9', correct: true },
+          { question: '4 x 6', correct: true },
+        ],
+      },
+    ]
+    localStorage.setItem('scores', JSON.stringify(mockScores))
+
+    render(
+      <MemoryRouter>
+        <HomePage />
+      </MemoryRouter>
+    )
+
+    // 4 correct answers in 60 seconds: 60/4 = 15.0"
+    expect(screen.getByText(/15\.0"/)).toBeInTheDocument()
+  })
+
+  it('should display correct/total questions metric', () => {
+    const mockScores = [
+      {
+        score: 300,
+        results: [
+          { question: '3 x 7', correct: true },
+          { question: '5 x 8', correct: false },
+          { question: '2 x 9', correct: true },
+        ],
+      },
+    ]
+    localStorage.setItem('scores', JSON.stringify(mockScores))
+
+    render(
+      <MemoryRouter>
+        <HomePage />
+      </MemoryRouter>
+    )
+
+    // 2 correct out of 3 total
+    expect(screen.getByText(/2\/3/)).toBeInTheDocument()
+  })
+
+  it('should handle zero correct answers for speed metric', () => {
+    const mockScores = [
+      {
+        score: 0,
+        results: [
+          { question: '3 x 7', correct: false },
+          { question: '5 x 8', correct: false },
+        ],
+      },
+    ]
+    localStorage.setItem('scores', JSON.stringify(mockScores))
+
+    render(
+      <MemoryRouter>
+        <HomePage />
+      </MemoryRouter>
+    )
+
+    // Speed should show "-" when no correct answers
+    expect(screen.getByText(/-/)).toBeInTheDocument()
+  })
+
+  it('should highlight best speed across all scores', () => {
+    const mockScores = [
+      {
+        score: 600,
+        results: [
+          { question: '3 x 7', correct: true },
+          { question: '5 x 8', correct: true },
+          { question: '2 x 9', correct: true },
+          { question: '4 x 6', correct: true },
+          { question: '7 x 3', correct: true },
+          { question: '8 x 2', correct: true },
+        ],
+      }, // 60/6 = 10.0" (best speed - lowest time)
+      {
+        score: 400,
+        results: [
+          { question: '3 x 7', correct: true },
+          { question: '5 x 8', correct: true },
+          { question: '2 x 9', correct: true },
+          { question: '4 x 6', correct: true },
+        ],
+      }, // 60/4 = 15.0"
+      {
+        score: 200,
+        results: [
+          { question: '3 x 7', correct: true },
+          { question: '5 x 8', correct: true },
+        ],
+      }, // 60/2 = 30.0"
+    ]
+    localStorage.setItem('scores', JSON.stringify(mockScores))
+
+    const { container } = render(
+      <MemoryRouter>
+        <HomePage />
+      </MemoryRouter>
+    )
+
+    // Find the speed metric with 10.0" and verify it has highlight styling
+    const bestSpeedElement = container.querySelector('[data-metric="speed"][data-best="true"]')
+    expect(bestSpeedElement).toBeInTheDocument()
+    expect(bestSpeedElement?.textContent).toContain('10.0"')
+  })
+
+  it('should highlight best accuracy across all scores', () => {
+    const mockScores = [
+      {
+        score: 500,
+        results: [
+          { question: '3 x 7', correct: true },
+          { question: '5 x 8', correct: true },
+        ],
+      }, // 2/2 = 100% (best accuracy)
+      {
+        score: 400,
+        results: [
+          { question: '3 x 7', correct: true },
+          { question: '5 x 8', correct: true },
+          { question: '2 x 9', correct: false },
+        ],
+      }, // 2/3 = 67%
+      {
+        score: 300,
+        results: [
+          { question: '3 x 7', correct: true },
+          { question: '5 x 8', correct: false },
+        ],
+      }, // 1/2 = 50%
+    ]
+    localStorage.setItem('scores', JSON.stringify(mockScores))
+
+    const { container } = render(
+      <MemoryRouter>
+        <HomePage />
+      </MemoryRouter>
+    )
+
+    // Find the accuracy metric with 100% and verify it has highlight styling
+    const bestAccuracyElement = container.querySelector(
+      '[data-metric="accuracy"][data-best="true"]'
+    )
+    expect(bestAccuracyElement).toBeInTheDocument()
+    expect(bestAccuracyElement?.textContent).toContain('100%')
+  })
+
+  it('should handle multiple scores with same best metric', () => {
+    const mockScores = [
+      {
+        score: 500,
+        results: [
+          { question: '3 x 7', correct: true },
+          { question: '5 x 8', correct: true },
+        ],
+      }, // 100% accuracy
+      {
+        score: 400,
+        results: [
+          { question: '3 x 7', correct: true },
+          { question: '5 x 8', correct: true },
+        ],
+      }, // 100% accuracy (tied best)
+    ]
+    localStorage.setItem('scores', JSON.stringify(mockScores))
+
+    const { container } = render(
+      <MemoryRouter>
+        <HomePage />
+      </MemoryRouter>
+    )
+
+    // Both scores should be highlighted for best accuracy
+    const bestAccuracyElements = container.querySelectorAll(
+      '[data-metric="accuracy"][data-best="true"]'
+    )
+    expect(bestAccuracyElements).toHaveLength(2)
+  })
+
+  it('should display metrics in dark grey 8-bit style', () => {
+    const mockScores = [
+      {
+        score: 300,
+        results: [
+          { question: '3 x 7', correct: true },
+          { question: '5 x 8', correct: true },
+        ],
+      },
+    ]
+    localStorage.setItem('scores', JSON.stringify(mockScores))
+
+    const { container } = render(
+      <MemoryRouter>
+        <HomePage />
+      </MemoryRouter>
+    )
+
+    // Check that metrics container has dark grey styling
+    const metricsContainer = container.querySelector('[data-testid="metrics-container"]')
+    expect(metricsContainer).toBeInTheDocument()
+  })
+})

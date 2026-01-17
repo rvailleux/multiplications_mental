@@ -33,6 +33,90 @@ interface RankedScore extends ScoreEntry {
 }
 
 /**
+ * Represents calculated metrics for a game session
+ */
+interface GameMetrics {
+  /** Accuracy percentage (0-100) */
+  accuracy: number
+  /** Average time per correct answer in seconds, or null if no correct answers */
+  speed: number | null
+  /** Number of correct answers */
+  correctCount: number
+  /** Total number of questions attempted */
+  totalQuestions: number
+}
+
+/**
+ * Calculate game metrics from results array
+ * @param {Array<{question: string, correct: boolean}>} results - Game results
+ * @returns {GameMetrics} Calculated metrics
+ */
+const calculateMetrics = (results: Array<{ question: string; correct: boolean }>): GameMetrics => {
+  const correctCount = results.filter(r => r.correct).length
+  const totalQuestions = results.length
+  const accuracy = totalQuestions > 0 ? Math.round((correctCount / totalQuestions) * 100) : 0
+  const GAME_DURATION_SECONDS = 60
+  const speed = correctCount > 0 ? GAME_DURATION_SECONDS / correctCount : null
+
+  return {
+    accuracy,
+    speed,
+    correctCount,
+    totalQuestions,
+  }
+}
+
+/**
+ * Find indices of scores with best metrics
+ * @param {ScoreEntry[]} scores - Array of score entries
+ * @returns {{bestSpeedIndices: number[], bestAccuracyIndices: number[]}}
+ */
+const findBestMetrics = (
+  scores: ScoreEntry[]
+): { bestSpeedIndices: number[]; bestAccuracyIndices: number[] } => {
+  if (scores.length === 0) {
+    return { bestSpeedIndices: [], bestAccuracyIndices: [] }
+  }
+
+  let bestSpeed: number | null = null
+  let bestAccuracy = 0
+  const bestSpeedIndices: number[] = []
+  const bestAccuracyIndices: number[] = []
+
+  // First pass: find best values
+  scores.forEach(score => {
+    const metrics = calculateMetrics(score.results)
+
+    // Best speed is lowest time (faster)
+    if (metrics.speed !== null) {
+      if (bestSpeed === null || metrics.speed < bestSpeed) {
+        bestSpeed = metrics.speed
+      }
+    }
+
+    // Best accuracy is highest percentage
+    if (metrics.accuracy > bestAccuracy) {
+      bestAccuracy = metrics.accuracy
+    }
+  })
+
+  // Second pass: collect indices of best metrics
+  scores.forEach((score, index) => {
+    const metrics = calculateMetrics(score.results)
+
+    if (metrics.speed !== null && bestSpeed !== null && metrics.speed === bestSpeed) {
+      bestSpeedIndices.push(index)
+    }
+
+    if (metrics.accuracy === bestAccuracy && bestAccuracy > 0) {
+      bestAccuracyIndices.push(index)
+    }
+  })
+
+  return { bestSpeedIndices, bestAccuracyIndices }
+}
+
+/**
  * Calculate ranks for scores, handling ties appropriately
  * @param {ScoreEntry[]} scores - Array of score entries
  * @returns {RankedScore[]} Scores with rank and medal information
@@ -100,6 +184,9 @@ export default function HomePage() {
   const rankedScores = calculateRanks(scores)
   const visibleScores = rankedScores
 
+  /** Find best metrics across all scores for highlighting */
+  const { bestSpeedIndices, bestAccuracyIndices } = findBestMetrics(scores)
+
   // Don't render if no player selected (will redirect)
   if (!currentPlayer) {
     return null
@@ -129,32 +216,71 @@ export default function HomePage() {
         <>
           <h2 style={styles.scoresTitle}>🏆 Previous Scores 🏆</h2>
           <div style={styles.scoresContainer}>
-            {visibleScores.map((entry: RankedScore, index: number) => (
-              <div
-                key={index}
-                style={{
-                  ...styles.scoreCard,
-                  ...(entry.rank <= 3 ? styles.topRankCard : {}),
-                }}
-              >
-                <span
+            {visibleScores.map((entry: RankedScore, index: number) => {
+              const metrics = calculateMetrics(entry.results)
+              const originalIndex = scores.findIndex(
+                s => s.score === entry.score && s.results === entry.results
+              )
+              const isBestSpeed = bestSpeedIndices.includes(originalIndex)
+              const isBestAccuracy = bestAccuracyIndices.includes(originalIndex)
+
+              return (
+                <div
+                  key={index}
                   style={{
-                    ...styles.scoreNumber,
-                    ...(entry.rank <= 3 ? styles.topRankNumber : {}),
+                    ...styles.scoreCard,
+                    ...(entry.rank <= 3 ? styles.topRankCard : {}),
                   }}
                 >
-                  {entry.medal ? `${entry.medal} #${entry.rank}` : `#${entry.rank}`}
-                </span>
-                <span
-                  style={{
-                    ...styles.scoreValue,
-                    ...(entry.rank <= 3 ? styles.topRankValue : {}),
-                  }}
-                >
-                  {entry.score} pts
-                </span>
-              </div>
-            ))}
+                  <div style={styles.scoreCardLeft}>
+                    <span
+                      style={{
+                        ...styles.scoreNumber,
+                        ...(entry.rank <= 3 ? styles.topRankNumber : {}),
+                      }}
+                    >
+                      {entry.medal ? `${entry.medal} #${entry.rank}` : `#${entry.rank}`}
+                    </span>
+                    <span
+                      style={{
+                        ...styles.scoreValue,
+                        ...(entry.rank <= 3 ? styles.topRankValue : {}),
+                      }}
+                    >
+                      {entry.score} pts
+                    </span>
+                  </div>
+
+                  <div style={styles.metricsContainer} data-testid="metrics-container">
+                    <span
+                      style={{
+                        ...styles.metricText,
+                        ...(isBestAccuracy ? styles.bestMetric : {}),
+                      }}
+                      data-metric="accuracy"
+                      data-best={isBestAccuracy}
+                    >
+                      {metrics.accuracy}%
+                    </span>
+                    <span style={styles.metricSeparator}>•</span>
+                    <span
+                      style={{
+                        ...styles.metricText,
+                        ...(isBestSpeed ? styles.bestMetric : {}),
+                      }}
+                      data-metric="speed"
+                      data-best={isBestSpeed}
+                    >
+                      {metrics.speed !== null ? `${metrics.speed.toFixed(1)}"` : '-'}
+                    </span>
+                    <span style={styles.metricSeparator}>•</span>
+                    <span style={styles.metricText}>
+                      {metrics.correctCount}/{metrics.totalQuestions}
+                    </span>
+                  </div>
+                </div>
+              )
+            })}
           </div>
         </>
       )}
@@ -257,9 +383,14 @@ const styles = {
     border: '4px solid #000',
     padding: '15px',
     display: 'flex',
+    flexDirection: 'column' as const,
+    gap: '10px',
+    boxShadow: 'inset 0 4px 0 rgba(255,255,255,0.5)',
+  },
+  scoreCardLeft: {
+    display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    boxShadow: 'inset 0 4px 0 rgba(255,255,255,0.5)',
   },
   topRankCard: {
     background: 'linear-gradient(180deg, #ffd700 0%, #fff8dc 100%)',
@@ -297,5 +428,26 @@ const styles = {
     right: '20px',
     fontSize: '64px',
     animation: 'bounce 1s ease-in-out infinite',
+  },
+  metricsContainer: {
+    display: 'flex',
+    gap: '8px',
+    alignItems: 'center',
+    fontSize: '12px',
+    color: '#4a4a4a', // Dark grey 8-bit style
+    fontFamily: 'monospace',
+  },
+  metricText: {
+    color: '#4a4a4a', // Dark grey for regular metrics
+    fontWeight: 'bold' as const,
+  },
+  metricSeparator: {
+    color: '#4a4a4a',
+    opacity: 0.5,
+  },
+  bestMetric: {
+    color: '#ff6b47', // Highlighted color for best metrics
+    textShadow: '1px 1px 0 rgba(255, 107, 71, 0.3)',
+    animation: 'softBlink 2s ease-in-out infinite',
   },
 }
