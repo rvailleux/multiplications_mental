@@ -172,6 +172,18 @@ h1 {
   }
 }
 
+@keyframes goldFadingBlink {
+  0%,
+  100% {
+    opacity: 1;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+  }
+  50% {
+    opacity: 0.8;
+    box-shadow: 0 0 40px rgba(255, 215, 0, 1);
+  }
+}
+
 /* Responsive design for mobile */
 @media (max-width: 600px) {
   :root {

@@ -94,13 +94,17 @@ export default function PlayPage() {
   // Save score to local storage when time is up (only if score > 0)
   useEffect(() => {
     if (secondsLeft === 0) {
+      stopMusic() // Stop music before navigation
       // Only save scores greater than zero to prevent empty games cluttering leaderboard
       if (score > 0) {
         const previousScores = JSON.parse(localStorage.getItem('scores') || '[]')
         localStorage.setItem('scores', JSON.stringify([...previousScores, { score, results }]))
+        // Navigate to results screen with game data
+        navigate('/results', { state: { score, results } })
+      } else {
+        // Skip results screen for zero scores
+        navigate('/home')
       }
-      stopMusic() // Stop music before navigation
-      navigate('/home') // Redirect to home page
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [secondsLeft]) // Only depend on secondsLeft to prevent duplicate saves
