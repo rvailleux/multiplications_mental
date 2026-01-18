@@ -37,6 +37,13 @@ export default function GameResultsPage() {
   const score = state?.score ?? 0
   const results = state?.results ?? []
 
+  /** Redirect to player selection if no player is selected */
+  useEffect(() => {
+    if (!currentPlayer) {
+      navigate('/')
+    }
+  }, [currentPlayer, navigate])
+
   // Calculate stats from results array
   const correctCount = results.filter(r => r.correct).length
   const totalQuestions = results.length

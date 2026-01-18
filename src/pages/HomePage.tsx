@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import { useEffect } from 'react'
 import { getCurrentPlayer } from '../types/player'
+import { getScorePlayerName } from '../types/score'
 import PlayerNameDisplay from '../components/PlayerNameDisplay'
 
 /**
@@ -15,6 +16,10 @@ export type ScoreEntry = {
     question: string
     correct: boolean
   }>
+  /** Unique identifier of the player who achieved this score */
+  playerId?: string
+  /** Display name of the player who achieved this score */
+  playerName?: string
 }
 
 /**
@@ -224,6 +229,8 @@ export default function HomePage() {
               const isBestSpeed = bestSpeedIndices.includes(originalIndex)
               const isBestAccuracy = bestAccuracyIndices.includes(originalIndex)
 
+              const playerName = getScorePlayerName(entry)
+
               return (
                 <div
                   key={index}
@@ -233,14 +240,17 @@ export default function HomePage() {
                   }}
                 >
                   <div style={styles.scoreCardLeft}>
-                    <span
-                      style={{
-                        ...styles.scoreNumber,
-                        ...(entry.rank <= 3 ? styles.topRankNumber : {}),
-                      }}
-                    >
-                      {entry.medal ? `${entry.medal} #${entry.rank}` : `#${entry.rank}`}
-                    </span>
+                    <div style={styles.scoreLeftGroup}>
+                      <span
+                        style={{
+                          ...styles.scoreNumber,
+                          ...(entry.rank <= 3 ? styles.topRankNumber : {}),
+                        }}
+                      >
+                        {entry.medal ? `${entry.medal} #${entry.rank}` : `#${entry.rank}`}
+                      </span>
+                      <span style={styles.playerName}>{playerName}</span>
+                    </div>
                     <span
                       style={{
                         ...styles.scoreValue,
@@ -392,6 +402,11 @@ const styles = {
     justifyContent: 'space-between',
     alignItems: 'center',
   },
+  scoreLeftGroup: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+  },
   topRankCard: {
     background: 'linear-gradient(180deg, #ffd700 0%, #fff8dc 100%)',
     border: '4px solid #b8860b',
@@ -405,6 +420,14 @@ const styles = {
     fontSize: '14px',
     color: '#000',
     fontWeight: 'bold' as const,
+  },
+  playerName: {
+    fontSize: '14px',
+    color: '#8b4513',
+    fontWeight: 'bold' as const,
+    fontFamily: 'monospace',
+    textShadow: '1px 1px 0 rgba(255, 215, 0, 0.3)',
+    letterSpacing: '0.5px',
   },
   topRankNumber: {
     color: '#8b4513',

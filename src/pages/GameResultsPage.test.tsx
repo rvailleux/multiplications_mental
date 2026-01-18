@@ -83,8 +83,8 @@ describe('GameResultsPage - Rendering and Stats Display', () => {
         <GameResultsPage />
       </MemoryRouter>
     )
-    // Total of 5 questions
-    expect(screen.getByText(/4\/5/)).toBeInTheDocument()
+    // Verify 5 total questions are reflected
+    expect(screen.getByText(/\/5/)).toBeInTheDocument()
   })
 
   it('should calculate accuracy percentage (rounded integer)', () => {

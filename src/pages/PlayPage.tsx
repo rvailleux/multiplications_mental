@@ -97,8 +97,24 @@ export default function PlayPage() {
       stopMusic() // Stop music before navigation
       // Only save scores greater than zero to prevent empty games cluttering leaderboard
       if (score > 0) {
-        const previousScores = JSON.parse(localStorage.getItem('scores') || '[]')
-        localStorage.setItem('scores', JSON.stringify([...previousScores, { score, results }]))
+        try {
+          const previousScores = JSON.parse(localStorage.getItem('scores') || '[]')
+          localStorage.setItem(
+            'scores',
+            JSON.stringify([
+              ...previousScores,
+              {
+                score,
+                results,
+                playerId: currentPlayer?.id,
+                playerName: currentPlayer?.name,
+              },
+            ])
+          )
+        } catch (error) {
+          console.error('Failed to save score to localStorage:', error)
+          // Continue to results page even if save fails
+        }
         // Navigate to results screen with game data
         navigate('/results', { state: { score, results } })
       } else {

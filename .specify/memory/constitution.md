@@ -1,20 +1,28 @@
 <!--
 SYNC IMPACT REPORT:
-Version Change: 1.0.0 → 1.1.0
-Modified Principles: None
+Version Change: 1.1.0 → 1.2.0
+Modified Principles:
+  - Principle I (Test-First Development): Added error handling test requirements, test quality standards
 Added Sections:
-  - Principle VI: Retro Gaming UX (Super NES 8-bit aesthetic)
+  - Principle VII: Error Handling & Resilience (NON-NEGOTIABLE)
+    - localStorage operations error handling patterns
+    - Component guard patterns for prerequisites
+    - Test coverage requirements for error scenarios
 Removed Sections: None
 Templates Status:
   ✅ plan-template.md - Reviewed, no updates required
-  ✅ spec-template.md - Reviewed, UX requirements should now include keyboard navigation checks
-  ✅ tasks-template.md - Reviewed, no updates required
-  ⚠ CLAUDE.md - Should be updated to document keyboard navigation patterns (ArrowUp/Down/Enter/Esc)
+  ✅ spec-template.md - Should include error handling requirements for localStorage operations
+  ✅ tasks-template.md - Should include error handling tasks for localStorage-heavy features
+  ⚠ CLAUDE.md - Should document localStorage error handling patterns and component guard examples
 Follow-up TODOs:
-  - Update CLAUDE.md with keyboard navigation pattern examples for Super NES 8-bit UX
-  - Document pixel art styling conventions
-  - Add UX testing checklist for keyboard + mouse dual support
-Rationale: MINOR version bump - Added new principle VI establishing retro gaming UX standards with keyboard-first navigation while maintaining mouse accessibility. This expands project guidance without breaking existing principles.
+  - Update CLAUDE.md with localStorage error handling code examples
+  - Document component guard pattern for page prerequisites
+  - Add error handling test examples to testing documentation
+  - Create error handling checklist for code reviews
+Rationale: MINOR version bump - Added new principle VII establishing mandatory error handling and resilience patterns, particularly for localStorage operations and component guards. Prevents application crashes from storage failures and ensures graceful degradation. Expands test requirements to include error scenarios and test quality standards.
+Previous Changes (1.0.0 → 1.1.0):
+  - Added Principle VI: Retro Gaming UX (Super NES 8-bit aesthetic)
+  - Established keyboard-first navigation with mouse support
 -->
 
 # Multiplications Mental Game Constitution
@@ -95,6 +103,54 @@ All UI/UX MUST follow retro gaming design principles with keyboard-first interac
 
 **Rationale**: Keyboard-first navigation provides a superior gaming experience reminiscent of classic consoles while maintaining modern web accessibility. Dual input support ensures the game is playable on both desktop (keyboard preferred) and touch/mobile devices (click/tap). The retro aesthetic creates an immersive, nostalgic experience that enhances engagement.
 
+### VII. Error Handling & Resilience (NON-NEGOTIABLE)
+
+All code MUST handle errors gracefully to prevent application crashes:
+
+#### localStorage Operations
+- **ALWAYS wrap in try-catch**: `JSON.parse()` and `localStorage.setItem()` can throw exceptions
+- **Continue critical flows**: Navigation and core functionality must proceed even if localStorage fails
+- **Log errors appropriately**: Use `console.error()` for storage failures
+- **Common failure scenarios**:
+  - `JSON.parse()` throws `SyntaxError` on corrupted data
+  - `localStorage.setItem()` throws `QuotaExceededError` when storage limit reached
+  - `localStorage.getItem()` returns `null` for missing keys (handle with fallback values)
+
+**Example Pattern**:
+```typescript
+try {
+  const data = JSON.parse(localStorage.getItem('key') || '[]')
+  localStorage.setItem('key', JSON.stringify(newData))
+} catch (error) {
+  console.error('Failed to save to localStorage:', error)
+  // Continue critical flow - don't block navigation
+}
+```
+
+#### Component Guard Patterns
+- **Page prerequisites**: All page components MUST verify prerequisites before rendering
+- **Player selection guard**: Pages requiring a selected player MUST redirect to `/` if no player selected
+- **Consistent pattern**: Use `useEffect` for guard logic with dependency on prerequisite state
+- **Early exit**: Guard checks should be among first useEffect hooks in component
+
+**Example Pattern**:
+```typescript
+/** Redirect to player selection if no player is selected */
+useEffect(() => {
+  if (!currentPlayer) {
+    navigate('/')
+  }
+}, [currentPlayer, navigate])
+```
+
+#### Test Coverage for Error Handling
+- **localStorage failures**: Test quota exceeded, corrupted data, and JSON parse errors
+- **Component resilience**: Verify components render without crashing despite errors
+- **Flow continuation**: Assert critical navigation/flows proceed even when persistence fails
+- **Error logging**: Verify errors are logged appropriately (mock `console.error`)
+
+**Rationale**: Error handling is fundamental to application stability. localStorage operations are unreliable by nature (user privacy settings, quota limits, data corruption). Graceful degradation ensures users can continue using the app even when non-critical features fail. Testing error paths prevents production crashes and ensures resilience.
+
 ## Development Workflow
 
 ### Feature Development Process
@@ -108,6 +164,9 @@ All UI/UX MUST follow retro gaming design principles with keyboard-first interac
    - Write failing tests first (`.test.tsx` files)
    - Validate approach with stakeholders
    - Test edge cases and error conditions
+   - **Error handling tests**: MUST test localStorage failures, corrupted data, quota exceeded
+   - **Test quality**: Each test must validate distinct behavior (no duplicate assertions)
+   - **Test descriptions**: Must accurately match what's being tested
    - **UX Testing**: Verify both keyboard AND mouse interactions work
    - Implement feature to pass tests
    - Never skip tests or implement before testing
@@ -188,4 +247,4 @@ All UI/UX MUST follow retro gaming design principles with keyboard-first interac
 
 Use **CLAUDE.md** for runtime development guidance and project context. The constitution defines non-negotiable principles; CLAUDE.md provides practical implementation patterns.
 
-**Version**: 1.1.0 | **Ratified**: 2026-01-13 | **Last Amended**: 2026-01-13
+**Version**: 1.2.0 | **Ratified**: 2026-01-13 | **Last Amended**: 2026-01-18

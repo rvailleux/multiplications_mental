@@ -634,3 +634,117 @@ describe('HomePage - Game Metrics Display', () => {
     expect(metricsContainer).toBeInTheDocument()
   })
 })
+
+describe('HomePage - Leaderboard Player Names', () => {
+  beforeEach(() => {
+    localStorage.clear()
+    vi.clearAllMocks()
+
+    // Set a player so we don't get redirected
+    localStorage.setItem('players', JSON.stringify([{ id: 'jules', name: 'Jules' }]))
+    setCurrentPlayerId('jules')
+  })
+
+  it('should display player names for scores with player info', () => {
+    const scores = [
+      {
+        score: 500,
+        results: [{ question: '3 x 7', correct: true }],
+        playerId: 'jules',
+        playerName: 'Jules',
+      },
+      {
+        score: 450,
+        results: [{ question: '5 x 8', correct: true }],
+        playerId: 'achille',
+        playerName: 'Achille',
+      },
+    ]
+    localStorage.setItem('scores', JSON.stringify(scores))
+
+    render(
+      <MemoryRouter>
+        <HomePage />
+      </MemoryRouter>
+    )
+
+    expect(screen.getByText('JULES')).toBeInTheDocument()
+    expect(screen.getByText('ACHILLE')).toBeInTheDocument()
+  })
+
+  it('should display UNKNOWN for legacy scores without player info', () => {
+    const scores = [
+      {
+        score: 500,
+        results: [{ question: '3 x 7', correct: true }],
+      },
+      {
+        score: 450,
+        results: [{ question: '5 x 8', correct: true }],
+        playerId: 'jules',
+        playerName: 'Jules',
+      },
+    ]
+    localStorage.setItem('scores', JSON.stringify(scores))
+
+    render(
+      <MemoryRouter>
+        <HomePage />
+      </MemoryRouter>
+    )
+
+    expect(screen.getByText('UNKNOWN')).toBeInTheDocument()
+    expect(screen.getByText('JULES')).toBeInTheDocument()
+  })
+
+  it('should display player name next to rank and score', () => {
+    const scores = [
+      {
+        score: 500,
+        results: [{ question: '3 x 7', correct: true }],
+        playerId: 'jules',
+        playerName: 'Jules',
+      },
+    ]
+    localStorage.setItem('scores', JSON.stringify(scores))
+
+    render(
+      <MemoryRouter>
+        <HomePage />
+      </MemoryRouter>
+    )
+
+    // Verify structure: rank, player name, and score are all present
+    expect(screen.getByText(/🥇 #1/)).toBeInTheDocument()
+    expect(screen.getByText('JULES')).toBeInTheDocument()
+    expect(screen.getByText('500 pts')).toBeInTheDocument()
+  })
+
+  it('should handle multiple scores from the same player', () => {
+    const scores = [
+      {
+        score: 500,
+        results: [{ question: '3 x 7', correct: true }],
+        playerId: 'jules',
+        playerName: 'Jules',
+      },
+      {
+        score: 450,
+        results: [{ question: '5 x 8', correct: true }],
+        playerId: 'jules',
+        playerName: 'Jules',
+      },
+    ]
+    localStorage.setItem('scores', JSON.stringify(scores))
+
+    render(
+      <MemoryRouter>
+        <HomePage />
+      </MemoryRouter>
+    )
+
+    // Should show JULES twice
+    const julesElements = screen.getAllByText('JULES')
+    expect(julesElements).toHaveLength(2)
+  })
+})

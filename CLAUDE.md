@@ -485,6 +485,95 @@ type GameResult = {
 - `currentPlayer`: String ID of currently selected player
 - `scores`: Array of ScoreEntry objects (global, will be per-player in future)
 
+## Error Handling & Resilience
+
+### localStorage Error Handling (MANDATORY)
+
+**Constitutional Requirement**: All localStorage operations MUST be wrapped in try-catch blocks to prevent application crashes.
+
+#### Common Failure Scenarios
+1. **`JSON.parse()` throws `SyntaxError`** - Corrupted data in localStorage
+2. **`localStorage.setItem()` throws `QuotaExceededError`** - Storage limit reached
+3. **`localStorage.getItem()` returns `null`** - Key doesn't exist (handle with fallback)
+
+#### Pattern: Reading from localStorage
+```typescript
+// ✅ CORRECT - Always wrap JSON.parse in try-catch
+try {
+  const previousScores = JSON.parse(localStorage.getItem('scores') || '[]')
+  // Use data...
+} catch (error) {
+  console.error('Failed to load scores from localStorage:', error)
+  // Fallback to default value
+  const previousScores = []
+}
+```
+
+#### Pattern: Writing to localStorage
+```typescript
+// ✅ CORRECT - Wrap both read AND write operations
+try {
+  const previousScores = JSON.parse(localStorage.getItem('scores') || '[]')
+  localStorage.setItem('scores', JSON.stringify([...previousScores, { score, results }]))
+} catch (error) {
+  console.error('Failed to save score to localStorage:', error)
+  // Continue critical flow - don't block navigation
+}
+navigate('/results', { state: { score, results } })
+```
+
+#### Pattern: Component Guard (Page Prerequisites)
+```typescript
+// ✅ CORRECT - All page components verify prerequisites
+/** Redirect to player selection if no player is selected */
+useEffect(() => {
+  if (!currentPlayer) {
+    navigate('/')
+  }
+}, [currentPlayer, navigate])
+```
+
+**Key Principle**: Critical user flows (navigation, game progression) MUST continue even if localStorage fails. Storage is a nice-to-have, not a blocker.
+
+### Error Handling Tests (MANDATORY)
+
+Every component using localStorage MUST have error handling tests:
+
+```typescript
+describe('Component - Error Handling', () => {
+  it('should handle localStorage quota exceeded gracefully', () => {
+    // Mock localStorage.setItem to throw quota exceeded error
+    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+    const setItemSpy = vi.spyOn(Storage.prototype, 'setItem').mockImplementation((key) => {
+      if (key === 'scores') {
+        throw new DOMException('QuotaExceededError')
+      }
+    })
+
+    // Component should render without crashing
+    render(<Component />)
+    expect(screen.getByText(/expected content/i)).toBeInTheDocument()
+
+    // Cleanup
+    consoleErrorSpy.mockRestore()
+    setItemSpy.mockRestore()
+  })
+
+  it('should handle corrupted localStorage data gracefully', () => {
+    // Set corrupted data in localStorage
+    localStorage.setItem('scores', '{invalid json}')
+    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+
+    // Component should render without crashing
+    render(<Component />)
+    expect(screen.getByText(/expected content/i)).toBeInTheDocument()
+
+    // Cleanup
+    consoleErrorSpy.mockRestore()
+  })
+})
+```
+
 ## Game Logic
 
 ### Core Game Flow
@@ -552,6 +641,48 @@ describe('ComponentName', () => {
 - Co-located with components: `Component.test.tsx`
 - Test setup: `src/test/setup.ts`
 - Test config: `vitest.config.ts`
+
+### Test Quality Standards (Constitutional Requirement)
+
+#### Each Test Must Validate Distinct Behavior
+- **Avoid duplicate assertions** - Each test should check a unique aspect of functionality
+- **Test descriptions must match implementation** - What the test says it does should match what it actually tests
+- **One behavior per test** - Don't combine multiple unrelated checks in a single test
+
+**Example - WRONG (Duplicate Assertions)**:
+```typescript
+it('should calculate and display correct answer count', () => {
+  render(<GameResultsPage />)
+  expect(screen.getByText(/4\/5/)).toBeInTheDocument()  // Tests "4 correct out of 5"
+})
+
+it('should calculate and display total questions count', () => {
+  render(<GameResultsPage />)
+  expect(screen.getByText(/4\/5/)).toBeInTheDocument()  // ❌ DUPLICATE - same assertion!
+})
+```
+
+**Example - CORRECT (Distinct Tests)**:
+```typescript
+it('should calculate and display correct answer count', () => {
+  render(<GameResultsPage />)
+  expect(screen.getByText(/4\/5/)).toBeInTheDocument()  // Tests "4 correct out of 5"
+})
+
+it('should calculate and display total questions count', () => {
+  render(<GameResultsPage />)
+  expect(screen.getByText(/\/5/)).toBeInTheDocument()  // ✅ Tests just the "/ 5" part
+})
+```
+
+#### Error Handling Test Coverage
+Every component using localStorage MUST test:
+1. **Quota exceeded** - Mock `localStorage.setItem()` to throw `QuotaExceededError`
+2. **Corrupted data** - Set invalid JSON in localStorage before rendering
+3. **Component resilience** - Verify component renders without crashing
+4. **Flow continuation** - Assert critical navigation/actions still work
+
+See "Error Handling Tests (MANDATORY)" section above for complete examples.
 
 ### Testing Best Practices (Constitutional Compliance)
 - **Test user behavior**, not implementation details
