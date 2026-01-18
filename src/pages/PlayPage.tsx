@@ -6,6 +6,7 @@ import MultiplicationQuestion from '../components/MultiplicationQuestion'
 import { useNavigate } from 'react-router-dom'
 import { getCurrentPlayer } from '../types/player'
 import PlayerNameDisplay from '../components/PlayerNameDisplay'
+import styles from './PlayPage.module.scss'
 
 /**
  * Game result structure for tracking user answers
@@ -126,31 +127,31 @@ export default function PlayPage() {
   }, [secondsLeft]) // Only depend on secondsLeft to prevent duplicate saves
 
   return (
-    <div style={styles.gameContainer}>
+    <div className={styles.gameContainer}>
       <PlayerNameDisplay player={currentPlayer} />
-      <div style={styles.clouds}>
-        <div style={styles.cloud}>☁️</div>
-        <div style={styles.cloud}>☁️</div>
-        <div style={styles.cloud}>☁️</div>
+      <div className={styles.clouds}>
+        <div className={styles.cloud}>☁️</div>
+        <div className={styles.cloud}>☁️</div>
+        <div className={styles.cloud}>☁️</div>
       </div>
 
-      <div style={styles.gameHeader}>
-        <h1 style={styles.gameTitle}>⭐ MATH QUEST ⭐</h1>
+      <div className={styles.gameHeader}>
+        <h1 className={styles.gameTitle}>⭐ MATH QUEST ⭐</h1>
 
-        <div style={styles.statsBar}>
-          <div style={styles.statItem}>
-            <span style={styles.statIcon}>⏱️</span>
+        <div className={styles.statsBar}>
+          <div className={styles.statItem}>
+            <span className={styles.statIcon}>⏱️</span>
             <div>
-              <div style={styles.statLabel}>Temps</div>
-              <div style={styles.statValue}>{secondsLeft}s</div>
+              <div className={styles.statLabel}>Temps</div>
+              <div className={styles.statValue}>{secondsLeft}s</div>
             </div>
           </div>
 
-          <div style={styles.statItem}>
-            <span style={styles.statIcon}>🏆</span>
+          <div className={styles.statItem}>
+            <span className={styles.statIcon}>🏆</span>
             <div>
-              <div style={styles.statLabel}>Score</div>
-              <div style={styles.statValue}>{score}</div>
+              <div className={styles.statLabel}>Score</div>
+              <div className={styles.statValue}>{score}</div>
             </div>
           </div>
         </div>
@@ -166,9 +167,9 @@ export default function PlayPage() {
         showPopup={showPopup}
       />
 
-      <div style={styles.buttonGroup}>
+      <div className={styles.buttonGroup}>
         <button
-          style={styles.pixelButton}
+          className={styles.pixelButton}
           onClick={() => {
             reset() // Reset the timer
             setScore(0) // Reset the score
@@ -182,125 +183,15 @@ export default function PlayPage() {
         </button>
       </div>
 
-      <div style={styles.livesDisplay}>
+      <div className={styles.livesDisplay}>
         {Array.from({ length: lives }, (_, i) => (
-          <span key={i} style={styles.heart}>
+          <span key={i} className={styles.heart}>
             ❤️
           </span>
         ))}
       </div>
 
-      <div style={styles.characterSprite}>🍄</div>
+      <div className={styles.characterSprite}>🍄</div>
     </div>
   )
-}
-
-const styles = {
-  gameContainer: {
-    background: '#fff',
-    border: '8px solid #000',
-    boxShadow: `
-      0 0 0 4px #fff,
-      0 0 0 8px #000,
-      12px 12px 0 0 rgba(0,0,0,0.3)
-    `,
-    maxWidth: '600px',
-    width: '100%',
-    padding: '30px',
-    position: 'relative' as const,
-  },
-  clouds: {
-    position: 'absolute' as const,
-    top: '20px',
-    left: '0',
-    right: '0',
-    display: 'flex',
-    justifyContent: 'space-around',
-    pointerEvents: 'none' as const,
-  },
-  cloud: {
-    fontSize: '24px',
-    opacity: 0.7,
-    animation: 'float 8s ease-in-out infinite',
-  },
-  gameHeader: {
-    background: 'linear-gradient(180deg, #ff6b6b 0%, #ee5a5a 100%)',
-    border: '4px solid #000',
-    padding: '20px',
-    marginBottom: '30px',
-    position: 'relative' as const,
-    boxShadow: 'inset 0 -4px 0 rgba(0,0,0,0.2)',
-  },
-  gameTitle: {
-    color: '#fff',
-    textAlign: 'center' as const,
-    fontSize: '20px',
-    textShadow: `
-      4px 4px 0 #000,
-      -2px -2px 0 #000
-    `,
-    marginBottom: '20px',
-    letterSpacing: '2px',
-  },
-  statsBar: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    gap: '20px',
-  },
-  statItem: {
-    background: '#000',
-    padding: '10px 15px',
-    borderRadius: '4px',
-    display: 'flex',
-    alignItems: 'center',
-    gap: '10px',
-    flex: 1,
-  },
-  statIcon: {
-    fontSize: '20px',
-  },
-  statValue: {
-    color: '#ffd700',
-    fontSize: '14px',
-  },
-  statLabel: {
-    color: '#fff',
-    fontSize: '10px',
-  },
-  buttonGroup: {
-    display: 'flex',
-    gap: '15px',
-    justifyContent: 'center',
-    marginBottom: '25px',
-  },
-  pixelButton: {
-    background: 'linear-gradient(180deg, #3498db 0%, #2980b9 100%)',
-    color: '#fff',
-    fontSize: '14px',
-    padding: '18px 30px',
-    border: '4px solid #000',
-    cursor: 'pointer',
-    position: 'relative' as const,
-    transition: 'all 0.1s',
-    textTransform: 'uppercase' as const,
-    letterSpacing: '1px',
-    boxShadow: '0 6px 0 #000',
-  },
-  livesDisplay: {
-    display: 'flex',
-    justifyContent: 'center',
-    gap: '10px',
-    marginTop: '20px',
-  },
-  heart: {
-    fontSize: '32px',
-    animation: 'pulse 1.5s ease-in-out infinite',
-  },
-  characterSprite: {
-    position: 'absolute' as const,
-    bottom: '-50px',
-    right: '20px',
-    fontSize: '64px',
-    animation: 'bounce 1s ease-in-out infinite',
-  },
 }

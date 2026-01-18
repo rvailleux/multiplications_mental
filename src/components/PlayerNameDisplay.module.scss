@@ -1,0 +1,21 @@
+@use '../styles/tokens' as *;
+@use '../styles/mixins' as *;
+
+.playerNameContainer {
+  @include fixed-top-right;
+  background: $gradient-teal;
+  border: $border-width-thin $border-style $color-black;
+  padding: $spacing-sm $spacing-md;
+  box-shadow: $box-shadow-inset-shine;
+}
+
+.playerNameText {
+  color: $color-white;
+  font-size: $font-size-base;
+  text-shadow: $text-shadow-black-sm;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: bold;
+}

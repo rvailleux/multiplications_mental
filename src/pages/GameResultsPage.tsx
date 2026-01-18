@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import PlayerNameDisplay from '../components/PlayerNameDisplay'
 import { getCurrentPlayer } from '../types/player'
 import type { GameResult } from './PlayPage'
+import styles from './GameResultsPage.module.scss'
 
 /**
  * Route state interface for GameResultsPage
@@ -93,96 +94,30 @@ export default function GameResultsPage() {
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [navigate])
 
-  // Styles
-  const containerStyles: React.CSSProperties = {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    minHeight: '100vh',
-    background: 'linear-gradient(135deg, #ffd700 0%, #ffed4e 50%, #ffd700 100%)',
-    padding: '20px',
-    position: 'relative',
-    animation: isBlinking ? 'goldFadingBlink 2s ease-in-out infinite' : 'none',
-  }
-
-  const cardStyles: React.CSSProperties = {
-    backgroundColor: 'rgba(0, 0, 0, 0.8)',
-    border: '8px solid #000',
-    borderRadius: '0',
-    padding: '40px',
-    maxWidth: '600px',
-    width: '100%',
-    boxShadow: '12px 12px 0 rgba(0, 0, 0, 0.5)',
-    color: '#ffd700',
-    textAlign: 'center',
-  }
-
-  const headingStyles: React.CSSProperties = {
-    fontSize: '48px',
-    marginBottom: '30px',
-    textTransform: 'uppercase',
-    letterSpacing: '4px',
-    textShadow: '4px 4px 0 rgba(0, 0, 0, 0.5)',
-  }
-
-  const statStyles: React.CSSProperties = {
-    fontSize: '32px',
-    margin: '20px 0',
-    color: '#fff',
-  }
-
-  const scoreStyles: React.CSSProperties = {
-    fontSize: '64px',
-    fontWeight: 'bold',
-    margin: '30px 0',
-    color: '#ffd700',
-    textShadow: '6px 6px 0 rgba(0, 0, 0, 0.5)',
-  }
-
-  const buttonStyles: React.CSSProperties = {
-    marginTop: '40px',
-    padding: '20px 40px',
-    fontSize: '24px',
-    fontWeight: 'bold',
-    backgroundColor: '#ffd700',
-    color: '#000',
-    border: '4px solid #000',
-    borderRadius: '0',
-    cursor: 'pointer',
-    textTransform: 'uppercase',
-    letterSpacing: '2px',
-    transition: 'transform 0.1s',
-    boxShadow: '6px 6px 0 rgba(0, 0, 0, 0.3)',
+  const getContainerClass = () => {
+    const classes = [styles.container]
+    if (isBlinking) classes.push(styles.blinking)
+    return classes.join(' ')
   }
 
   return (
-    <div style={containerStyles}>
+    <div className={getContainerClass()}>
       <PlayerNameDisplay player={currentPlayer} />
 
-      <div style={cardStyles}>
-        <h1 style={headingStyles}>Game Over!</h1>
+      <div className={styles.card}>
+        <h1 className={styles.heading}>Game Over!</h1>
 
-        <div style={scoreStyles}>{score}</div>
+        <div className={styles.score}>{score}</div>
 
-        <div style={statStyles}>
+        <div className={styles.stat}>
           Correct: {correctCount}/{totalQuestions}
         </div>
 
-        <div style={statStyles}>Accuracy: {accuracy}%</div>
+        <div className={styles.stat}>Accuracy: {accuracy}%</div>
 
-        <div style={statStyles}>Speed: {speed}</div>
+        <div className={styles.stat}>Speed: {speed}</div>
 
-        <button
-          onClick={() => navigate('/home')}
-          style={buttonStyles}
-          onMouseEnter={e => {
-            e.currentTarget.style.transform = 'scale(1.05)'
-          }}
-          onMouseLeave={e => {
-            e.currentTarget.style.transform = 'scale(1)'
-          }}
-        >
+        <button onClick={() => navigate('/home')} className={styles.button}>
           Continue
         </button>
       </div>

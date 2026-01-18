@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import styles from './MultiplicationQuestion.module.scss'
 
 /**
  * Props for the MultiplicationQuestion component
@@ -69,31 +70,39 @@ const MultiplicationQuestion: React.FC<MultiplicationQuestionProps> = ({
     generateNewQuestion()
   }, [])
 
+  const getComboClass = () => {
+    const classes = [styles.comboDisplay]
+    if (combo > 1) classes.push(styles.shake)
+    return classes.join(' ')
+  }
+
+  const getScorePopupClass = () => {
+    const classes = [styles.scorePopup]
+    if (showPopup) classes.push(styles.show)
+    if (scorePopup.includes('✗')) {
+      classes.push(styles.incorrect)
+    } else {
+      classes.push(styles.correct)
+    }
+    return classes.join(' ')
+  }
+
   return (
     <>
       {/* Combo Display */}
-      {combo > 1 && (
-        <div
-          style={{
-            ...styles.comboDisplay,
-            animation: combo > 1 ? 'comboShake 0.5s ease' : 'none',
-          }}
-        >
-          🔥 COMBO x{combo} 🔥
-        </div>
-      )}
+      {combo > 1 && <div className={getComboClass()}>🔥 COMBO x{combo} 🔥</div>}
 
       {/* Question Area */}
-      <div style={styles.questionArea}>
-        <div style={styles.questionText}>
+      <div className={styles.questionArea}>
+        <div className={styles.questionText}>
           {factorA} x {factorB}?
         </div>
-        <form onSubmit={handleSubmit} style={styles.form}>
+        <form onSubmit={handleSubmit} className={styles.form}>
           <input
             type="number"
             value={userAnswer}
             onChange={e => setUserAnswer(e.target.value)}
-            style={styles.answerInput}
+            className={styles.answerInput}
             autoFocus
             required
             inputMode="numeric"
@@ -101,90 +110,16 @@ const MultiplicationQuestion: React.FC<MultiplicationQuestionProps> = ({
             placeholder="?"
             maxLength={4}
           />
-          <button type="submit" style={styles.pixelButton}>
+          <button type="submit" className={styles.pixelButton}>
             ✓ Valider
           </button>
         </form>
 
         {/* Score Popup */}
-        <div
-          style={{
-            ...styles.scorePopup,
-            animation: showPopup ? 'scorePopup 0.8s ease-out' : 'none',
-            color: scorePopup.includes('✗') ? '#ff6b6b' : '#4ecdc4',
-          }}
-        >
-          {scorePopup}
-        </div>
+        <div className={getScorePopupClass()}>{scorePopup}</div>
       </div>
     </>
   )
-}
-
-const styles = {
-  comboDisplay: {
-    textAlign: 'center' as const,
-    marginBottom: '15px',
-    color: '#ff6b6b',
-    fontSize: '12px',
-    minHeight: '20px',
-  },
-  questionArea: {
-    background: 'linear-gradient(180deg, #87ceeb 0%, #fff 100%)',
-    border: '6px solid #000',
-    padding: '40px',
-    marginBottom: '25px',
-    textAlign: 'center' as const,
-    position: 'relative' as const,
-    boxShadow: 'inset 0 4px 0 rgba(255,255,255,0.5)',
-  },
-  questionText: {
-    fontSize: '42px',
-    color: '#000',
-    textShadow: '3px 3px 0 rgba(255,255,255,0.8)',
-    marginBottom: '30px',
-  },
-  form: {
-    display: 'flex',
-    flexDirection: 'column' as const,
-    alignItems: 'center',
-    gap: '20px',
-  },
-  answerInput: {
-    width: '200px',
-    height: '60px',
-    fontSize: '28px',
-    textAlign: 'center' as const,
-    border: '4px solid #000',
-    background: '#fff',
-    boxShadow: 'inset 0 4px 0 rgba(0,0,0,0.1)',
-    outline: 'none',
-    transition: 'all 0.2s',
-  },
-  pixelButton: {
-    background: 'linear-gradient(180deg, #4ecdc4 0%, #44b3aa 100%)',
-    color: '#fff',
-    fontSize: '14px',
-    padding: '18px 30px',
-    border: '4px solid #000',
-    cursor: 'pointer',
-    position: 'relative' as const,
-    transition: 'all 0.1s',
-    textTransform: 'uppercase' as const,
-    letterSpacing: '1px',
-    boxShadow: '0 6px 0 #000',
-  },
-  scorePopup: {
-    position: 'absolute' as const,
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    fontSize: '48px',
-    fontWeight: 'bold' as const,
-    opacity: 0,
-    pointerEvents: 'none' as const,
-    zIndex: 100,
-  },
 }
 
 export default MultiplicationQuestion

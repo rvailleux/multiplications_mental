@@ -359,7 +359,8 @@ describe('GameResultsPage - Animation Lifecycle', () => {
     )
 
     const mainContainer = container.firstChild as HTMLElement
-    expect(mainContainer.style.animation).toContain('goldFadingBlink')
+    // Check for CSS Module class instead of inline style
+    expect(mainContainer.className).toContain('blinking')
   })
 
   it('should stop blinking animation after 5 seconds', () => {
@@ -371,16 +372,16 @@ describe('GameResultsPage - Animation Lifecycle', () => {
 
     const mainContainer = container.firstChild as HTMLElement
 
-    // Initially animating
-    expect(mainContainer.style.animation).toContain('goldFadingBlink')
+    // Initially animating - check for CSS Module class instead of inline style
+    expect(mainContainer.className).toContain('blinking')
 
     // Fast-forward 5 seconds with act() to ensure React state updates
     act(() => {
       vi.advanceTimersByTime(5000)
     })
 
-    // Animation should be stopped (check after state update)
-    expect(mainContainer.style.animation).toBe('none')
+    // Animation should be stopped - blinking class should be removed
+    expect(mainContainer.className).not.toContain('blinking')
   })
 
   it('should cleanup timeout on unmount', () => {

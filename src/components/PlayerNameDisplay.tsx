@@ -1,5 +1,6 @@
 import React from 'react'
 import { Player } from '../types/player'
+import styles from './PlayerNameDisplay.module.scss'
 
 /**
  * Props for PlayerNameDisplay component
@@ -27,31 +28,8 @@ export default function PlayerNameDisplay({
   if (!player) return null
 
   return (
-    <div style={styles.playerNameContainer} className="player-name-display">
-      <span style={styles.playerNameText}>{player.name}</span>
+    <div className={`${styles.playerNameContainer} player-name-display`}>
+      <span className={styles.playerNameText}>{player.name}</span>
     </div>
   )
-}
-
-const styles = {
-  playerNameContainer: {
-    position: 'fixed' as const,
-    top: '20px',
-    right: '20px',
-    zIndex: 1000,
-    background: 'linear-gradient(180deg, #4ecdc4 0%, #44b3aa 100%)',
-    border: '4px solid #000',
-    padding: '8px 16px',
-    boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.3)',
-  },
-  playerNameText: {
-    color: '#fff',
-    fontSize: '14px',
-    textShadow: '2px 2px 0 #000',
-    maxWidth: '200px',
-    overflow: 'hidden' as const,
-    textOverflow: 'ellipsis',
-    whiteSpace: 'nowrap' as const,
-    fontWeight: 'bold' as const,
-  },
 }

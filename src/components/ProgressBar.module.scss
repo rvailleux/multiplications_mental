@@ -1,0 +1,40 @@
+@use '../styles/tokens' as *;
+@use '../styles/mixins' as *;
+
+.progressBar {
+  background: $color-black;
+  border: $border-width-thin $border-style $color-black;
+  height: 30px;
+  margin-bottom: $spacing-lg;
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+}
+
+.progressFill {
+  height: 100%;
+  transition: $transition-normal;
+  position: relative;
+  background-image: repeating-linear-gradient(
+    90deg,
+    transparent 0px,
+    transparent 8px,
+    rgba($color-white, 0.3) 8px,
+    rgba($color-white, 0.3) 16px
+  );
+}
+
+// Color classes for different states
+.progressGreen {
+  background: $gradient-progress-green;
+}
+
+.progressOrange {
+  background: $gradient-progress-orange;
+  animation: blinkOrange 1s infinite;
+}
+
+.progressRed {
+  background: $gradient-progress-red;
+  animation: flashRed 0.5s infinite;
+}

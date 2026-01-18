@@ -1,0 +1,55 @@
+@use '../styles/tokens' as *;
+@use '../styles/mixins' as *;
+
+.container {
+  @include flex-column-center;
+  justify-content: center;
+  min-height: 100vh;
+  background: $gradient-gold-radial;
+  padding: $spacing-lg;
+  position: relative;
+
+  &.blinking {
+    animation: goldFadingBlink 2s ease-in-out infinite;
+  }
+}
+
+.card {
+  @include card-dark;
+}
+
+.heading {
+  font-size: $font-size-5xl;
+  margin-bottom: $spacing-xl;
+  text-transform: uppercase;
+  letter-spacing: 4px;
+  text-shadow: $text-shadow-black-lg;
+}
+
+.stat {
+  font-size: $font-size-3xl;
+  margin: $spacing-lg 0;
+  color: $color-white;
+}
+
+.score {
+  font-size: $font-size-6xl;
+  font-weight: bold;
+  margin: $spacing-xl 0;
+  color: $color-gold;
+  text-shadow: $text-shadow-black-lg;
+}
+
+.button {
+  @include pixel-button-gold;
+  margin-top: $spacing-2xl;
+  padding: $spacing-lg $spacing-2xl;
+  font-size: $font-size-xl;
+  font-weight: bold;
+  letter-spacing: 2px;
+  box-shadow: 6px 6px 0 rgba($color-black, 0.3);
+
+  &:hover {
+    transform: scale(1.05);
+  }
+}

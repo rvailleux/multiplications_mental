@@ -1,0 +1,99 @@
+@use '../styles/tokens' as *;
+@use '../styles/mixins' as *;
+
+.gameContainer {
+  @include main-game-container;
+}
+
+.clouds {
+  position: absolute;
+  top: $spacing-lg;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-around;
+  pointer-events: none;
+}
+
+.cloud {
+  font-size: $font-size-xl;
+  opacity: 0.7;
+  animation: float 8s ease-in-out infinite;
+}
+
+.gameHeader {
+  @include header-container;
+  margin-bottom: $spacing-xl;
+}
+
+.gameTitle {
+  color: $color-white;
+  text-align: center;
+  font-size: $font-size-lg;
+  text-shadow: $text-shadow-dual;
+  margin-bottom: $spacing-lg;
+  letter-spacing: 2px;
+}
+
+.statsBar {
+  display: flex;
+  justify-content: space-between;
+  gap: $spacing-lg;
+}
+
+.statItem {
+  background: $color-black;
+  padding: $spacing-md $spacing-base;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  flex: 1;
+}
+
+.statIcon {
+  font-size: $font-size-lg;
+}
+
+.statValue {
+  color: $color-gold;
+  font-size: $font-size-base;
+}
+
+.statLabel {
+  color: $color-white;
+  font-size: $font-size-xs;
+}
+
+.buttonGroup {
+  display: flex;
+  gap: $spacing-base;
+  justify-content: center;
+  margin-bottom: 25px;
+}
+
+.pixelButton {
+  @include pixel-button-blue;
+  font-size: $font-size-base;
+  padding: 18px $spacing-xl;
+}
+
+.livesDisplay {
+  display: flex;
+  justify-content: center;
+  gap: $spacing-md;
+  margin-top: $spacing-lg;
+}
+
+.heart {
+  font-size: $font-size-3xl;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.characterSprite {
+  position: absolute;
+  bottom: -50px;
+  right: $spacing-lg;
+  font-size: $font-size-6xl;
+  animation: bounce 1s ease-in-out infinite;
+}

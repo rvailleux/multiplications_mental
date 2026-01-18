@@ -1,0 +1,72 @@
+@use '../styles/tokens' as *;
+@use '../styles/mixins' as *;
+
+.comboDisplay {
+  text-align: center;
+  margin-bottom: $spacing-base;
+  color: $color-red;
+  font-size: $font-size-sm;
+  min-height: 20px;
+
+  &.shake {
+    animation: comboShake 0.5s ease;
+  }
+}
+
+.questionArea {
+  @include card-sky;
+  border: $border-width-thick $border-style $color-black;
+  padding: $spacing-2xl;
+  margin-bottom: 25px;
+  text-align: center;
+  position: relative;
+}
+
+.questionText {
+  font-size: $font-size-4xl;
+  color: $color-black;
+  text-shadow: $text-shadow-white;
+  margin-bottom: $spacing-xl;
+}
+
+.form {
+  @include flex-column-center;
+  gap: $spacing-lg;
+}
+
+.answerInput {
+  @include pixel-input;
+  width: 200px;
+  height: 60px;
+  font-size: $font-size-2xl;
+}
+
+.pixelButton {
+  @include pixel-button-teal;
+  font-size: $font-size-base;
+  padding: 18px $spacing-xl;
+}
+
+.scorePopup {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: $font-size-5xl;
+  font-weight: bold;
+  opacity: 0;
+  pointer-events: none;
+  z-index: $z-index-popup;
+
+  &.show {
+    animation: scorePopup 0.8s ease-out;
+  }
+
+  &.correct {
+    color: $color-teal;
+  }
+
+  &.incorrect {
+    color: $color-red;
+  }
+}
