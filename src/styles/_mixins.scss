@@ -1,0 +1,186 @@
+@use 'tokens' as *;
+
+// === BUTTON MIXINS ===
+
+@mixin pixel-button-base {
+  font-family: $font-family-pixel;
+  cursor: pointer;
+  border: $border-width-thin $border-style $color-black;
+  padding: $spacing-md $spacing-lg;
+  font-size: $font-size-sm;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: $box-shadow-button;
+  transition: $transition-fast;
+  position: relative;
+  border-radius: $border-radius-none;
+
+  &:active {
+    transform: translateY(4px);
+    box-shadow: $box-shadow-button-pressed;
+  }
+
+  &:focus,
+  &:focus-visible {
+    outline: 4px auto $color-gold;
+  }
+}
+
+@mixin pixel-button-teal {
+  @include pixel-button-base;
+  background: $gradient-teal;
+  color: $color-white;
+}
+
+@mixin pixel-button-blue {
+  @include pixel-button-base;
+  background: $gradient-blue;
+  color: $color-white;
+}
+
+@mixin pixel-button-gold {
+  @include pixel-button-base;
+  background-color: $color-gold;
+  color: $color-black;
+  font-weight: bold;
+}
+
+// === CARD MIXINS ===
+
+@mixin card-base {
+  border: $border-width-thin $border-style $color-black;
+  padding: $spacing-base;
+  box-shadow: $box-shadow-inset-light;
+}
+
+@mixin card-sky {
+  @include card-base;
+  background: $gradient-sky;
+}
+
+@mixin card-gold {
+  @include card-base;
+  background: $gradient-gold;
+  border-color: $color-gold-dark;
+  box-shadow: $box-shadow-gold-card;
+  animation: goldGlow 2s ease-in-out infinite alternate;
+}
+
+@mixin card-dark {
+  background-color: rgba($color-black, 0.8);
+  border: $border-width-thicker $border-style $color-black;
+  padding: $spacing-2xl;
+  box-shadow: $box-shadow-container;
+  color: $color-gold;
+  text-align: center;
+  border-radius: $border-radius-none;
+}
+
+// === CONTAINER MIXINS ===
+
+@mixin game-container {
+  background: $gradient-sky;
+  border: $border-width-thick $border-style $color-black;
+  padding: $spacing-2xl;
+  box-shadow: $box-shadow-inset-light;
+  position: relative;
+}
+
+@mixin header-container {
+  background: $gradient-red;
+  border: $border-width-thin $border-style $color-black;
+  padding: $spacing-lg;
+  box-shadow: inset 0 -4px 0 rgba($color-black, 0.2);
+  width: 100%;
+  text-align: center;
+  position: relative;
+}
+
+@mixin main-game-container {
+  background: $color-white;
+  border: $border-width-thicker $border-style $color-black;
+  box-shadow: $box-shadow-game-container;
+  max-width: 600px;
+  width: 100%;
+  padding: $spacing-xl;
+  position: relative;
+}
+
+// === TEXT MIXINS ===
+
+@mixin text-pixel-white {
+  color: $color-white;
+  text-shadow: $text-shadow-dual;
+}
+
+@mixin text-pixel-black {
+  color: $color-black;
+  text-shadow: $text-shadow-white;
+}
+
+@mixin text-pixel-gold {
+  color: $color-gold;
+  text-shadow: $text-shadow-black-lg;
+}
+
+// === INPUT MIXINS ===
+
+@mixin pixel-input {
+  font-family: $font-family-pixel;
+  border: $border-width-thin $border-style $color-black;
+  background: $color-white;
+  padding: $spacing-md;
+  font-size: $font-size-base;
+  text-align: center;
+  outline: none;
+  box-shadow: $box-shadow-input;
+
+  &:focus {
+    border-color: $color-gold;
+    box-shadow:
+      $box-shadow-input,
+      0 0 0 4px $color-gold;
+  }
+}
+
+// === UTILITY MIXINS ===
+
+@mixin center-absolute {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+@mixin fixed-top-right {
+  position: fixed;
+  top: $spacing-lg;
+  right: $spacing-lg;
+  z-index: $z-index-header;
+}
+
+@mixin flex-column-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+@mixin flex-row-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+@mixin flex-row-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+// === RESPONSIVE MIXIN ===
+
+@mixin mobile {
+  @media (max-width: $breakpoint-mobile) {
+    @content;
+  }
+}

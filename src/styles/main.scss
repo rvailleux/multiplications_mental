@@ -1,0 +1,17 @@
+// === SASS ARCHITECTURE MAIN ENTRY ===
+// Import order is critical: tokens → animations → mixins → base
+
+// 1. Design Tokens (variables must be first)
+@use 'tokens';
+
+// 2. Animations (@keyframes used by components)
+@use 'animations';
+
+// 3. Mixins (depend on tokens)
+@use 'mixins';
+
+// 4. Base Global Styles (use tokens and mixins)
+@use 'base';
+
+// === GOOGLE FONTS ===
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
