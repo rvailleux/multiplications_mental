@@ -32,4 +32,15 @@ export default defineConfig(({ mode }) => ({
       },
     }),
   ],
+  css: {
+    modules: {
+      generateScopedName: '[name]__[local]___[hash:base64:5]',
+      localsConvention: 'camelCase',
+    },
+    preprocessorOptions: {
+      scss: {
+        api: 'modern',
+      },
+    },
+  },
 }))
