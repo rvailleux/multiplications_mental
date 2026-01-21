@@ -157,6 +157,10 @@ test.describe('Keyboard Navigation - Pause Menu', () => {
     await expect(page.getByText('Choose Your Player')).toBeVisible()
     await page.keyboard.press('Enter') // Select player
     await page.waitForURL(/\/home/)
+
+    // Extra wait to ensure home page is fully rendered
+    await page.waitForTimeout(1000)
+
     const startButton = page.getByRole('button', { name: /Start Game/i })
     await expect(startButton).toBeVisible()
     await startButton.click()
