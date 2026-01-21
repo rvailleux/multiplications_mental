@@ -184,3 +184,29 @@
     @content;
   }
 }
+
+// === MODAL MIXINS ===
+
+@mixin modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba($color-black, 0.7);
+  z-index: $z-index-overlay;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin modal-content {
+  background: $gradient-sky;
+  border: $border-width-thicker $border-style $color-black;
+  padding: $spacing-2xl;
+  box-shadow: $box-shadow-game-container;
+  animation: zoomSplash 0.3s ease-out;
+  position: relative;
+  max-width: 500px;
+  width: 90%;
+}

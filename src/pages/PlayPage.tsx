@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react'
 import { useTimer } from '../hooks/useTimer'
 import { useBackgroundMusic } from '../hooks/useBackgroundMusic'
+import { usePauseMenu } from '../hooks/usePauseMenu'
 import ProgressBar from '../components/ProgressBar'
 import MultiplicationQuestion from '../components/MultiplicationQuestion'
+import PauseMenu from '../components/PauseMenu'
 import { useNavigate } from 'react-router-dom'
 import { getCurrentPlayer } from '../types/player'
 import PlayerNameDisplay from '../components/PlayerNameDisplay'
@@ -30,7 +32,7 @@ export default function PlayPage() {
   const navigate = useNavigate()
   const currentPlayer = getCurrentPlayer()
   const totalTime = 60 // Total time in seconds
-  const { secondsLeft, reset } = useTimer(totalTime)
+  const { secondsLeft, reset, pause, resume } = useTimer(totalTime)
   const { startMusic, stopMusic } = useBackgroundMusic()
   const [score, setScore] = useState(0)
   const [results, setResults] = useState<GameResult[]>([])
@@ -39,12 +41,37 @@ export default function PlayPage() {
   const [showPopup, setShowPopup] = useState(false)
   const [lives, setLives] = useState(3)
 
+  // Setup pause menu
+  const pauseMenu = usePauseMenu({
+    onQuit: () => {
+      stopMusic()
+      navigate('/home')
+    },
+    onContinue: () => {
+      resume()
+    },
+  })
+
   /** Redirect to player selection if no player is selected */
   useEffect(() => {
     if (!currentPlayer) {
       navigate('/')
     }
   }, [currentPlayer, navigate])
+
+  /** Handle ESC key to open pause menu */
+  useEffect(() => {
+    const handleEscKey = (e: KeyboardEvent): void => {
+      if (e.key === 'Escape' && !pauseMenu.state.isPaused) {
+        e.preventDefault()
+        pause()
+        pauseMenu.openPauseMenu()
+      }
+    }
+
+    window.addEventListener('keydown', handleEscKey)
+    return () => window.removeEventListener('keydown', handleEscKey)
+  }, [pauseMenu, pause])
 
   /** Calculate progress percentage based on elapsed time */
   const progress = ((totalTime - secondsLeft) / totalTime) * 100
@@ -192,6 +219,18 @@ export default function PlayPage() {
       </div>
 
       <div className={styles.characterSprite}>🍄</div>
+
+      <PauseMenu
+        isPaused={pauseMenu.state.isPaused}
+        selectedOption={pauseMenu.state.selectedOption}
+        onContinue={pauseMenu.confirmSelection}
+        onQuit={pauseMenu.confirmSelection}
+        onToggle={pauseMenu.toggleOption}
+        onClose={() => {
+          pauseMenu.closePauseMenu()
+          resume()
+        }}
+      />
     </div>
   )
 }

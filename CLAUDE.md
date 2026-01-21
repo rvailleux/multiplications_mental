@@ -945,6 +945,7 @@ This file helps Claude Code understand the project context, patterns, and conven
 - localStorage (browser-based persistence) (010-player-name-display)
 - TypeScript 5.7.2 (strict mode enabled) + React Router DOM 7.5.0 (for navigation) (011-game-results-screen)
 - localStorage (browser-based persistence) - GameResult[] already saved by PlayPage (011-game-results-screen)
+- TypeScript 5.7.2 (strict mode) + React 19.0.0, React Router DOM 7.5.0, Sass (CSS Modules) (012-keyboard-navigation)
 
 ## Recent Changes
 - 010-player-name-display: Added TypeScript 5.7.2 (strict mode enabled) + React 19.0.0, React Router DOM 7.5.0

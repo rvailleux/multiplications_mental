@@ -1,25 +1,28 @@
 <!--
 SYNC IMPACT REPORT:
-Version Change: 1.1.0 → 1.2.0
+Version Change: 1.2.0 → 1.3.0
 Modified Principles:
-  - Principle I (Test-First Development): Added error handling test requirements, test quality standards
+  - Principle I (Test-First Development): Added E2E testing requirements in test pyramid
 Added Sections:
-  - Principle VII: Error Handling & Resilience (NON-NEGOTIABLE)
-    - localStorage operations error handling patterns
-    - Component guard patterns for prerequisites
-    - Test coverage requirements for error scenarios
+  - Principle VIII: End-to-End Testing with Playwright (NON-NEGOTIABLE)
+    - Automated E2E test scenarios for each feature
+    - Browser automation testing requirements
+    - User journey validation with Playwright
+    - Screenshot and visual regression testing
 Removed Sections: None
 Templates Status:
-  ✅ plan-template.md - Reviewed, no updates required
-  ✅ spec-template.md - Should include error handling requirements for localStorage operations
-  ✅ tasks-template.md - Should include error handling tasks for localStorage-heavy features
-  ⚠ CLAUDE.md - Should document localStorage error handling patterns and component guard examples
+  ✅ spec-template.md - MUST add E2E Test Scenarios section
+  ✅ tasks-template.md - MUST include E2E testing tasks in each user story phase
+  ✅ plan-template.md - MUST include E2E testing in technical context
+  ⚠ CLAUDE.md - Should document Playwright testing patterns and examples
 Follow-up TODOs:
-  - Update CLAUDE.md with localStorage error handling code examples
-  - Document component guard pattern for page prerequisites
-  - Add error handling test examples to testing documentation
-  - Create error handling checklist for code reviews
-Rationale: MINOR version bump - Added new principle VII establishing mandatory error handling and resilience patterns, particularly for localStorage operations and component guards. Prevents application crashes from storage failures and ensures graceful degradation. Expands test requirements to include error scenarios and test quality standards.
+  - Update CLAUDE.md with Playwright E2E testing code examples
+  - Document E2E test patterns for keyboard navigation
+  - Add E2E testing checklist for feature completion
+  - Create visual regression testing workflow
+Rationale: MINOR version bump - Added new principle VIII establishing mandatory E2E testing with Playwright for all features. Ensures complete user journeys are validated beyond unit/integration tests. Prevents regressions in user flows and validates real browser interactions including keyboard navigation, visual rendering, and full application state.
+Previous Changes (1.1.0 → 1.2.0):
+  - Added Principle VII: Error Handling & Resilience
 Previous Changes (1.0.0 → 1.1.0):
   - Added Principle VI: Retro Gaming UX (Super NES 8-bit aesthetic)
   - Established keyboard-first navigation with mouse support
@@ -151,6 +154,68 @@ useEffect(() => {
 
 **Rationale**: Error handling is fundamental to application stability. localStorage operations are unreliable by nature (user privacy settings, quota limits, data corruption). Graceful degradation ensures users can continue using the app even when non-critical features fail. Testing error paths prevents production crashes and ensures resilience.
 
+### VIII. End-to-End Testing with Playwright (NON-NEGOTIABLE)
+
+All features MUST have automated end-to-end tests validating complete user journeys:
+
+#### E2E Test Requirements
+- **Feature-level E2E tests**: Every user story MUST have at least one E2E test validating the complete flow
+- **Playwright framework**: Use Playwright for browser automation (already configured in project)
+- **Real browser testing**: Tests run in actual browser environment, not simulated DOM
+- **User journey validation**: E2E tests follow exact user paths from spec.md acceptance scenarios
+- **Visual validation**: Include screenshots at key states for visual regression detection
+- **Keyboard navigation**: Validate keyboard-first interactions (arrows, Enter, Escape) work as expected
+- **Mouse interactions**: Validate mouse clicks and interactions work as expected
+- **Multi-step flows**: Test complete workflows (player selection → game play → results → leaderboard)
+
+#### E2E Test Structure
+```typescript
+// Example E2E test pattern for user story
+test('User Story 1: Player selects character and starts game', async ({ page }) => {
+  // Navigate to app
+  await page.goto('http://localhost:5174')
+
+  // Screenshot initial state
+  await page.screenshot({ path: 'test-results/01-player-select.png' })
+
+  // Validate keyboard navigation
+  await page.keyboard.press('ArrowDown')
+  await page.keyboard.press('Enter')
+
+  // Validate navigation occurred
+  expect(page.url()).toContain('/home')
+
+  // Screenshot after navigation
+  await page.screenshot({ path: 'test-results/02-home-page.png' })
+
+  // Continue user journey...
+})
+```
+
+#### Test Organization
+- **File location**: `tests/e2e/[feature-name].spec.ts`
+- **One file per user story**: Group related scenarios together
+- **Descriptive test names**: Match acceptance scenarios from spec.md
+- **Screenshot naming**: `[step-number]-[description].png` for visual tracking
+- **Test data cleanup**: Reset localStorage/state between tests
+- **Deterministic tests**: No flaky tests - use proper waits, not arbitrary timeouts
+
+#### When to Write E2E Tests
+- **After unit tests pass**: E2E tests come after component/unit tests in TDD cycle
+- **Before feature completion**: E2E tests MUST pass before marking user story complete
+- **For each user story**: Minimum one E2E test per user story in spec.md
+- **For critical paths**: Additional E2E tests for happy path + error scenarios
+- **For regressions**: Add E2E test when bug found in production
+
+#### E2E Test Quality Standards
+- **Test independence**: Each test can run in isolation without dependencies
+- **Fast execution**: Optimize for speed - use shortcuts where appropriate (direct navigation vs full flow)
+- **Clear assertions**: Use descriptive expects that match acceptance criteria
+- **Screenshot evidence**: Capture key states for debugging and visual validation
+- **Keyboard + mouse coverage**: Validate both input methods work (constitutional requirement)
+
+**Rationale**: E2E tests validate the complete user experience in a real browser, catching issues that unit and integration tests miss. Playwright enables reliable browser automation with excellent developer experience. E2E tests serve as living documentation of user journeys and prevent regressions in complex multi-step flows. For a gaming application with keyboard-first navigation, E2E tests are essential to validate the actual user experience matches the design.
+
 ## Development Workflow
 
 ### Feature Development Process
@@ -161,14 +226,17 @@ useEffect(() => {
    - Review related components with Read tool
 
 2. **Test-First Implementation** (REQUIRED)
-   - Write failing tests first (`.test.tsx` files)
+   - Write failing unit tests first (`.test.tsx` files)
    - Validate approach with stakeholders
    - Test edge cases and error conditions
    - **Error handling tests**: MUST test localStorage failures, corrupted data, quota exceeded
    - **Test quality**: Each test must validate distinct behavior (no duplicate assertions)
    - **Test descriptions**: Must accurately match what's being tested
    - **UX Testing**: Verify both keyboard AND mouse interactions work
-   - Implement feature to pass tests
+   - Implement feature to pass unit tests
+   - **Write E2E tests**: Create Playwright tests for user journeys from spec.md
+   - **Validate E2E tests fail**: Ensure E2E tests fail before full integration
+   - Complete implementation to pass all tests (unit + E2E)
    - Never skip tests or implement before testing
 
 3. **Quality Assurance** (ALL COMMANDS REQUIRED)
@@ -185,6 +253,8 @@ useEffect(() => {
 
 5. **Final Verification** (REQUIRED)
    - `npm run test:coverage` - Ensure adequate coverage (>80%)
+   - **E2E test execution**: Run all Playwright tests for feature (`npx playwright test tests/e2e/[feature].spec.ts`)
+   - **E2E test screenshots**: Review screenshots for visual regressions
    - Manual browser testing (keyboard navigation + mouse clicks)
    - Performance check (no bundle size regression)
    - UX validation (retro aesthetic consistency)
@@ -247,4 +317,4 @@ useEffect(() => {
 
 Use **CLAUDE.md** for runtime development guidance and project context. The constitution defines non-negotiable principles; CLAUDE.md provides practical implementation patterns.
 
-**Version**: 1.2.0 | **Ratified**: 2026-01-13 | **Last Amended**: 2026-01-18
+**Version**: 1.3.0 | **Ratified**: 2026-01-13 | **Last Amended**: 2026-01-19
