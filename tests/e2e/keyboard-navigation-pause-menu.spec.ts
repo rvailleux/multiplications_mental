@@ -47,7 +47,7 @@ test.describe('Keyboard Navigation - Pause Menu', () => {
     await expect(page.getByText(/MATH QUEST/i)).toBeVisible()
 
     // Wait for game to be fully interactive (check for score display)
-    await expect(page.getByText(/Score:/i)).toBeVisible()
+    await expect(page.getByText('Score')).toBeVisible()
     await page.screenshot({ path: 'test-results/pause-menu/03-game-playing.png' })
 
     // Step 5: Open pause menu with ESC key
