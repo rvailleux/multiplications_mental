@@ -88,6 +88,7 @@ test.describe('Keyboard Navigation - Pause Menu', () => {
   test('E2E-US1-002: Pause menu Continue functionality resumes game', async ({ page }) => {
     // Navigate through to game
     await page.goto('/')
+    await expect(page.getByText('Choose Your Player')).toBeVisible()
     await page.keyboard.press('Enter') // Select player
     await page.waitForURL(/\/home/)
     await page.getByRole('button', { name: /Start Game/i }).click()
@@ -116,6 +117,7 @@ test.describe('Keyboard Navigation - Pause Menu', () => {
   test('E2E-US1-003: Pause menu Quit functionality returns to home', async ({ page }) => {
     // Navigate through to game
     await page.goto('/')
+    await expect(page.getByText('Choose Your Player')).toBeVisible()
     await page.keyboard.press('Enter') // Select player
     await page.waitForURL(/\/home/)
     await page.getByRole('button', { name: /Start Game/i }).click()
@@ -140,6 +142,7 @@ test.describe('Keyboard Navigation - Pause Menu', () => {
   test('E2E-US1-004: Mouse interactions work alongside keyboard', async ({ page }) => {
     // Navigate through to game
     await page.goto('/')
+    await expect(page.getByText('Choose Your Player')).toBeVisible()
     await page.keyboard.press('Enter') // Select player
     await page.waitForURL(/\/home/)
     await page.getByRole('button', { name: /Start Game/i }).click()
