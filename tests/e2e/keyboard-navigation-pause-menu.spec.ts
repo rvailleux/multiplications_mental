@@ -40,7 +40,9 @@ test.describe('Keyboard Navigation - Pause Menu', () => {
     await page.screenshot({ path: 'test-results/pause-menu/02-home-page.png' })
 
     // Step 3: Start the game
-    await page.getByRole('button', { name: /Start Game/i }).click()
+    const startButton = page.getByRole('button', { name: /Start Game/i })
+    await expect(startButton).toBeVisible()
+    await startButton.click()
 
     // Step 4: Verify game page loaded
     await expect(page).toHaveURL(/\/play/)
@@ -91,7 +93,9 @@ test.describe('Keyboard Navigation - Pause Menu', () => {
     await expect(page.getByText('Choose Your Player')).toBeVisible()
     await page.keyboard.press('Enter') // Select player
     await page.waitForURL(/\/home/)
-    await page.getByRole('button', { name: /Start Game/i }).click()
+    const startButton = page.getByRole('button', { name: /Start Game/i })
+    await expect(startButton).toBeVisible()
+    await startButton.click()
     await page.waitForURL(/\/play/)
 
     // Wait for game to be fully interactive
@@ -123,7 +127,9 @@ test.describe('Keyboard Navigation - Pause Menu', () => {
     await expect(page.getByText('Choose Your Player')).toBeVisible()
     await page.keyboard.press('Enter') // Select player
     await page.waitForURL(/\/home/)
-    await page.getByRole('button', { name: /Start Game/i }).click()
+    const startButton = page.getByRole('button', { name: /Start Game/i })
+    await expect(startButton).toBeVisible()
+    await startButton.click()
     await page.waitForURL(/\/play/)
 
     // Wait for game to be fully interactive
@@ -151,7 +157,9 @@ test.describe('Keyboard Navigation - Pause Menu', () => {
     await expect(page.getByText('Choose Your Player')).toBeVisible()
     await page.keyboard.press('Enter') // Select player
     await page.waitForURL(/\/home/)
-    await page.getByRole('button', { name: /Start Game/i }).click()
+    const startButton = page.getByRole('button', { name: /Start Game/i })
+    await expect(startButton).toBeVisible()
+    await startButton.click()
     await page.waitForURL(/\/play/)
 
     // Wait for game to be fully interactive
