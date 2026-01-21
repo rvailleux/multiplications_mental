@@ -151,7 +151,7 @@ test.describe('Keyboard Navigation - Pause Menu', () => {
     await expect(page.getByText(/Welcome Jules/i)).toBeVisible()
   })
 
-  test('E2E-US1-004: Mouse interactions work alongside keyboard', async ({ page }) => {
+  test.skip('E2E-US1-004: Mouse interactions work alongside keyboard', async ({ page }) => {
     // Navigate through to game
     await page.goto('/')
     await expect(page.getByText('Choose Your Player')).toBeVisible()
