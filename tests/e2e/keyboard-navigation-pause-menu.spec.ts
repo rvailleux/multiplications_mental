@@ -95,7 +95,7 @@ test.describe('Keyboard Navigation - Pause Menu', () => {
     await page.waitForURL(/\/play/)
 
     // Wait for game to be fully interactive
-    await expect(page.getByText(/Score:/i)).toBeVisible()
+    await expect(page.getByText('Score')).toBeVisible()
 
     // Get initial timer value
     const timerBefore = await page.getByText(/\d+s/).first().textContent()
@@ -127,7 +127,7 @@ test.describe('Keyboard Navigation - Pause Menu', () => {
     await page.waitForURL(/\/play/)
 
     // Wait for game to be fully interactive
-    await expect(page.getByText(/Score:/i)).toBeVisible()
+    await expect(page.getByText('Score')).toBeVisible()
 
     // Open pause menu
     await page.keyboard.press('Escape')
@@ -155,7 +155,7 @@ test.describe('Keyboard Navigation - Pause Menu', () => {
     await page.waitForURL(/\/play/)
 
     // Wait for game to be fully interactive
-    await expect(page.getByText(/Score:/i)).toBeVisible()
+    await expect(page.getByText('Score')).toBeVisible()
 
     // Open pause menu with keyboard
     await page.keyboard.press('Escape')
