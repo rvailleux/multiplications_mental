@@ -45,10 +45,10 @@ test.describe('Keyboard Navigation - Pause Menu', () => {
     // Step 4: Verify game page loaded
     await expect(page).toHaveURL(/\/play/)
     await expect(page.getByText(/MATH QUEST/i)).toBeVisible()
-    await page.screenshot({ path: 'test-results/pause-menu/03-game-playing.png' })
 
-    // Wait a moment for game to initialize
-    await page.waitForTimeout(500)
+    // Wait for game to be fully interactive (check for score display)
+    await expect(page.getByText(/Score:/i)).toBeVisible()
+    await page.screenshot({ path: 'test-results/pause-menu/03-game-playing.png' })
 
     // Step 5: Open pause menu with ESC key
     await page.keyboard.press('Escape')
@@ -94,6 +94,9 @@ test.describe('Keyboard Navigation - Pause Menu', () => {
     await page.getByRole('button', { name: /Start Game/i }).click()
     await page.waitForURL(/\/play/)
 
+    // Wait for game to be fully interactive
+    await expect(page.getByText(/Score:/i)).toBeVisible()
+
     // Get initial timer value
     const timerBefore = await page.getByText(/\d+s/).first().textContent()
 
@@ -123,6 +126,9 @@ test.describe('Keyboard Navigation - Pause Menu', () => {
     await page.getByRole('button', { name: /Start Game/i }).click()
     await page.waitForURL(/\/play/)
 
+    // Wait for game to be fully interactive
+    await expect(page.getByText(/Score:/i)).toBeVisible()
+
     // Open pause menu
     await page.keyboard.press('Escape')
     await expect(page.getByText('⏸ PAUSE ⏸')).toBeVisible()
@@ -147,6 +153,9 @@ test.describe('Keyboard Navigation - Pause Menu', () => {
     await page.waitForURL(/\/home/)
     await page.getByRole('button', { name: /Start Game/i }).click()
     await page.waitForURL(/\/play/)
+
+    // Wait for game to be fully interactive
+    await expect(page.getByText(/Score:/i)).toBeVisible()
 
     // Open pause menu with keyboard
     await page.keyboard.press('Escape')
