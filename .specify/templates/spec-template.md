@@ -75,6 +75,69 @@
 - What happens when [boundary condition]?
 - How does system handle [error scenario]?
 
+## E2E Test Scenarios *(mandatory)*
+
+<!--
+  IMPORTANT: End-to-end test scenarios map directly to user stories and validate
+  complete user journeys in a real browser environment using Playwright.
+
+  Each E2E test scenario should:
+  - Match an acceptance scenario from a user story
+  - Describe the complete flow from start to finish
+  - Include both keyboard and mouse interaction paths
+  - Specify visual checkpoints (screenshots)
+  - Be independently executable
+
+  Format: E2E-[UserStoryNumber]-[SequenceNumber]
+-->
+
+### E2E-US1-001: [Primary User Journey for Story 1]
+
+**User Story**: User Story 1 - [Brief Title]
+
+**Test Flow**:
+1. **Navigate** to application home page
+   - Screenshot: `01-initial-state.png`
+2. **Keyboard Interaction**: [e.g., Press ArrowDown to select option]
+   - Screenshot: `02-option-selected.png`
+3. **Confirm Selection**: [e.g., Press Enter to confirm]
+   - Screenshot: `03-after-confirmation.png`
+4. **Verify State**: [e.g., Check URL changed to /next-page]
+5. **Mouse Interaction**: [e.g., Click on button to proceed]
+   - Screenshot: `04-final-state.png`
+
+**Expected Outcome**: [Describe final state that matches acceptance criteria]
+
+**Visual Validation**: [What visual elements should be present/highlighted]
+
+---
+
+### E2E-US1-002: [Alternative Flow or Error Scenario]
+
+**User Story**: User Story 1 - [Brief Title]
+
+**Test Flow**:
+1. [Step-by-step flow for alternative path]
+2. [Include both keyboard and mouse interactions]
+
+**Expected Outcome**: [What should happen in this scenario]
+
+---
+
+### E2E-US2-001: [Primary User Journey for Story 2]
+
+**User Story**: User Story 2 - [Brief Title]
+
+**Test Flow**:
+1. [Complete user journey for story 2]
+2. [Each step should be concrete and testable]
+
+**Expected Outcome**: [Final state validation]
+
+---
+
+[Add E2E scenarios for all user stories - minimum one per story]
+
 ## Requirements *(mandatory)*
 
 <!--

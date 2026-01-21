@@ -1,0 +1,56 @@
+@use '../styles/tokens' as *;
+@use '../styles/mixins' as *;
+
+.keyboardHints {
+  @include flex-row-center;
+  gap: $spacing-lg;
+  padding: $spacing-md $spacing-lg;
+  background-color: rgba($color-black, 0.85);
+  border-top: $border-width-thin $border-style $color-gold;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: $z-index-popup;
+  flex-wrap: wrap;
+
+  @include mobile {
+    gap: $spacing-sm;
+    padding: $spacing-sm $spacing-md;
+  }
+}
+
+.hint {
+  @include flex-row-center;
+  gap: $spacing-sm;
+}
+
+.key {
+  @include text-pixel-gold;
+  font-family: $font-family-pixel;
+  font-size: $font-size-sm;
+  font-weight: bold;
+  padding: $spacing-xs $spacing-sm;
+  background-color: rgba($color-gold, 0.1);
+  border: 2px solid $color-gold;
+  border-radius: 4px;
+  min-width: 40px;
+  text-align: center;
+
+  @include mobile {
+    font-size: $font-size-xs;
+    min-width: 32px;
+    padding: 2px $spacing-xs;
+  }
+}
+
+.description {
+  color: $color-white;
+  font-family: $font-family-pixel;
+  font-size: $font-size-sm;
+  text-transform: uppercase;
+
+  @include mobile {
+    font-size: $font-size-xs;
+  }
+}

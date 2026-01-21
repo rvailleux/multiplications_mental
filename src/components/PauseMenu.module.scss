@@ -1,0 +1,101 @@
+@use '../styles/tokens' as *;
+@use '../styles/mixins' as *;
+
+.overlay {
+  @include modal-overlay;
+}
+
+.menuContainer {
+  @include modal-content;
+  @include flex-column-center;
+  gap: $spacing-2xl;
+  min-width: 400px;
+
+  @include mobile {
+    min-width: 300px;
+  }
+}
+
+.title {
+  @include text-pixel-white;
+  font-size: $font-size-3xl;
+  margin: 0;
+  font-family: $font-family-pixel;
+
+  @include mobile {
+    font-size: $font-size-xl;
+  }
+}
+
+.buttonGroup {
+  @include flex-column-center;
+  gap: $spacing-lg;
+  width: 100%;
+}
+
+.menuButton {
+  @include pixel-button-teal;
+  width: 100%;
+  font-size: $font-size-md;
+  padding: $spacing-lg $spacing-xl;
+  text-align: left;
+  transition: $transition-fast;
+
+  &:hover {
+    transform: scale(1.02);
+    box-shadow:
+      $box-shadow-button,
+      0 0 20px rgba($color-gold, 0.5);
+  }
+
+  &:active {
+    transform: translateY(4px);
+    box-shadow: $box-shadow-button-pressed;
+  }
+
+  @include mobile {
+    font-size: $font-size-sm;
+    padding: $spacing-md $spacing-lg;
+  }
+}
+
+.selected {
+  background: $gradient-gold !important;
+  color: $color-black !important;
+  font-weight: bold;
+  border-color: $color-gold-dark;
+  box-shadow: $box-shadow-button, $box-shadow-gold-glow-strong;
+  animation: pulse 1s ease-in-out infinite;
+
+  &:hover {
+    box-shadow: $box-shadow-button, $box-shadow-gold-glow-strong;
+  }
+
+  &:active {
+    box-shadow: $box-shadow-button-pressed, $box-shadow-gold-glow;
+  }
+}
+
+.hint {
+  @include text-pixel-white;
+  font-size: $font-size-xs;
+  margin: 0;
+  font-family: $font-family-pixel;
+  text-align: center;
+  opacity: 0.8;
+
+  @include mobile {
+    font-size: 8px;
+  }
+}
+
+// Pulse animation for selected button
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
