@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import PlayerNameDisplay from '../components/PlayerNameDisplay'
+import JumpingArrow from '../components/JumpingArrow'
+import KeyboardHints from '../components/KeyboardHints'
 import { getCurrentPlayer } from '../types/player'
 import type { GameResult } from './PlayPage'
 import styles from './GameResultsPage.module.scss'
@@ -80,13 +82,15 @@ export default function GameResultsPage() {
   }, [])
 
   /**
-   * Keyboard navigation: ENTER key navigates to homepage
+   * Keyboard navigation: ENTER navigates to homepage, ESC to player select
    * Cleanup event listener on unmount
    */
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent): void => {
       if (e.key === 'Enter') {
         navigate('/home')
+      } else if (e.key === 'Escape') {
+        navigate('/')
       }
     }
 
@@ -118,9 +122,12 @@ export default function GameResultsPage() {
         <div className={styles.stat}>Speed: {speed}</div>
 
         <button onClick={() => navigate('/home')} className={styles.button}>
+          <JumpingArrow visible={true} />
           Continue
         </button>
       </div>
+
+      <KeyboardHints screenId="results" />
     </div>
   )
 }

@@ -113,6 +113,105 @@ useEffect(() => {
 - **Visual feedback** - highlight selected item with distinct styling
 - **Debouncing** if rapid key presses cause issues (usually not needed)
 
+### Jumping Arrow Selection Indicator (MANDATORY)
+
+Every selectable option MUST display a **jumping arrow indicator** (→) next to the currently selected option. This provides clear visual feedback for keyboard navigation.
+
+#### JumpingArrow Component Usage
+
+```typescript
+import JumpingArrow from '../components/JumpingArrow'
+
+// Single option (arrow always visible)
+<button onClick={handleStartGame}>
+  <JumpingArrow visible={true} />
+  🚀 Start Game
+</button>
+
+// Multiple options (arrow moves based on selection state)
+<button onClick={handleSubmit}>
+  <JumpingArrow visible={selectedOption === 'valider'} />
+  Valider
+</button>
+<button onClick={handleRestart}>
+  <JumpingArrow visible={selectedOption === 'restart'} />
+  ↻ Restart
+</button>
+```
+
+#### Implementation Rules
+- **Single arrow visible**: Only ONE jumping arrow should be visible at a time
+- **State-driven**: Arrow visibility controlled by `selectedOption` or `selectedIndex` state
+- **Inside button**: Arrow renders inside the button, before the label text
+- **Animated**: The arrow uses CSS animation for a bouncing effect
+
+### Multi-Option Navigation with useNavigableOptions Hook
+
+For screens with multiple selectable options (e.g., PlayPage with Valider/Restart), use the `useNavigableOptions` hook for standardized navigation.
+
+#### Hook Import and Setup
+
+```typescript
+import { useNavigableOptions } from '../hooks/useNavigableOptions'
+import type { NavigableOption } from '../types/navigation'
+
+// Define callbacks first
+const handleSubmitAnswer = (): void => {
+  formRef.current?.requestSubmit()
+}
+
+const handleRestartGame = (): void => {
+  reset()
+  setScore(0)
+  // ... reset other state
+}
+
+// Initialize the hook
+const {
+  selectedOption,
+  navigateUp,
+  navigateDown,
+  executeSelectedOption,
+  resetToDefault,
+} = useNavigableOptions({
+  options: ['valider', 'restart'] as const,
+  defaultOption: 'valider',
+  onValider: handleSubmitAnswer,
+  onRestart: handleRestartGame,
+})
+```
+
+#### Keyboard Event Handler Integration
+
+```typescript
+useEffect(() => {
+  const handleKeyDown = (e: KeyboardEvent): void => {
+    // Skip if modal/pause menu is open
+    if (pauseMenu.state.isPaused) return
+
+    if (e.key === 'ArrowUp') {
+      e.preventDefault()
+      navigateUp()
+    } else if (e.key === 'ArrowDown') {
+      e.preventDefault()
+      navigateDown()
+    } else if (e.key === 'Enter') {
+      e.preventDefault()
+      executeSelectedOption()
+    }
+  }
+
+  window.addEventListener('keydown', handleKeyDown)
+  return () => window.removeEventListener('keydown', handleKeyDown)
+}, [navigateUp, navigateDown, executeSelectedOption])
+```
+
+#### Hook Features
+- **Cyclic navigation**: Wraps around (last→first, first→last)
+- **Type-safe options**: Uses `NavigableOption` type (`'valider' | 'restart'`)
+- **Callback execution**: `executeSelectedOption()` calls the appropriate handler
+- **Reset capability**: `resetToDefault()` returns to initial selection
+
 ### Mouse Support (SECONDARY Input Method)
 
 #### Constitutional Requirement
@@ -946,6 +1045,7 @@ This file helps Claude Code understand the project context, patterns, and conven
 - TypeScript 5.7.2 (strict mode enabled) + React Router DOM 7.5.0 (for navigation) (011-game-results-screen)
 - localStorage (browser-based persistence) - GameResult[] already saved by PlayPage (011-game-results-screen)
 - TypeScript 5.7.2 (strict mode) + React 19.0.0, React Router DOM 7.5.0, Sass (CSS Modules) (012-keyboard-navigation)
+- localStorage (client-side persistence for selection state) (013-unified-keyboard-ui)
 
 ## Recent Changes
 - 010-player-name-display: Added TypeScript 5.7.2 (strict mode enabled) + React 19.0.0, React Router DOM 7.5.0

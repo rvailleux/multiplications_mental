@@ -40,9 +40,10 @@ test.describe('Keyboard Navigation - Pause Menu', () => {
     await page.screenshot({ path: 'test-results/pause-menu/02-home-page.png' })
 
     // Step 3: Start the game
+    // Note: force:true needed because pulse animation makes element "not stable"
     const startButton = page.getByRole('button', { name: /Start Game/i })
     await expect(startButton).toBeVisible()
-    await startButton.click()
+    await startButton.click({ force: true })
 
     // Step 4: Verify game page loaded
     await expect(page).toHaveURL(/\/play/)
@@ -93,16 +94,14 @@ test.describe('Keyboard Navigation - Pause Menu', () => {
     await expect(page.getByText('Choose Your Player')).toBeVisible()
     await page.keyboard.press('Enter') // Select player
     await page.waitForURL(/\/home/)
+    // Note: force:true needed because pulse animation makes element "not stable"
     const startButton = page.getByRole('button', { name: /Start Game/i })
     await expect(startButton).toBeVisible()
-    await startButton.click()
+    await startButton.click({ force: true })
     await page.waitForURL(/\/play/)
 
     // Wait for game to be fully interactive
     await expect(page.getByText('Score')).toBeVisible()
-
-    // Get initial timer value
-    const timerBefore = await page.getByText(/\d+s/).first().textContent()
 
     // Open pause menu
     await page.keyboard.press('Escape')
@@ -127,9 +126,10 @@ test.describe('Keyboard Navigation - Pause Menu', () => {
     await expect(page.getByText('Choose Your Player')).toBeVisible()
     await page.keyboard.press('Enter') // Select player
     await page.waitForURL(/\/home/)
+    // Note: force:true needed because pulse animation makes element "not stable"
     const startButton = page.getByRole('button', { name: /Start Game/i })
     await expect(startButton).toBeVisible()
-    await startButton.click()
+    await startButton.click({ force: true })
     await page.waitForURL(/\/play/)
 
     // Wait for game to be fully interactive
@@ -158,12 +158,10 @@ test.describe('Keyboard Navigation - Pause Menu', () => {
     await page.keyboard.press('Enter') // Select player
     await page.waitForURL(/\/home/)
 
-    // Extra wait to ensure home page is fully rendered
-    await page.waitForTimeout(1000)
-
+    // Note: force:true needed because pulse animation makes element "not stable"
     const startButton = page.getByRole('button', { name: /Start Game/i })
     await expect(startButton).toBeVisible()
-    await startButton.click()
+    await startButton.click({ force: true })
     await page.waitForURL(/\/play/)
 
     // Wait for game to be fully interactive

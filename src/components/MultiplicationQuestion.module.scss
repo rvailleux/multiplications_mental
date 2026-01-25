@@ -42,9 +42,11 @@
 }
 
 .pixelButton {
-  @include pixel-button-teal;
-  font-size: $font-size-base;
-  padding: 18px $spacing-xl;
+  @include pixel-button-unified;
+}
+
+.pixelButtonSelected {
+  @include pixel-button-selected;
 }
 
 .scorePopup {

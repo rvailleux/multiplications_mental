@@ -65,7 +65,9 @@
   font-weight: bold;
   border-color: $color-gold-dark;
   box-shadow: $box-shadow-button, $box-shadow-gold-glow-strong;
-  animation: pulse 1s ease-in-out infinite;
+  :global {
+    animation: pulse 1s ease-in-out infinite;
+  }
 
   &:hover {
     box-shadow: $box-shadow-button, $box-shadow-gold-glow-strong;
@@ -86,16 +88,5 @@
 
   @include mobile {
     font-size: 8px;
-  }
-}
-
-// Pulse animation for selected button
-@keyframes pulse {
-  0%,
-  100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.05);
   }
 }

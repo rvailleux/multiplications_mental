@@ -25,11 +25,12 @@ describe('JumpingArrow', () => {
     expect(arrow.className).toBeTruthy()
   })
 
-  it('should apply bounce animation via CSS', () => {
+  it('should render as inline element for text flow', () => {
     render(<JumpingArrow visible={true} />)
 
     const arrow = screen.getByText('▶')
-    // Verify the element exists and can have animation applied
+    // Verify the element exists and has styling class
     expect(arrow).toBeInTheDocument()
+    expect(arrow.tagName.toLowerCase()).toBe('span')
   })
 })

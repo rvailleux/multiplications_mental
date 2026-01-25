@@ -1,10 +1,13 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useTimer } from '../hooks/useTimer'
 import { useBackgroundMusic } from '../hooks/useBackgroundMusic'
 import { usePauseMenu } from '../hooks/usePauseMenu'
+import { useNavigableOptions } from '../hooks/useNavigableOptions'
 import ProgressBar from '../components/ProgressBar'
 import MultiplicationQuestion from '../components/MultiplicationQuestion'
 import PauseMenu from '../components/PauseMenu'
+import JumpingArrow from '../components/JumpingArrow'
+import KeyboardHints from '../components/KeyboardHints'
 import { useNavigate } from 'react-router-dom'
 import { getCurrentPlayer } from '../types/player'
 import PlayerNameDisplay from '../components/PlayerNameDisplay'
@@ -41,6 +44,52 @@ export default function PlayPage() {
   const [showPopup, setShowPopup] = useState(false)
   const [lives, setLives] = useState(3)
 
+  // Ref for form submission (allows Enter key to submit when Valider is selected)
+  const formRef = useRef<HTMLFormElement>(null)
+
+  /**
+   * Submit answer handler - submits the current form
+   * @returns void
+   */
+  const handleSubmitAnswer = (): void => {
+    if (formRef.current) {
+      formRef.current.requestSubmit()
+    }
+  }
+
+  /**
+   * Core restart logic - resets all game state
+   * @returns void
+   */
+  const doRestart = (): void => {
+    reset() // Reset the timer
+    setScore(0) // Reset the score
+    setResults([]) // Clear the results
+    setCombo(0) // Reset combo
+    setLives(3) // Reset lives
+    startMusic() // Start new random music
+  }
+
+  // Setup navigable options for Valider/Restart selection
+  const { selectedOption, navigateUp, navigateDown, executeSelectedOption, resetToDefault } =
+    useNavigableOptions({
+      options: ['valider', 'restart'] as const,
+      defaultOption: 'valider',
+      onValider: handleSubmitAnswer,
+      onRestart: () => {
+        doRestart()
+        // Note: resetToDefault is called after via useEffect below
+      },
+    })
+
+  // Reset selection to default after restart to prevent Enter from re-triggering restart
+  useEffect(() => {
+    // When score resets to 0 and results are empty (restart condition), reset selection
+    if (score === 0 && results.length === 0) {
+      resetToDefault()
+    }
+  }, [score, results.length, resetToDefault])
+
   // Setup pause menu
   const pauseMenu = usePauseMenu({
     onQuit: () => {
@@ -59,19 +108,33 @@ export default function PlayPage() {
     }
   }, [currentPlayer, navigate])
 
-  /** Handle ESC key to open pause menu */
+  /** Handle keyboard navigation: ESC for pause, Arrow keys for option navigation */
   useEffect(() => {
-    const handleEscKey = (e: KeyboardEvent): void => {
-      if (e.key === 'Escape' && !pauseMenu.state.isPaused) {
+    const handleKeyDown = (e: KeyboardEvent): void => {
+      // Don't handle keys when pause menu is open
+      if (pauseMenu.state.isPaused) {
+        return
+      }
+
+      if (e.key === 'Escape') {
         e.preventDefault()
         pause()
         pauseMenu.openPauseMenu()
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault()
+        navigateUp()
+      } else if (e.key === 'ArrowDown') {
+        e.preventDefault()
+        navigateDown()
+      } else if (e.key === 'Enter') {
+        e.preventDefault()
+        executeSelectedOption()
       }
     }
 
-    window.addEventListener('keydown', handleEscKey)
-    return () => window.removeEventListener('keydown', handleEscKey)
-  }, [pauseMenu, pause])
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [pauseMenu.state.isPaused, pause, navigateUp, navigateDown, executeSelectedOption])
 
   /** Calculate progress percentage based on elapsed time */
   const progress = ((totalTime - secondsLeft) / totalTime) * 100
@@ -192,21 +255,19 @@ export default function PlayPage() {
         combo={combo}
         scorePopup={scorePopup}
         showPopup={showPopup}
+        showValiderArrow={selectedOption === 'valider'}
+        formRef={formRef}
       />
 
       <div className={styles.buttonGroup}>
         <button
-          className={styles.pixelButton}
+          className={`${styles.pixelButton} ${selectedOption === 'restart' ? styles.pixelButtonSelected : ''}`}
           onClick={() => {
-            reset() // Reset the timer
-            setScore(0) // Reset the score
-            setResults([]) // Clear the results
-            setCombo(0) // Reset combo
-            setLives(3) // Reset lives
-            startMusic() // Start new random music
+            doRestart()
+            resetToDefault()
           }}
         >
-          ↻ Restart
+          <JumpingArrow visible={selectedOption === 'restart'} />↻ Restart
         </button>
       </div>
 
@@ -219,6 +280,8 @@ export default function PlayPage() {
       </div>
 
       <div className={styles.characterSprite}>🍄</div>
+
+      <KeyboardHints screenId="play" />
 
       <PauseMenu
         isPaused={pauseMenu.state.isPaused}

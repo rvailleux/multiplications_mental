@@ -62,6 +62,20 @@ h1 {
   @include text-pixel-white;
 }
 
+// === GLOBAL ANIMATIONS ===
+// These keyframes are used by CSS Modules via the pixel-button-selected mixin
+// Defined here to be globally accessible without CSS Modules scoping
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
 // === RESPONSIVE ADJUSTMENTS ===
 @include mobile {
   :root {

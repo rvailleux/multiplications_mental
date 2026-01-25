@@ -1,14 +1,6 @@
 // === CORE ANIMATIONS (from index.css) ===
-
-@keyframes pulse {
-  0%,
-  100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.1);
-  }
-}
+// Note: The main `pulse` animation is defined in _base.scss for global access
+// This file contains other animations that are used locally or can be scoped
 
 @keyframes bounce {
   0%,

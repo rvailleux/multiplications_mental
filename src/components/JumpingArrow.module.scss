@@ -3,9 +3,7 @@
 .jumpingArrow {
   display: inline-block;
   margin-right: $spacing-sm;
-  color: $color-gold;
-  font-size: $font-size-lg;
-  animation: bounce 0.6s ease-in-out infinite;
-  will-change: transform;
-  text-shadow: $text-shadow-black-lg;
+  color: inherit;
+  font-size: inherit;
+  text-shadow: $text-shadow-black-sm;
 }

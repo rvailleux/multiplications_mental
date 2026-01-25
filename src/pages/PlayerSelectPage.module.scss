@@ -61,14 +61,11 @@
   &.selected {
     @include card-gold;
     border-color: $color-gold-dark;
-    transform: scale(1.05);
+    box-shadow: $box-shadow-button, $box-shadow-gold-glow-strong;
+    :global {
+      animation: pulse 1s ease-in-out infinite;
+    }
   }
-}
-
-.cursor {
-  font-size: $font-size-lg;
-  margin-right: $spacing-md;
-  animation: bounce 1s ease-in-out infinite;
 }
 
 .playerName {
@@ -76,22 +73,6 @@
   color: $color-black;
   font-weight: bold;
   text-shadow: 2px 2px 0 rgba($color-white, 0.5);
-}
-
-.instructions {
-  background: $gradient-teal;
-  border: $border-width-thin $border-style $color-black;
-  padding: $spacing-base;
-  text-align: center;
-  width: 100%;
-  box-shadow: inset 0 -4px 0 rgba($color-black, 0.2);
-}
-
-.instructionText {
-  color: $color-white;
-  font-size: $font-size-xs;
-  text-shadow: $text-shadow-black-sm;
-  margin-bottom: $spacing-xs;
 }
 
 .characterSprite {

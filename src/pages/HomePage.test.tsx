@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, fireEvent } from '@testing-library/react'
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { MemoryRouter } from 'react-router-dom'
 import HomePage from './HomePage'
@@ -632,6 +632,59 @@ describe('HomePage - Game Metrics Display', () => {
     // Check that metrics container has dark grey styling
     const metricsContainer = container.querySelector('[data-testid="metrics-container"]')
     expect(metricsContainer).toBeInTheDocument()
+  })
+})
+
+describe('HomePage - Jumping Arrow', () => {
+  beforeEach(() => {
+    localStorage.clear()
+    vi.clearAllMocks()
+
+    localStorage.setItem('players', JSON.stringify([{ id: 'jules', name: 'Jules' }]))
+    setCurrentPlayerId('jules')
+    localStorage.setItem('scores', JSON.stringify([]))
+  })
+
+  it('should display jumping arrow next to Start Game button', () => {
+    render(
+      <MemoryRouter>
+        <HomePage />
+      </MemoryRouter>
+    )
+
+    // Arrow symbol should be visible
+    expect(screen.getByText('▶')).toBeInTheDocument()
+  })
+
+  it('should keep arrow visible when arrow keys are pressed (single option)', () => {
+    render(
+      <MemoryRouter>
+        <HomePage />
+      </MemoryRouter>
+    )
+
+    // Arrow keys should do nothing gracefully (single option)
+    const arrowDownEvent = new KeyboardEvent('keydown', { key: 'ArrowDown' })
+    window.dispatchEvent(arrowDownEvent)
+
+    const arrowUpEvent = new KeyboardEvent('keydown', { key: 'ArrowUp' })
+    window.dispatchEvent(arrowUpEvent)
+
+    // Arrow should still be visible (no crash, no error)
+    expect(screen.getByText('▶')).toBeInTheDocument()
+  })
+
+  it('should navigate to play page when Start Game button is clicked', () => {
+    render(
+      <MemoryRouter>
+        <HomePage />
+      </MemoryRouter>
+    )
+
+    const startButton = screen.getByRole('button', { name: /start game/i })
+    fireEvent.click(startButton)
+
+    expect(mockNavigate).toHaveBeenCalledWith('/play')
   })
 })
 
