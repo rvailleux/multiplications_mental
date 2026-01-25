@@ -45,6 +45,41 @@
   font-weight: bold;
 }
 
+// Unified button with hover state (matches PauseMenu)
+@mixin pixel-button-unified {
+  @include pixel-button-teal;
+  font-size: $font-size-md;
+  padding: $spacing-lg $spacing-xl;
+
+  &:hover {
+    transform: scale(1.02);
+    box-shadow:
+      $box-shadow-button,
+      0 0 20px rgba($color-gold, 0.5);
+  }
+}
+
+// Selected state for buttons (gold + pulse)
+// Note: pulse animation is defined globally in _base.scss
+@mixin pixel-button-selected {
+  background: $gradient-gold !important;
+  color: $color-black !important;
+  font-weight: bold;
+  border-color: $color-gold-dark;
+  box-shadow: $box-shadow-button, $box-shadow-gold-glow-strong;
+  :global {
+    animation: pulse 1s ease-in-out infinite;
+  }
+
+  &:hover {
+    box-shadow: $box-shadow-button, $box-shadow-gold-glow-strong;
+  }
+
+  &:active {
+    box-shadow: $box-shadow-button-pressed, $box-shadow-gold-glow;
+  }
+}
+
 // === CARD MIXINS ===
 
 @mixin card-base {

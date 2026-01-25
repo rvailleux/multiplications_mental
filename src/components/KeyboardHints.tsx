@@ -39,14 +39,16 @@ export const KEYBOARD_HINTS_CONFIG: Record<ScreenId, KeyboardHint[]> = {
     { key: 'ESC', description: 'Exit' },
   ],
   home: [
-    { key: 'Enter', description: 'Start Game' },
+    { key: '↑↓', description: 'Navigate' },
+    { key: 'Enter', description: 'Select' },
     { key: 'ESC', description: 'Change Player' },
   ],
   play: [
-    { key: 'Type', description: 'Answer' },
-    { key: 'Enter', description: 'Submit' },
+    { key: '0-9', description: 'Type Answer' },
+    { key: 'Backspace', description: 'Delete' },
+    { key: '↑↓', description: 'Navigate Options' },
+    { key: 'Enter', description: 'Confirm' },
     { key: 'ESC', description: 'Pause' },
-    { key: '↑↓', description: 'Navigate' },
   ],
   'pause-menu': [
     { key: '↑↓', description: 'Navigate' },

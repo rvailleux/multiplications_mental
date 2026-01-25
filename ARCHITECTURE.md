@@ -41,7 +41,8 @@ L'application suit une architecture **Component-Based** avec séparation des res
 │                  │   │                 │   │                      │
 │ - PlayerSelect   │◄──┤ - ProgressBar   │◄──┤ - useTimer           │
 │ - HomePage       │   │ - MultiQuestion │   │ - usePlayerMgmt      │
-│ - PlayPage       │   │                 │   │ - useBackgroundMusic │
+│ - PlayPage       │   │ - JumpingArrow  │   │ - useBackgroundMusic │
+│ - GameResults    │   │ - KeyboardHints │   │ - useNavigableOptions│
 └──────────────────┘   └─────────────────┘   └──────────────────────┘
          │                      │                       │
          ▼                      ▼                       ▼
@@ -79,7 +80,8 @@ src/
 │   ├── useBackgroundMusic.ts        # Contrôle de la musique
 │   └── *.test.ts                    # Tests des hooks
 ├── types/              # Types et utilitaires TypeScript
-│   └── player.ts                    # Types Player + utils localStorage
+│   ├── player.ts                    # Types Player + utils localStorage
+│   └── navigation.ts                # Types NavigableOption + configs
 ├── test/               # Configuration des tests
 │   └── setup.ts                     # Setup global pour les tests
 ├── App.tsx             # Composant racine avec routage
@@ -159,6 +161,9 @@ type ScoreEntry = {
 - **useTimer** : Encapsulation de la logique de minuteur
 - **usePlayerManagement** : Gestion de l'état des joueurs et localStorage
 - **useBackgroundMusic** : Contrôle de la musique de fond
+- **useNavigableOptions** : Navigation clavier entre options (Valider/Restart)
+- **useListNavigation** : Navigation clavier générique dans une liste (cyclic)
+- **usePauseMenu** : Gestion du menu pause avec navigation clavier
 - **Séparation des préoccupations** : logique métier vs présentation
 - **Réutilisabilité** : hooks indépendants du contexte UI
 
@@ -176,7 +181,32 @@ type ScoreEntry = {
 - **Event listeners** : addEventListener/removeEventListener dans useEffect
 - **Cleanup pattern** : return cleanup function pour éviter les fuites mémoire
 - **Bounded navigation** : Math.max/Math.min pour limiter l'index
-- **Multi-key support** : ArrowUp, ArrowDown, Enter
+- **Multi-key support** : ArrowUp, ArrowDown, Enter, Escape
+- **Cyclic navigation** : useNavigableOptions hook pour navigation circulaire
+- **Visual feedback** : JumpingArrow component pour indicateur de sélection
+- **Context hints** : KeyboardHints component affiche les touches disponibles
+
+#### useNavigableOptions Hook
+```typescript
+// Types from src/types/navigation.ts
+type NavigableOption = 'valider' | 'restart'
+
+interface NavigableOptionsConfig {
+  options: readonly NavigableOption[]
+  defaultOption: NavigableOption
+  onValider: () => void
+  onRestart: () => void
+}
+
+// Usage
+const { selectedOption, navigateUp, navigateDown, executeSelectedOption } =
+  useNavigableOptions({
+    options: ['valider', 'restart'],
+    defaultOption: 'valider',
+    onValider: () => formRef.current?.requestSubmit(),
+    onRestart: () => handleRestartGame(),
+  })
+```
 
 ## Gestion des États
 

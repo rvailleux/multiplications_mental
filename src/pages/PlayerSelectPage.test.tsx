@@ -37,24 +37,29 @@ describe('PlayerSelectPage', () => {
     expect(screen.getByText('Achille')).toBeInTheDocument()
   })
 
-  it('should display keyboard navigation instructions', () => {
+  it('should display keyboard hints via KeyboardHints component', () => {
     renderWithRouter(<PlayerSelectPage />)
-    expect(screen.getByText('↑ ↓ Arrow Keys to Navigate')).toBeInTheDocument()
-    expect(screen.getByText('↵ Enter to Select')).toBeInTheDocument()
+    // KeyboardHints component renders these for player-select screen
+    expect(screen.getByText('Navigate')).toBeInTheDocument()
+    expect(screen.getByText('Select')).toBeInTheDocument()
+  })
+
+  it('should show JumpingArrow on first player by default', () => {
+    renderWithRouter(<PlayerSelectPage />)
+    // JumpingArrow renders '▶' character
+    const arrows = screen.getAllByText('▶')
+    expect(arrows.length).toBe(1)
   })
 
   it('should navigate to next player with ArrowDown key', () => {
     renderWithRouter(<PlayerSelectPage />)
 
-    // Initially, first player should be selected (cursor visible)
-    const playerCards = screen.getAllByText(/Jules|Achille/)
-    expect(playerCards[0].parentElement).toHaveTextContent('▶')
-
     // Press ArrowDown to select second player
     fireEvent.keyDown(window, { key: 'ArrowDown' })
 
-    // Second player should now show cursor
-    expect(playerCards[1].parentElement).toHaveTextContent('▶')
+    // The arrow should now be on the second player card
+    const achilleCard = screen.getByText('Achille').closest('div')
+    expect(achilleCard).toHaveTextContent('▶')
   })
 
   it('should navigate to previous player with ArrowUp key', () => {
@@ -66,32 +71,31 @@ describe('PlayerSelectPage', () => {
     // Press ArrowUp to go back to first player
     fireEvent.keyDown(window, { key: 'ArrowUp' })
 
-    const playerCards = screen.getAllByText(/Jules|Achille/)
-    expect(playerCards[0].parentElement).toHaveTextContent('▶')
+    const julesCard = screen.getByText('Jules').closest('div')
+    expect(julesCard).toHaveTextContent('▶')
   })
 
-  it('should not navigate above first player', () => {
+  it('should wrap around to last player when pressing ArrowUp at first', () => {
     renderWithRouter(<PlayerSelectPage />)
 
-    // Try to press ArrowUp when already at first player
+    // Press ArrowUp when already at first player - should wrap to last
     fireEvent.keyDown(window, { key: 'ArrowUp' })
 
-    const playerCards = screen.getAllByText(/Jules|Achille/)
-    expect(playerCards[0].parentElement).toHaveTextContent('▶')
+    const achilleCard = screen.getByText('Achille').closest('div')
+    expect(achilleCard).toHaveTextContent('▶')
   })
 
-  it('should not navigate below last player', () => {
+  it('should wrap around to first player when pressing ArrowDown at last', () => {
     renderWithRouter(<PlayerSelectPage />)
 
     // Navigate to last player
     fireEvent.keyDown(window, { key: 'ArrowDown' })
 
-    // Try to go beyond last player
+    // Press ArrowDown again - should wrap to first
     fireEvent.keyDown(window, { key: 'ArrowDown' })
 
-    const playerCards = screen.getAllByText(/Jules|Achille/)
-    // Should still be on second player
-    expect(playerCards[1].parentElement).toHaveTextContent('▶')
+    const julesCard = screen.getByText('Jules').closest('div')
+    expect(julesCard).toHaveTextContent('▶')
   })
 
   it('should select player and navigate to home on Enter key', () => {

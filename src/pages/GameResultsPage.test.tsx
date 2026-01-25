@@ -298,7 +298,7 @@ describe('GameResultsPage - Keyboard Navigation', () => {
     removeEventListenerSpy.mockRestore()
   })
 
-  it('should ignore non-ENTER keys', () => {
+  it('should ignore non-navigation keys', () => {
     render(
       <MemoryRouter>
         <GameResultsPage />
@@ -307,8 +307,8 @@ describe('GameResultsPage - Keyboard Navigation', () => {
 
     mockNavigate.mockClear()
 
-    const escapeEvent = new KeyboardEvent('keydown', { key: 'Escape' })
-    window.dispatchEvent(escapeEvent)
+    const spaceEvent = new KeyboardEvent('keydown', { key: ' ' })
+    window.dispatchEvent(spaceEvent)
 
     expect(mockNavigate).not.toHaveBeenCalled()
   })
@@ -334,6 +334,58 @@ describe('GameResultsPage - Mouse Navigation', () => {
     fireEvent.click(continueButton)
 
     expect(mockNavigate).toHaveBeenCalledWith('/home')
+  })
+})
+
+describe('GameResultsPage - Jumping Arrow', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    mockLocationState = {
+      score: 500,
+      results: [{ question: '3 x 7', correct: true }],
+    }
+  })
+
+  it('should display jumping arrow next to Continue button', () => {
+    render(
+      <MemoryRouter>
+        <GameResultsPage />
+      </MemoryRouter>
+    )
+
+    // Arrow symbol should be visible
+    expect(screen.getByText('▶')).toBeInTheDocument()
+  })
+
+  it('should navigate to player select when Escape key is pressed', () => {
+    render(
+      <MemoryRouter>
+        <GameResultsPage />
+      </MemoryRouter>
+    )
+
+    const escapeEvent = new KeyboardEvent('keydown', { key: 'Escape' })
+    window.dispatchEvent(escapeEvent)
+
+    expect(mockNavigate).toHaveBeenCalledWith('/')
+  })
+
+  it('should keep arrow visible when arrow keys are pressed (single option)', () => {
+    render(
+      <MemoryRouter>
+        <GameResultsPage />
+      </MemoryRouter>
+    )
+
+    // Arrow keys should do nothing gracefully (single option)
+    const arrowDownEvent = new KeyboardEvent('keydown', { key: 'ArrowDown' })
+    window.dispatchEvent(arrowDownEvent)
+
+    const arrowUpEvent = new KeyboardEvent('keydown', { key: 'ArrowUp' })
+    window.dispatchEvent(arrowUpEvent)
+
+    // Arrow should still be visible (no crash, no error)
+    expect(screen.getByText('▶')).toBeInTheDocument()
   })
 })
 

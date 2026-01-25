@@ -46,10 +46,8 @@
 }
 
 .pixelButton {
-  @include pixel-button-teal;
-  font-size: $font-size-md;
-  padding: 18px $spacing-xl;
-  animation: softBlink 2s ease-in-out infinite;
+  @include pixel-button-unified;
+  @include pixel-button-selected; // Single button = always selected
 }
 
 .scoresTitle {

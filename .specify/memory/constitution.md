@@ -1,26 +1,24 @@
 <!--
 SYNC IMPACT REPORT:
-Version Change: 1.2.0 → 1.3.0
+Version Change: 1.3.0 → 1.3.1
 Modified Principles:
-  - Principle I (Test-First Development): Added E2E testing requirements in test pyramid
+  - Principle VIII (E2E Testing): Strengthened requirement that EVERY new feature MUST have meaningful Playwright tests
 Added Sections:
-  - Principle VIII: End-to-End Testing with Playwright (NON-NEGOTIABLE)
-    - Automated E2E test scenarios for each feature
-    - Browser automation testing requirements
-    - User journey validation with Playwright
-    - Screenshot and visual regression testing
+  - "Mandatory E2E Tests for New Features" subsection in Principle VIII
+  - Feature completion checklist requiring E2E tests
 Removed Sections: None
 Templates Status:
-  ✅ spec-template.md - MUST add E2E Test Scenarios section
-  ✅ tasks-template.md - MUST include E2E testing tasks in each user story phase
-  ✅ plan-template.md - MUST include E2E testing in technical context
+  ✅ spec-template.md - Already requires E2E Test Scenarios section
+  ✅ tasks-template.md - Already includes E2E testing tasks
+  ✅ plan-template.md - Already includes E2E testing in technical context
   ⚠ CLAUDE.md - Should document Playwright testing patterns and examples
 Follow-up TODOs:
   - Update CLAUDE.md with Playwright E2E testing code examples
   - Document E2E test patterns for keyboard navigation
   - Add E2E testing checklist for feature completion
-  - Create visual regression testing workflow
-Rationale: MINOR version bump - Added new principle VIII establishing mandatory E2E testing with Playwright for all features. Ensures complete user journeys are validated beyond unit/integration tests. Prevents regressions in user flows and validates real browser interactions including keyboard navigation, visual rendering, and full application state.
+Rationale: PATCH version bump - Strengthened and clarified existing E2E testing requirements to emphasize that meaningful Playwright tests are mandatory for every new feature. No new principles added; existing Principle VIII enhanced with explicit feature-driven requirements and completion criteria.
+Previous Changes (1.2.0 → 1.3.0):
+  - Added Principle VIII: End-to-End Testing with Playwright
 Previous Changes (1.1.0 → 1.2.0):
   - Added Principle VII: Error Handling & Resilience
 Previous Changes (1.0.0 → 1.1.0):
@@ -104,7 +102,59 @@ All UI/UX MUST follow retro gaming design principles with keyboard-first interac
 - **Event handlers**: Implement keyboard listeners with proper cleanup in useEffect
 - **Testing**: Verify both keyboard and mouse paths work in component tests
 
-**Rationale**: Keyboard-first navigation provides a superior gaming experience reminiscent of classic consoles while maintaining modern web accessibility. Dual input support ensures the game is playable on both desktop (keyboard preferred) and touch/mobile devices (click/tap). The retro aesthetic creates an immersive, nostalgic experience that enhances engagement.
+#### Jumping Arrow Selection Indicator (MANDATORY)
+All selectable options MUST display a **jumping arrow indicator** (→) next to the currently selected option:
+- **Visual feedback**: Animated arrow bounces to draw attention to current selection
+- **Single selection**: Only ONE arrow visible at a time across all options
+- **State-driven**: Arrow visibility controlled by `selectedOption` state
+- **Component**: Use `JumpingArrow` component with `visible` prop
+
+**Example Pattern**:
+```typescript
+// Single option (always selected)
+<button onClick={handleAction}>
+  <JumpingArrow visible={true} />
+  Start Game
+</button>
+
+// Multiple options (arrow moves between them)
+<button onClick={handleSubmit}>
+  <JumpingArrow visible={selectedOption === 'valider'} />
+  Valider
+</button>
+<button onClick={handleRestart}>
+  <JumpingArrow visible={selectedOption === 'restart'} />
+  Restart
+</button>
+```
+
+#### Multi-Option Navigation with useNavigableOptions Hook
+For screens with multiple selectable options, use the `useNavigableOptions` hook:
+- **Cyclic navigation**: Arrow keys wrap around (last → first, first → last)
+- **State management**: Hook manages `selectedOption` state and navigation functions
+- **Action execution**: `executeSelectedOption()` calls the callback for current selection
+
+**Hook Usage Pattern**:
+```typescript
+const {
+  selectedOption,
+  navigateUp,
+  navigateDown,
+  executeSelectedOption,
+} = useNavigableOptions({
+  options: ['valider', 'restart'] as const,
+  defaultOption: 'valider',
+  onValider: () => formRef.current?.requestSubmit(),
+  onRestart: () => handleRestartGame(),
+})
+
+// In keyboard event handler:
+if (e.key === 'ArrowUp') navigateUp()
+if (e.key === 'ArrowDown') navigateDown()
+if (e.key === 'Enter') executeSelectedOption()
+```
+
+**Rationale**: Keyboard-first navigation provides a superior gaming experience reminiscent of classic consoles while maintaining modern web accessibility. Dual input support ensures the game is playable on both desktop (keyboard preferred) and touch/mobile devices (click/tap). The retro aesthetic creates an immersive, nostalgic experience that enhances engagement. The jumping arrow indicator provides clear visual feedback of the current selection, essential for keyboard navigation where mouse cursor position isn't relevant.
 
 ### VII. Error Handling & Resilience (NON-NEGOTIABLE)
 
@@ -158,6 +208,26 @@ useEffect(() => {
 
 All features MUST have automated end-to-end tests validating complete user journeys:
 
+#### Mandatory E2E Tests for New Features (CRITICAL)
+
+**Every new feature MUST include meaningful Playwright E2E tests before it can be considered complete.**
+
+This is a NON-NEGOTIABLE requirement:
+- **No feature merges without E2E tests**: PRs adding new features MUST include corresponding E2E tests
+- **User journey coverage**: E2E tests MUST validate the complete user flow, not just isolated actions
+- **Meaningful assertions**: Tests MUST verify actual user-visible outcomes, not implementation details
+- **Keyboard + mouse validation**: Tests MUST cover both input methods (constitutional UX requirement)
+- **Visual state capture**: Screenshots MUST be captured at key states for regression detection
+
+**Feature Completion Checklist** (all items MUST be checked before feature is complete):
+- [ ] E2E test file created in `tests/e2e/[feature-name].spec.ts`
+- [ ] At least one E2E test per user story/acceptance scenario
+- [ ] Keyboard navigation tested (ArrowUp/Down, Enter, Escape)
+- [ ] Mouse interactions tested (clicks, hover states)
+- [ ] Screenshots captured at key states
+- [ ] All E2E tests pass locally (`npx playwright test`)
+- [ ] No flaky tests (deterministic, no arbitrary timeouts)
+
 #### E2E Test Requirements
 - **Feature-level E2E tests**: Every user story MUST have at least one E2E test validating the complete flow
 - **Playwright framework**: Use Playwright for browser automation (already configured in project)
@@ -194,13 +264,14 @@ test('User Story 1: Player selects character and starts game', async ({ page }) 
 
 #### Test Organization
 - **File location**: `tests/e2e/[feature-name].spec.ts`
-- **One file per user story**: Group related scenarios together
+- **One file per feature/user story**: Group related scenarios together
 - **Descriptive test names**: Match acceptance scenarios from spec.md
 - **Screenshot naming**: `[step-number]-[description].png` for visual tracking
 - **Test data cleanup**: Reset localStorage/state between tests
 - **Deterministic tests**: No flaky tests - use proper waits, not arbitrary timeouts
 
 #### When to Write E2E Tests
+- **For EVERY new feature**: This is mandatory, not optional
 - **After unit tests pass**: E2E tests come after component/unit tests in TDD cycle
 - **Before feature completion**: E2E tests MUST pass before marking user story complete
 - **For each user story**: Minimum one E2E test per user story in spec.md
@@ -214,7 +285,7 @@ test('User Story 1: Player selects character and starts game', async ({ page }) 
 - **Screenshot evidence**: Capture key states for debugging and visual validation
 - **Keyboard + mouse coverage**: Validate both input methods work (constitutional requirement)
 
-**Rationale**: E2E tests validate the complete user experience in a real browser, catching issues that unit and integration tests miss. Playwright enables reliable browser automation with excellent developer experience. E2E tests serve as living documentation of user journeys and prevent regressions in complex multi-step flows. For a gaming application with keyboard-first navigation, E2E tests are essential to validate the actual user experience matches the design.
+**Rationale**: E2E tests validate the complete user experience in a real browser, catching issues that unit and integration tests miss. Playwright enables reliable browser automation with excellent developer experience. E2E tests serve as living documentation of user journeys and prevent regressions in complex multi-step flows. For a gaming application with keyboard-first navigation, E2E tests are essential to validate the actual user experience matches the design. Making E2E tests mandatory for every new feature ensures consistent quality and prevents technical debt accumulation.
 
 ## Development Workflow
 
@@ -234,7 +305,7 @@ test('User Story 1: Player selects character and starts game', async ({ page }) 
    - **Test descriptions**: Must accurately match what's being tested
    - **UX Testing**: Verify both keyboard AND mouse interactions work
    - Implement feature to pass unit tests
-   - **Write E2E tests**: Create Playwright tests for user journeys from spec.md
+   - **Write E2E tests**: Create Playwright tests for user journeys from spec.md (MANDATORY)
    - **Validate E2E tests fail**: Ensure E2E tests fail before full integration
    - Complete implementation to pass all tests (unit + E2E)
    - Never skip tests or implement before testing
@@ -267,6 +338,7 @@ test('User Story 1: Player selects character and starts game', async ({ page }) 
 ### Code Review Standards
 
 - All PRs must verify constitution compliance
+- **E2E tests required**: PRs adding features MUST include E2E tests (no exceptions)
 - Complexity must be justified in PR description
 - Breaking changes require migration plan
 - Test coverage must not decrease
@@ -279,6 +351,7 @@ test('User Story 1: Player selects character and starts game', async ({ page }) 
 - **TypeScript 5.7+** - Latest language features
 - **Vite 6.2+** - Fast build tool (no Webpack)
 - **Vitest 4.0+** - Modern test runner (no Jest)
+- **Playwright** - E2E browser automation testing
 - **Happy-DOM** - Lightweight test environment
 - **ESLint + Prettier** - Consistent code style
 - **localStorage** - Client-side persistence (no backend yet)
@@ -317,4 +390,4 @@ test('User Story 1: Player selects character and starts game', async ({ page }) 
 
 Use **CLAUDE.md** for runtime development guidance and project context. The constitution defines non-negotiable principles; CLAUDE.md provides practical implementation patterns.
 
-**Version**: 1.3.0 | **Ratified**: 2026-01-13 | **Last Amended**: 2026-01-19
+**Version**: 1.3.1 | **Ratified**: 2026-01-13 | **Last Amended**: 2026-01-24

@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen, waitFor, fireEvent } from '@testing-library/react'
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { MemoryRouter } from 'react-router-dom'
 import PlayPage from './PlayPage'
@@ -21,6 +21,21 @@ vi.mock('../hooks/useBackgroundMusic', () => ({
     stopMusic: vi.fn(),
     isPlaying: false,
     currentTrack: null,
+  }),
+}))
+
+// Mock pause menu hook
+vi.mock('../hooks/usePauseMenu', () => ({
+  usePauseMenu: () => ({
+    state: {
+      isPaused: false,
+      selectedOption: 'continue',
+      previousFocusElement: null,
+    },
+    openPauseMenu: vi.fn(),
+    closePauseMenu: vi.fn(),
+    toggleOption: vi.fn(),
+    confirmSelection: vi.fn(),
   }),
 }))
 
@@ -437,5 +452,118 @@ describe('PlayPage - Player Info in Saved Scores', () => {
     // Cleanup
     consoleErrorSpy.mockRestore()
     setItemSpy.mockRestore()
+  })
+})
+
+describe('PlayPage - Option Navigation', () => {
+  beforeEach(() => {
+    localStorage.clear()
+    vi.clearAllMocks()
+
+    localStorage.setItem('players', JSON.stringify([{ id: 'jules', name: 'Jules' }]))
+    setCurrentPlayerId('jules')
+  })
+
+  it('should default to Valider option selected on load', () => {
+    render(
+      <MemoryRouter>
+        <PlayPage />
+      </MemoryRouter>
+    )
+
+    // Jumping arrow should be next to Valider button (visible on Valider, not on Restart)
+    const validerButton = screen.getByRole('button', { name: /valider/i })
+    expect(validerButton.textContent).toContain('▶')
+
+    const restartButton = screen.getByRole('button', { name: /restart/i })
+    expect(restartButton.textContent).not.toContain('▶')
+  })
+
+  it('should navigate to Restart option with ArrowDown', async () => {
+    render(
+      <MemoryRouter>
+        <PlayPage />
+      </MemoryRouter>
+    )
+
+    // Press ArrowDown
+    fireEvent.keyDown(window, { key: 'ArrowDown' })
+
+    // Wait for state update
+    await waitFor(() => {
+      // Arrow should move to Restart
+      const restartButton = screen.getByRole('button', { name: /restart/i })
+      expect(restartButton.textContent).toContain('▶')
+    })
+
+    const validerButton = screen.getByRole('button', { name: /valider/i })
+    expect(validerButton.textContent).not.toContain('▶')
+  })
+
+  it('should navigate back to Valider with ArrowUp', async () => {
+    render(
+      <MemoryRouter>
+        <PlayPage />
+      </MemoryRouter>
+    )
+
+    // Navigate down first
+    fireEvent.keyDown(window, { key: 'ArrowDown' })
+
+    // Wait for navigation to Restart
+    await waitFor(() => {
+      const restartButton = screen.getByRole('button', { name: /restart/i })
+      expect(restartButton.textContent).toContain('▶')
+    })
+
+    // Navigate back up
+    fireEvent.keyDown(window, { key: 'ArrowUp' })
+
+    // Wait for navigation back to Valider
+    await waitFor(() => {
+      const validerButton = screen.getByRole('button', { name: /valider/i })
+      expect(validerButton.textContent).toContain('▶')
+    })
+  })
+
+  it('should wrap around when navigating down from Restart', async () => {
+    render(
+      <MemoryRouter>
+        <PlayPage />
+      </MemoryRouter>
+    )
+
+    // Navigate to Restart
+    fireEvent.keyDown(window, { key: 'ArrowDown' })
+
+    // Wait for navigation to Restart
+    await waitFor(() => {
+      const restartButton = screen.getByRole('button', { name: /restart/i })
+      expect(restartButton.textContent).toContain('▶')
+    })
+
+    // Navigate down again - should wrap to Valider
+    fireEvent.keyDown(window, { key: 'ArrowDown' })
+
+    await waitFor(() => {
+      const validerButton = screen.getByRole('button', { name: /valider/i })
+      expect(validerButton.textContent).toContain('▶')
+    })
+  })
+
+  it('should wrap around when navigating up from Valider', async () => {
+    render(
+      <MemoryRouter>
+        <PlayPage />
+      </MemoryRouter>
+    )
+
+    // Navigate up from Valider - should wrap to Restart
+    fireEvent.keyDown(window, { key: 'ArrowUp' })
+
+    await waitFor(() => {
+      const restartButton = screen.getByRole('button', { name: /restart/i })
+      expect(restartButton.textContent).toContain('▶')
+    })
   })
 })

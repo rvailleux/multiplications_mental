@@ -101,9 +101,6 @@ test.describe('Keyboard Navigation - Pause Menu', () => {
     // Wait for game to be fully interactive
     await expect(page.getByText('Score')).toBeVisible()
 
-    // Get initial timer value
-    const timerBefore = await page.getByText(/\d+s/).first().textContent()
-
     // Open pause menu
     await page.keyboard.press('Escape')
     await expect(page.getByText('⏸ PAUSE ⏸')).toBeVisible()

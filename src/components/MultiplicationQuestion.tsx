@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import JumpingArrow from './JumpingArrow'
 import styles from './MultiplicationQuestion.module.scss'
 
 /**
@@ -16,6 +17,10 @@ export interface MultiplicationQuestionProps {
   scorePopup?: string
   /** Whether to show score popup animation */
   showPopup?: boolean
+  /** Whether to show jumping arrow next to Valider button */
+  showValiderArrow?: boolean
+  /** Optional ref to the form element for programmatic submission */
+  formRef?: React.RefObject<HTMLFormElement | null>
 }
 
 /**
@@ -36,6 +41,8 @@ const MultiplicationQuestion: React.FC<MultiplicationQuestionProps> = ({
   combo = 0,
   scorePopup = '',
   showPopup = false,
+  showValiderArrow = true,
+  formRef,
 }) => {
   const [factorA, setFactorA] = useState(1)
   const [factorB, setFactorB] = useState(1)
@@ -97,7 +104,7 @@ const MultiplicationQuestion: React.FC<MultiplicationQuestionProps> = ({
         <div className={styles.questionText}>
           {factorA} x {factorB}?
         </div>
-        <form onSubmit={handleSubmit} className={styles.form}>
+        <form onSubmit={handleSubmit} className={styles.form} ref={formRef}>
           <input
             type="number"
             value={userAnswer}
@@ -110,8 +117,11 @@ const MultiplicationQuestion: React.FC<MultiplicationQuestionProps> = ({
             placeholder="?"
             maxLength={4}
           />
-          <button type="submit" className={styles.pixelButton}>
-            ✓ Valider
+          <button
+            type="submit"
+            className={`${styles.pixelButton} ${showValiderArrow ? styles.pixelButtonSelected : ''}`}
+          >
+            <JumpingArrow visible={showValiderArrow} />✓ Valider
           </button>
         </form>
 

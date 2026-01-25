@@ -3,6 +3,8 @@ import { useEffect } from 'react'
 import { getCurrentPlayer } from '../types/player'
 import { getScorePlayerName } from '../types/score'
 import PlayerNameDisplay from '../components/PlayerNameDisplay'
+import JumpingArrow from '../components/JumpingArrow'
+import KeyboardHints from '../components/KeyboardHints'
 import styles from './HomePage.module.scss'
 
 /**
@@ -238,6 +240,7 @@ export default function HomePage() {
 
       <div className={styles.startButtonContainer}>
         <button className={styles.pixelButton} onClick={() => navigate('/play')}>
+          <JumpingArrow visible={true} />
           🚀 Start Game
         </button>
       </div>
@@ -297,6 +300,8 @@ export default function HomePage() {
       )}
 
       <div className={styles.characterSprite}>🍄</div>
+
+      <KeyboardHints screenId="home" />
     </div>
   )
 }

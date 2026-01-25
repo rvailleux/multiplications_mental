@@ -73,9 +73,11 @@
 }
 
 .pixelButton {
-  @include pixel-button-blue;
-  font-size: $font-size-base;
-  padding: 18px $spacing-xl;
+  @include pixel-button-unified;
+}
+
+.pixelButtonSelected {
+  @include pixel-button-selected;
 }
 
 .livesDisplay {
@@ -87,7 +89,9 @@
 
 .heart {
   font-size: $font-size-3xl;
-  animation: pulse 1.5s ease-in-out infinite;
+  :global {
+    animation: pulse 1.5s ease-in-out infinite;
+  }
 }
 
 .characterSprite {

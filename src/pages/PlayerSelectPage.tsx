@@ -1,11 +1,14 @@
 import { useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { usePlayerManagement } from '../hooks/usePlayerManagement'
+import { useListNavigation } from '../hooks/useListNavigation'
+import JumpingArrow from '../components/JumpingArrow'
+import KeyboardHints from '../components/KeyboardHints'
 import styles from './PlayerSelectPage.module.scss'
 
 /**
  * Player selection page component that allows choosing between players
- * Uses keyboard navigation (arrow up/down) and Enter key for validation
+ * Uses keyboard navigation (arrow up/down) with cyclic wrapping and Enter key for validation
  * @returns {JSX.Element} Player selection page with retro gaming aesthetic
  * @example
  * // Used in React Router as the default route
@@ -13,15 +16,24 @@ import styles from './PlayerSelectPage.module.scss'
  */
 export default function PlayerSelectPage() {
   const navigate = useNavigate()
-  const { players, selectedIndex, setSelectedIndex, selectPlayer } = usePlayerManagement()
+  const { players, selectPlayer } = usePlayerManagement()
 
   /**
    * Handle player selection and navigate to home page
    */
-  const handlePlayerSelect = useCallback((): void => {
-    selectPlayer(selectedIndex)
-    navigate('/home')
-  }, [selectedIndex, selectPlayer, navigate])
+  const handlePlayerSelect = useCallback(
+    (index: number): void => {
+      selectPlayer(index)
+      navigate('/home')
+    },
+    [selectPlayer, navigate]
+  )
+
+  const { selectedIndex, navigateUp, navigateDown, confirmSelection } = useListNavigation({
+    items: players,
+    defaultIndex: 0,
+    onSelect: handlePlayerSelect,
+  })
 
   /**
    * Handle keyboard navigation and selection
@@ -30,19 +42,19 @@ export default function PlayerSelectPage() {
     const handleKeyDown = (e: KeyboardEvent): void => {
       if (e.key === 'ArrowUp') {
         e.preventDefault()
-        setSelectedIndex(Math.max(0, selectedIndex - 1))
+        navigateUp()
       } else if (e.key === 'ArrowDown') {
         e.preventDefault()
-        setSelectedIndex(Math.min(players.length - 1, selectedIndex + 1))
+        navigateDown()
       } else if (e.key === 'Enter') {
         e.preventDefault()
-        handlePlayerSelect()
+        confirmSelection()
       }
     }
 
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [selectedIndex, players.length, setSelectedIndex, handlePlayerSelect])
+  }, [navigateUp, navigateDown, confirmSelection])
 
   const getPlayerCardClass = (index: number) => {
     const classes = [styles.playerCard]
@@ -68,21 +80,15 @@ export default function PlayerSelectPage() {
           <div
             key={player.id}
             className={getPlayerCardClass(index)}
-            onClick={() => {
-              selectPlayer(index)
-              navigate('/home')
-            }}
+            onClick={() => handlePlayerSelect(index)}
           >
-            {index === selectedIndex && <span className={styles.cursor}>▶</span>}
+            <JumpingArrow visible={index === selectedIndex} />
             <span className={styles.playerName}>{player.name}</span>
           </div>
         ))}
       </div>
 
-      <div className={styles.instructions}>
-        <div className={styles.instructionText}>↑ ↓ Arrow Keys to Navigate</div>
-        <div className={styles.instructionText}>↵ Enter to Select</div>
-      </div>
+      <KeyboardHints screenId="player-select" />
 
       <div className={styles.characterSprite}>🍄</div>
     </div>

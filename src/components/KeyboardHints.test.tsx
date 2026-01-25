@@ -3,23 +3,32 @@ import { describe, it, expect } from 'vitest'
 import KeyboardHints from './KeyboardHints'
 
 describe('KeyboardHints', () => {
-  it('should render keyboard hints for a given screen', () => {
+  it('should render keyboard hints for play screen with all navigation options', () => {
     render(<KeyboardHints screenId="play" />)
 
-    // Check for specific play screen hints
-    expect(screen.getByText('Type')).toBeInTheDocument()
-    expect(screen.getByText('Answer')).toBeInTheDocument()
+    // Check for specific play screen hints per data-model.md
+    expect(screen.getByText('0-9')).toBeInTheDocument()
+    expect(screen.getByText('Type Answer')).toBeInTheDocument()
+    expect(screen.getByText('Backspace')).toBeInTheDocument()
+    expect(screen.getByText('Delete')).toBeInTheDocument()
+    expect(screen.getByText('↑↓')).toBeInTheDocument()
+    expect(screen.getByText('Navigate Options')).toBeInTheDocument()
     expect(screen.getByText('Enter')).toBeInTheDocument()
-    expect(screen.getByText('Submit')).toBeInTheDocument()
+    expect(screen.getByText('Confirm')).toBeInTheDocument()
     expect(screen.getByText('ESC')).toBeInTheDocument()
     expect(screen.getByText('Pause')).toBeInTheDocument()
   })
 
-  it('should render home screen hints', () => {
+  it('should render home screen hints with navigation', () => {
     render(<KeyboardHints screenId="home" />)
 
+    // Home screen now includes navigation hint for consistency
+    expect(screen.getByText('↑↓')).toBeInTheDocument()
+    expect(screen.getByText('Navigate')).toBeInTheDocument()
     expect(screen.getByText('Enter')).toBeInTheDocument()
-    expect(screen.getByText('Start Game')).toBeInTheDocument()
+    expect(screen.getByText('Select')).toBeInTheDocument()
+    expect(screen.getByText('ESC')).toBeInTheDocument()
+    expect(screen.getByText('Change Player')).toBeInTheDocument()
   })
 
   it('should render pause menu hints', () => {
@@ -42,11 +51,13 @@ describe('KeyboardHints', () => {
     expect(screen.getByText('Select')).toBeInTheDocument()
   })
 
-  it('should render results screen hints', () => {
+  it('should render results screen hints with change player option', () => {
     render(<KeyboardHints screenId="results" />)
 
     expect(screen.getByText('Enter')).toBeInTheDocument()
     expect(screen.getByText('Continue')).toBeInTheDocument()
+    expect(screen.getByText('ESC')).toBeInTheDocument()
+    expect(screen.getByText('Change Player')).toBeInTheDocument()
   })
 
   it('should have distinct behavior - multiple hints', () => {
