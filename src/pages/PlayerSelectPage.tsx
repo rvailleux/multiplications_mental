@@ -20,6 +20,8 @@ export default function PlayerSelectPage() {
 
   /**
    * Handle player selection and navigate to home page
+   * @param index - Index of the selected player in the list
+   * @returns void
    */
   const handlePlayerSelect = useCallback(
     (index: number): void => {

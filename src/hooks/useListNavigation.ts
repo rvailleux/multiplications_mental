@@ -52,8 +52,14 @@ export interface UseListNavigationReturn {
  * ```
  */
 export function useListNavigation<T>(config: ListNavigationConfig<T>): UseListNavigationReturn {
-  const defaultIndex = config.defaultIndex ?? 0
-  const [selectedIndex, setSelectedIndex] = useState(defaultIndex)
+  // Guard against empty lists
+  if (config.items.length === 0) {
+    throw new Error('useListNavigation: items array cannot be empty')
+  }
+
+  // Clamp defaultIndex to valid range
+  const clampedDefault = Math.max(0, Math.min(config.defaultIndex ?? 0, config.items.length - 1))
+  const [selectedIndex, setSelectedIndex] = useState(clampedDefault)
 
   const navigateDown = useCallback((): void => {
     setSelectedIndex(current => {
@@ -72,8 +78,8 @@ export function useListNavigation<T>(config: ListNavigationConfig<T>): UseListNa
   }, [selectedIndex, config])
 
   const resetToDefault = useCallback((): void => {
-    setSelectedIndex(defaultIndex)
-  }, [defaultIndex])
+    setSelectedIndex(clampedDefault)
+  }, [clampedDefault])
 
   return {
     selectedIndex,

@@ -48,9 +48,20 @@ export default function PlayPage() {
   const formRef = useRef<HTMLFormElement>(null)
 
   /**
-   * Restart game handler - resets all game state
+   * Submit answer handler - submits the current form
+   * @returns void
    */
-  const handleRestartGame = (): void => {
+  const handleSubmitAnswer = (): void => {
+    if (formRef.current) {
+      formRef.current.requestSubmit()
+    }
+  }
+
+  /**
+   * Core restart logic - resets all game state
+   * @returns void
+   */
+  const doRestart = (): void => {
     reset() // Reset the timer
     setScore(0) // Reset the score
     setResults([]) // Clear the results
@@ -59,22 +70,25 @@ export default function PlayPage() {
     startMusic() // Start new random music
   }
 
-  /**
-   * Submit answer handler - submits the current form
-   */
-  const handleSubmitAnswer = (): void => {
-    if (formRef.current) {
-      formRef.current.requestSubmit()
-    }
-  }
-
   // Setup navigable options for Valider/Restart selection
-  const { selectedOption, navigateUp, navigateDown, executeSelectedOption } = useNavigableOptions({
-    options: ['valider', 'restart'] as const,
-    defaultOption: 'valider',
-    onValider: handleSubmitAnswer,
-    onRestart: handleRestartGame,
-  })
+  const { selectedOption, navigateUp, navigateDown, executeSelectedOption, resetToDefault } =
+    useNavigableOptions({
+      options: ['valider', 'restart'] as const,
+      defaultOption: 'valider',
+      onValider: handleSubmitAnswer,
+      onRestart: () => {
+        doRestart()
+        // Note: resetToDefault is called after via useEffect below
+      },
+    })
+
+  // Reset selection to default after restart to prevent Enter from re-triggering restart
+  useEffect(() => {
+    // When score resets to 0 and results are empty (restart condition), reset selection
+    if (score === 0 && results.length === 0) {
+      resetToDefault()
+    }
+  }, [score, results.length, resetToDefault])
 
   // Setup pause menu
   const pauseMenu = usePauseMenu({
@@ -248,7 +262,10 @@ export default function PlayPage() {
       <div className={styles.buttonGroup}>
         <button
           className={`${styles.pixelButton} ${selectedOption === 'restart' ? styles.pixelButtonSelected : ''}`}
-          onClick={handleRestartGame}
+          onClick={() => {
+            doRestart()
+            resetToDefault()
+          }}
         >
           <JumpingArrow visible={selectedOption === 'restart'} />↻ Restart
         </button>

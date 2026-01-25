@@ -3,7 +3,7 @@
 **Feature Branch**: `013-unified-keyboard-ui`
 **Created**: 2026-01-23
 **Status**: Draft
-**Input**: User description: "apply the jumping arrow on option when selected to start game button on homescreen, valider and restart options on the gamingscreen. on the gaming screen, make up and down arrow to switch selection between valider option and restart option. typing any figure during the gaming screen must input in the answer textbox. backspace must simply works as expected in the textbox. at all time, at the very bottom of the screen, outside the inner box display what keys can be used on each screen. update constitution and other guidance to make sure next feature will follow these keyboard only navigation instructions."
+**Input**: User description: "apply the jumping arrow on option when selected to start game button on homescreen, valider and restart options on the gamingscreen. on the gaming screen, make up and down arrow to switch selection between valider option and restart option. typing any figure during the gaming screen must input in the answer textbox. backspace must simply works as expected in the textbox. at all time, at the very bottom of the screen, outside the inner box display what keys can be used on each screen. update constitution and other guidance to make sure next feature will follow these keyboard-only navigation instructions."
 
 ## Clarifications
 
@@ -105,7 +105,7 @@ Project documentation (constitution and guidance files) must be updated to refle
 **User Story**: User Story 1 - Jumping Arrow Selection Indicator
 
 **Test Flow**:
-1. **Navigate** to application home page (http://localhost:5173/)
+1. **Navigate** to application home page (<http://localhost:5173/>)
    - Screenshot: `01-homepage-initial.png`
 2. **Visual Verification**: Confirm jumping arrow appears next to "Start Game" button
    - Screenshot: `02-homepage-arrow-visible.png`

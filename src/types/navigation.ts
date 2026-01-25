@@ -23,16 +23,3 @@ export interface NavigableOptionsConfig {
   /** Callback when "restart" option is confirmed */
   onRestart: () => void
 }
-
-/**
- * Generic selection state for components with keyboard navigation
- * @public
- */
-export interface SelectionState<T extends string> {
-  /** Currently selected option */
-  selectedOption: T
-  /** Index of selected option in options array (for cycling) */
-  selectedIndex: number
-  /** Total number of available options */
-  totalOptions: number
-}

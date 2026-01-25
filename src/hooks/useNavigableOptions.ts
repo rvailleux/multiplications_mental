@@ -42,6 +42,18 @@ export interface UseNavigableOptionsReturn {
  * ```
  */
 export function useNavigableOptions(config: NavigableOptionsConfig): UseNavigableOptionsReturn {
+  // Guard against empty options
+  if (config.options.length === 0) {
+    throw new Error('useNavigableOptions: options array cannot be empty')
+  }
+
+  // Guard against defaultOption not in options
+  if (!config.options.includes(config.defaultOption)) {
+    throw new Error(
+      `useNavigableOptions: defaultOption "${config.defaultOption}" is not in options array`
+    )
+  }
+
   const [selectedOption, setSelectedOption] = useState<NavigableOption>(config.defaultOption)
 
   const navigateDown = useCallback((): void => {
