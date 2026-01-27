@@ -65,7 +65,7 @@ src/components/AnswerFeedback.tsx    # Visual overlay component
 src/components/AnswerFeedback.module.scss  # Component styles
 src/components/AnswerFeedback.test.tsx  # Component tests
 public/audio/sfx/correct.mp3    # Positive feedback sound
-public/audio/sfx/incorrect.mp3  # Negative feedback sound
+public/audio/sfx/wrong.mp3      # Negative feedback sound
 tests/e2e/answer-feedback.spec.ts  # Playwright E2E tests
 ```
 

@@ -81,7 +81,7 @@ public/
 └── audio/
     └── sfx/                         # NEW: Sound effects directory
         ├── correct.mp3              # NEW: Positive feedback sound
-        └── incorrect.mp3            # NEW: Negative feedback sound
+        └── wrong.mp3                # NEW: Negative feedback sound
 
 tests/
 └── e2e/

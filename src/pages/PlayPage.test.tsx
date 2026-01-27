@@ -519,9 +519,9 @@ describe('PlayPage - Audio Feedback Integration', () => {
     })
   })
 
-  it('should not crash if audio feedback hook throws error', () => {
-    // The mock already handles this gracefully - verify component still renders
-    // when feedback functions are called (they shouldn't throw in production)
+  it('should render correctly with mocked audio feedback hook', () => {
+    // Verify component renders successfully when feedback hook is available
+    // Note: The hook internally handles audio errors gracefully via try-catch
     expect(() => {
       render(
         <MemoryRouter>
