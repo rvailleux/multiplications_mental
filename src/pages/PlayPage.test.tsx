@@ -39,6 +39,18 @@ vi.mock('../hooks/usePauseMenu', () => ({
   }),
 }))
 
+// Mock answer feedback hook
+const mockPlayCorrect = vi.fn()
+const mockPlayIncorrect = vi.fn()
+vi.mock('../hooks/useAnswerFeedback', () => ({
+  useAnswerFeedback: () => ({
+    playCorrect: mockPlayCorrect,
+    playIncorrect: mockPlayIncorrect,
+    isPlaying: false,
+    feedbackType: null,
+  }),
+}))
+
 describe('PlayPage - localStorage Integration', () => {
   beforeEach(() => {
     // Clear localStorage before each test
@@ -452,6 +464,118 @@ describe('PlayPage - Player Info in Saved Scores', () => {
     // Cleanup
     consoleErrorSpy.mockRestore()
     setItemSpy.mockRestore()
+  })
+})
+
+describe('PlayPage - Audio Feedback Integration', () => {
+  beforeEach(() => {
+    localStorage.clear()
+    vi.clearAllMocks()
+
+    localStorage.setItem('players', JSON.stringify([{ id: 'jules', name: 'Jules' }]))
+    setCurrentPlayerId('jules')
+  })
+
+  it('should call playCorrect when a correct answer is submitted', async () => {
+    render(
+      <MemoryRouter>
+        <PlayPage />
+      </MemoryRouter>
+    )
+
+    // Get the input field (spinbutton role due to numeric inputmode)
+    const input = screen.getByRole('spinbutton')
+
+    // Get the question text and extract the factors (format: "A x B?")
+    const questionText = screen.getByText(/\d+ x \d+\?/).textContent
+    const match = questionText?.match(/(\d+)\s*x\s*(\d+)/)
+    if (match) {
+      const correctAnswer = parseInt(match[1]) * parseInt(match[2])
+      fireEvent.change(input, { target: { value: correctAnswer.toString() } })
+      fireEvent.submit(input.closest('form')!)
+    }
+
+    await waitFor(() => {
+      expect(mockPlayCorrect).toHaveBeenCalled()
+    })
+  })
+
+  it('should call playIncorrect when an incorrect answer is submitted', async () => {
+    render(
+      <MemoryRouter>
+        <PlayPage />
+      </MemoryRouter>
+    )
+
+    // Get the input field (spinbutton role due to numeric inputmode)
+    const input = screen.getByRole('spinbutton')
+
+    // Submit an obviously wrong answer (0 is never correct for multiplication 1-10)
+    fireEvent.change(input, { target: { value: '0' } })
+    fireEvent.submit(input.closest('form')!)
+
+    await waitFor(() => {
+      expect(mockPlayIncorrect).toHaveBeenCalled()
+    })
+  })
+
+  it('should render correctly with mocked audio feedback hook', () => {
+    // Verify component renders successfully when feedback hook is available
+    // Note: The hook internally handles audio errors gracefully via try-catch
+    expect(() => {
+      render(
+        <MemoryRouter>
+          <PlayPage />
+        </MemoryRouter>
+      )
+    }).not.toThrow()
+
+    // Component should render successfully
+    expect(screen.getByText(/MATH QUEST/i)).toBeInTheDocument()
+  })
+})
+
+describe('PlayPage - Hearts Layout Position', () => {
+  beforeEach(() => {
+    localStorage.clear()
+    vi.clearAllMocks()
+
+    localStorage.setItem('players', JSON.stringify([{ id: 'jules', name: 'Jules' }]))
+    setCurrentPlayerId('jules')
+  })
+
+  it('should render livesDisplay before ProgressBar in DOM order', () => {
+    const { container } = render(
+      <MemoryRouter>
+        <PlayPage />
+      </MemoryRouter>
+    )
+
+    // Get all elements in DOM order
+    const gameContainer = container.querySelector('[class*="gameContainer"]')
+    const allElements = gameContainer?.children || []
+    const elementClasses = Array.from(allElements).map(el => el.className)
+
+    // Find indices of livesDisplay and progressBar
+    const livesIndex = elementClasses.findIndex(cls => cls.includes('livesDisplay'))
+    const progressIndex = elementClasses.findIndex(cls => cls.includes('progressBar'))
+
+    // Lives should appear BEFORE progress bar in DOM
+    expect(livesIndex).toBeGreaterThan(-1)
+    expect(progressIndex).toBeGreaterThan(-1)
+    expect(livesIndex).toBeLessThan(progressIndex)
+  })
+
+  it('should display 3 hearts initially', () => {
+    render(
+      <MemoryRouter>
+        <PlayPage />
+      </MemoryRouter>
+    )
+
+    // Should have 3 heart emojis
+    const hearts = screen.getAllByText('❤️')
+    expect(hearts).toHaveLength(3)
   })
 })
 

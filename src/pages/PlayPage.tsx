@@ -3,6 +3,8 @@ import { useTimer } from '../hooks/useTimer'
 import { useBackgroundMusic } from '../hooks/useBackgroundMusic'
 import { usePauseMenu } from '../hooks/usePauseMenu'
 import { useNavigableOptions } from '../hooks/useNavigableOptions'
+import { useAnswerFeedback } from '../hooks/useAnswerFeedback'
+import AnswerFeedback from '../components/AnswerFeedback'
 import ProgressBar from '../components/ProgressBar'
 import MultiplicationQuestion from '../components/MultiplicationQuestion'
 import PauseMenu from '../components/PauseMenu'
@@ -37,6 +39,7 @@ export default function PlayPage() {
   const totalTime = 60 // Total time in seconds
   const { secondsLeft, reset, pause, resume } = useTimer(totalTime)
   const { startMusic, stopMusic } = useBackgroundMusic()
+  const { playCorrect, playIncorrect, isPlaying, feedbackType } = useAnswerFeedback()
   const [score, setScore] = useState(0)
   const [results, setResults] = useState<GameResult[]>([])
   const [combo, setCombo] = useState(0)
@@ -150,6 +153,9 @@ export default function PlayPage() {
     setCombo(newCombo)
     setResults(prev => [...prev, { question, correct: true }])
 
+    // Play audio feedback for correct answer
+    playCorrect()
+
     // Show score popup animation
     setScorePopup(`+${points}`)
     setShowPopup(true)
@@ -164,6 +170,9 @@ export default function PlayPage() {
     setCombo(0)
     setLives(prev => Math.max(0, prev - 1))
     setResults(prev => [...prev, { question, correct: false }])
+
+    // Play audio feedback for incorrect answer
+    playIncorrect()
 
     // Show negative popup animation
     setScorePopup('✗')
@@ -247,6 +256,15 @@ export default function PlayPage() {
         </div>
       </div>
 
+      {/* Lives display - positioned between header and progress bar */}
+      <div className={styles.livesDisplay}>
+        {Array.from({ length: lives }, (_, i) => (
+          <span key={i} className={styles.heart}>
+            ❤️
+          </span>
+        ))}
+      </div>
+
       <ProgressBar progress={progress} timeRemaining={secondsLeft} />
 
       <MultiplicationQuestion
@@ -271,14 +289,6 @@ export default function PlayPage() {
         </button>
       </div>
 
-      <div className={styles.livesDisplay}>
-        {Array.from({ length: lives }, (_, i) => (
-          <span key={i} className={styles.heart}>
-            ❤️
-          </span>
-        ))}
-      </div>
-
       <div className={styles.characterSprite}>🍄</div>
 
       <KeyboardHints screenId="play" />
@@ -294,6 +304,9 @@ export default function PlayPage() {
           resume()
         }}
       />
+
+      {/* Visual feedback overlay for answer feedback */}
+      <AnswerFeedback type={feedbackType} isVisible={isPlaying} />
     </div>
   )
 }

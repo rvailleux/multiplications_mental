@@ -1,0 +1,23 @@
+@use '../styles/animations';
+
+// Answer Feedback Overlay
+// Full-viewport overlay for visual feedback on correct/incorrect answers
+// Non-interactive (pointer-events: none) to not block user input
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none; // Don't block interactions
+  z-index: 100; // Above game content, below modals
+}
+
+.correct {
+  animation: correctFlash 500ms ease-out forwards;
+}
+
+.incorrect {
+  animation: incorrectFlash 500ms ease-out forwards;
+}
