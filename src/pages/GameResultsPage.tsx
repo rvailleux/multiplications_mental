@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
+import { useMusic } from '../contexts/MusicContext'
 import PlayerNameDisplay from '../components/PlayerNameDisplay'
 import JumpingArrow from '../components/JumpingArrow'
 import KeyboardHints from '../components/KeyboardHints'
@@ -34,6 +35,7 @@ export default function GameResultsPage() {
   const navigate = useNavigate()
   const location = useLocation()
   const currentPlayer = getCurrentPlayer()
+  const { playMainTheme } = useMusic()
 
   // Extract score and results from route state with fallback defaults
   const state = location.state as GameResultsState | undefined
@@ -46,6 +48,14 @@ export default function GameResultsPage() {
       navigate('/')
     }
   }, [currentPlayer, navigate])
+
+  /**
+   * Resume main theme music when entering results page
+   * This switches back from gameplay music to menu theme
+   */
+  useEffect(() => {
+    playMainTheme()
+  }, [playMainTheme])
 
   // Calculate stats from results array
   const correctCount = results.filter(r => r.correct).length

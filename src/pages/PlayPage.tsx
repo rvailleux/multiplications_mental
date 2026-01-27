@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { useTimer } from '../hooks/useTimer'
-import { useBackgroundMusic } from '../hooks/useBackgroundMusic'
+import { useMusic } from '../contexts/MusicContext'
 import { usePauseMenu } from '../hooks/usePauseMenu'
 import { useNavigableOptions } from '../hooks/useNavigableOptions'
 import { useAnswerFeedback } from '../hooks/useAnswerFeedback'
@@ -38,7 +38,7 @@ export default function PlayPage() {
   const currentPlayer = getCurrentPlayer()
   const totalTime = 60 // Total time in seconds
   const { secondsLeft, reset, pause, resume } = useTimer(totalTime)
-  const { startMusic, stopMusic } = useBackgroundMusic()
+  const { playGameplayMusic, stopMusic } = useMusic()
   const { playCorrect, playIncorrect, isPlaying, feedbackType } = useAnswerFeedback()
   const [score, setScore] = useState(0)
   const [results, setResults] = useState<GameResult[]>([])
@@ -70,7 +70,7 @@ export default function PlayPage() {
     setResults([]) // Clear the results
     setCombo(0) // Reset combo
     setLives(3) // Reset lives
-    startMusic() // Start new random music
+    playGameplayMusic() // Start new random gameplay music (never main theme)
   }
 
   // Setup navigable options for Valider/Restart selection
@@ -180,11 +180,14 @@ export default function PlayPage() {
     setTimeout(() => setShowPopup(false), 800)
   }
 
-  // Start background music when component mounts
+  /**
+   * Start gameplay music when component mounts
+   * Uses MusicContext to play random track (excludes main theme)
+   */
   useEffect(() => {
-    startMusic()
+    playGameplayMusic()
 
-    // Cleanup music when component unmounts
+    // Cleanup music when component unmounts (let results page or home handle transition)
     return () => {
       stopMusic()
     }

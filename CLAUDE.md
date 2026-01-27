@@ -8,7 +8,7 @@ React TypeScript multiplication game with 60-second timer challenges, score trac
 - **ARCHITECTURE.md** - Detailed technical architecture, patterns, and scalability
 - **README.md** - Project overview, features, and setup instructions
 - **docs/api/** - Auto-generated JSDoc documentation (run `npm run docs`)
-
+- **todo.md** - Updated list of features to develop
 **⚖️ Constitutional Authority**: This file provides **runtime development guidance** following the principles established in `.specify/memory/constitution.md`. When in doubt, the constitution supersedes this file.
 
 ## Constitutional Principles (Quick Reference)
@@ -1048,6 +1048,8 @@ This file helps Claude Code understand the project context, patterns, and conven
 - localStorage (client-side persistence for selection state) (013-unified-keyboard-ui)
 - TypeScript 5.7.2 (strict mode) + React 19.0.0 + React, React Router DOM 7.5.0, Sass (CSS Modules), Vite 6.2+ (015-answer-feedback)
 - localStorage (client-side persistence for scores) (015-answer-feedback)
+- TypeScript 5.7.2 (strict mode enabled) + React 19.0.0, React Router DOM 7.5.0, HTML5 Audio API (016-main-theme-music)
+- N/A (no persistence required for music state) (016-main-theme-music)
 
 ## Recent Changes
 - 010-player-name-display: Added TypeScript 5.7.2 (strict mode enabled) + React 19.0.0, React Router DOM 7.5.0

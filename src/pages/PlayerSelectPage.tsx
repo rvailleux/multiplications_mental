@@ -2,6 +2,7 @@ import { useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { usePlayerManagement } from '../hooks/usePlayerManagement'
 import { useListNavigation } from '../hooks/useListNavigation'
+import { useMusic } from '../contexts/MusicContext'
 import JumpingArrow from '../components/JumpingArrow'
 import KeyboardHints from '../components/KeyboardHints'
 import styles from './PlayerSelectPage.module.scss'
@@ -9,6 +10,7 @@ import styles from './PlayerSelectPage.module.scss'
 /**
  * Player selection page component that allows choosing between players
  * Uses keyboard navigation (arrow up/down) with cyclic wrapping and Enter key for validation
+ * Starts playing main theme music on mount
  * @returns {JSX.Element} Player selection page with retro gaming aesthetic
  * @example
  * // Used in React Router as the default route
@@ -17,6 +19,15 @@ import styles from './PlayerSelectPage.module.scss'
 export default function PlayerSelectPage() {
   const navigate = useNavigate()
   const { players, selectPlayer } = usePlayerManagement()
+  const { playMainTheme } = useMusic()
+
+  /**
+   * Start main theme music on mount
+   * Handles browser autoplay policy gracefully via MusicContext
+   */
+  useEffect(() => {
+    playMainTheme()
+  }, [playMainTheme])
 
   /**
    * Handle player selection and navigate to home page

@@ -14,14 +14,17 @@ vi.mock('react-router-dom', async () => {
   }
 })
 
-// Mock background music hook
-vi.mock('../hooks/useBackgroundMusic', () => ({
-  useBackgroundMusic: () => ({
-    startMusic: vi.fn(),
+// Mock MusicContext
+vi.mock('../contexts/MusicContext', () => ({
+  useMusic: () => ({
+    playMainTheme: vi.fn().mockResolvedValue(undefined),
+    playGameplayMusic: vi.fn().mockResolvedValue(undefined),
     stopMusic: vi.fn(),
     isPlaying: false,
     currentTrack: null,
+    mode: 'menu',
   }),
+  MusicProvider: ({ children }: { children: React.ReactNode }) => children,
 }))
 
 // Mock pause menu hook
