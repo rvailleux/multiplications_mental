@@ -33,6 +33,7 @@ Thumbs.db
 # Claude Code
 .claude-plugins/
 .claude-cache/
+.claudecli
 
 # Playwright
 /test-results/
