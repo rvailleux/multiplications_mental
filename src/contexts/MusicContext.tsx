@@ -118,12 +118,18 @@ export function MusicProvider({ children }: MusicProviderProps) {
       await audio.play()
       setIsPlaying(true)
     } catch (error) {
-      if (error instanceof Error && error.name === 'NotAllowedError') {
-        console.warn('Autoplay blocked - music will start on first user interaction')
-        setAutoplayBlocked(true)
-        setupInteractionListeners(playMainTheme)
-      } else {
-        console.warn('Failed to play main theme:', error)
+      if (error instanceof Error) {
+        if (error.name === 'NotAllowedError') {
+          // Autoplay blocked by browser policy - set up listener for user interaction
+          console.warn('Autoplay blocked - music will start on first user interaction')
+          setAutoplayBlocked(true)
+          setupInteractionListeners(playMainTheme)
+        } else if (error.name === 'AbortError') {
+          // Audio fetch was aborted (user navigated away) - this is expected, ignore silently
+          return
+        } else {
+          console.warn('Failed to play main theme:', error)
+        }
       }
       setIsPlaying(false)
     }
@@ -157,12 +163,18 @@ export function MusicProvider({ children }: MusicProviderProps) {
       await audio.play()
       setIsPlaying(true)
     } catch (error) {
-      if (error instanceof Error && error.name === 'NotAllowedError') {
-        console.warn('Autoplay blocked - music will start on first user interaction')
-        setAutoplayBlocked(true)
-        setupInteractionListeners(playGameplayMusic)
-      } else {
-        console.warn('Failed to play gameplay music:', error)
+      if (error instanceof Error) {
+        if (error.name === 'NotAllowedError') {
+          // Autoplay blocked by browser policy - set up listener for user interaction
+          console.warn('Autoplay blocked - music will start on first user interaction')
+          setAutoplayBlocked(true)
+          setupInteractionListeners(playGameplayMusic)
+        } else if (error.name === 'AbortError') {
+          // Audio fetch was aborted (user navigated away) - this is expected, ignore silently
+          return
+        } else {
+          console.warn('Failed to play gameplay music:', error)
+        }
       }
       setIsPlaying(false)
     }
