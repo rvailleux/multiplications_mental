@@ -51,12 +51,17 @@ export interface AnswerFeedbackProps {
 }
 
 /**
+ * Base URL for assets - handles GitHub Pages subdirectory deployment
+ */
+const BASE_URL = import.meta.env.BASE_URL
+
+/**
  * Sound effect file paths
  * @internal
  */
 export const SOUND_PATHS = {
-  correct: '/audio/sfx/correct.mp3',
-  incorrect: '/audio/sfx/wrong.mp3',
+  correct: `${BASE_URL}audio/sfx/correct.mp3`,
+  incorrect: `${BASE_URL}audio/sfx/wrong.mp3`,
 } as const
 
 /**

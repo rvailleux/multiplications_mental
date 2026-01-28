@@ -1,16 +1,21 @@
 import { useEffect, useRef, useState } from 'react'
 
 /**
+ * Base URL for assets - handles GitHub Pages subdirectory deployment
+ */
+const BASE_URL = import.meta.env.BASE_URL
+
+/**
  * Available background music tracks for the game
  */
 const MUSIC_TRACKS = [
-  '/audio/8-bit-console-from-my-childhood-301286.mp3',
-  '/audio/8-bit-music-no-copyright-background-instrumental-pixel-party-322342.mp3',
-  '/audio/game-8-bit-on-278083.mp3',
-  '/audio/level-vii-short-258782.mp3',
-  '/audio/retro-8bit-happy-videogame-music-243997.mp3',
-  '/audio/the-return-of-the-8-bit-era-301292.mp3',
-  '/audio/the-world-of-8-bit-games-301273.mp3',
+  `${BASE_URL}audio/8-bit-console-from-my-childhood-301286.mp3`,
+  `${BASE_URL}audio/8-bit-music-no-copyright-background-instrumental-pixel-party-322342.mp3`,
+  `${BASE_URL}audio/game-8-bit-on-278083.mp3`,
+  `${BASE_URL}audio/level-vii-short-258782.mp3`,
+  `${BASE_URL}audio/retro-8bit-happy-videogame-music-243997.mp3`,
+  `${BASE_URL}audio/the-return-of-the-8-bit-era-301292.mp3`,
+  `${BASE_URL}audio/the-world-of-8-bit-games-301273.mp3`,
 ]
 
 /**
