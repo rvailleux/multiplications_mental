@@ -16,9 +16,18 @@ const MUSIC_TRACKS = [
 /**
  * Custom hook for managing background music during gameplay
  * Randomly selects and plays a track in loop, with proper cleanup
+ *
+ * @deprecated Use useMusic from MusicContext instead for global music state management.
+ * This hook creates new Audio instances per component mount, causing music restarts on navigation.
+ * MusicContext provides a single Audio instance that persists across route changes.
+ *
  * @returns Object with music controls and current track info
  * @example
- * const { isPlaying, currentTrack, startMusic, stopMusic } = useBackgroundMusic()
+ * // Old usage (deprecated):
+ * // const { isPlaying, currentTrack, startMusic, stopMusic } = useBackgroundMusic()
+ *
+ * // New usage (recommended):
+ * // const { isPlaying, currentTrack, playMainTheme, playGameplayMusic, stopMusic } = useMusic()
  */
 export function useBackgroundMusic() {
   const audioRef = useRef<HTMLAudioElement | null>(null)

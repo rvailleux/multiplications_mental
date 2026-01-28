@@ -1,6 +1,7 @@
 import { render, screen, fireEvent, act } from '@testing-library/react'
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { MemoryRouter } from 'react-router-dom'
+import { MusicProvider } from '../contexts/MusicContext'
 import type { GameResult } from './PlayPage'
 
 // Mock navigate function
@@ -30,6 +31,21 @@ vi.mock('react-router-dom', async () => {
   }
 })
 
+// Mock Audio for MusicContext
+vi.stubGlobal(
+  'Audio',
+  class {
+    play = vi.fn().mockResolvedValue(undefined)
+    pause = vi.fn()
+    addEventListener = vi.fn()
+    removeEventListener = vi.fn()
+    currentTime = 0
+    volume = 1
+    loop = false
+    src = ''
+  }
+)
+
 // Mock PlayerNameDisplay component
 vi.mock('../components/PlayerNameDisplay', () => ({
   default: () => <div data-testid="player-name-display">Player Name</div>,
@@ -42,6 +58,15 @@ vi.mock('../types/player', () => ({
 
 // Import component after mocks
 const { default: GameResultsPage } = await import('./GameResultsPage')
+
+// Helper to render with MusicProvider
+const renderWithProviders = (component: React.ReactElement) => {
+  return render(
+    <MusicProvider>
+      <MemoryRouter>{component}</MemoryRouter>
+    </MusicProvider>
+  )
+}
 
 describe('GameResultsPage - Rendering and Stats Display', () => {
   beforeEach(() => {
@@ -59,50 +84,30 @@ describe('GameResultsPage - Rendering and Stats Display', () => {
   })
 
   it('should render final score correctly', () => {
-    render(
-      <MemoryRouter>
-        <GameResultsPage />
-      </MemoryRouter>
-    )
+    renderWithProviders(<GameResultsPage />)
     expect(screen.getByText(/500/)).toBeInTheDocument()
   })
 
   it('should calculate and display correct answer count', () => {
-    render(
-      <MemoryRouter>
-        <GameResultsPage />
-      </MemoryRouter>
-    )
+    renderWithProviders(<GameResultsPage />)
     // 4 correct out of 5 total
     expect(screen.getByText(/4\/5/)).toBeInTheDocument()
   })
 
   it('should calculate and display total questions count', () => {
-    render(
-      <MemoryRouter>
-        <GameResultsPage />
-      </MemoryRouter>
-    )
+    renderWithProviders(<GameResultsPage />)
     // Verify 5 total questions are reflected
     expect(screen.getByText(/\/5/)).toBeInTheDocument()
   })
 
   it('should calculate accuracy percentage (rounded integer)', () => {
-    render(
-      <MemoryRouter>
-        <GameResultsPage />
-      </MemoryRouter>
-    )
+    renderWithProviders(<GameResultsPage />)
     // 4/5 = 80%
     expect(screen.getByText(/80%/)).toBeInTheDocument()
   })
 
   it('should calculate and display speed (average time per correct answer)', () => {
-    render(
-      <MemoryRouter>
-        <GameResultsPage />
-      </MemoryRouter>
-    )
+    renderWithProviders(<GameResultsPage />)
     // 4 correct answers, 60 seconds total: 60/4 = 15.0"
     expect(screen.getByText(/Speed: 15\.0"/)).toBeInTheDocument()
   })
@@ -113,20 +118,12 @@ describe('GameResultsPage - Rendering and Stats Display', () => {
       results: [],
     }
 
-    render(
-      <MemoryRouter>
-        <GameResultsPage />
-      </MemoryRouter>
-    )
+    renderWithProviders(<GameResultsPage />)
     expect(screen.getByText(/0%/)).toBeInTheDocument()
   })
 
   it('should display player name in top-right corner', () => {
-    render(
-      <MemoryRouter>
-        <GameResultsPage />
-      </MemoryRouter>
-    )
+    renderWithProviders(<GameResultsPage />)
     expect(screen.getByTestId('player-name-display')).toBeInTheDocument()
   })
 })
@@ -142,11 +139,7 @@ describe('GameResultsPage - Edge Cases', () => {
       results: [],
     }
 
-    render(
-      <MemoryRouter>
-        <GameResultsPage />
-      </MemoryRouter>
-    )
+    renderWithProviders(<GameResultsPage />)
     // Should display 0/0 and 0%
     expect(screen.getByText(/0\/0/)).toBeInTheDocument()
     expect(screen.getByText(/0%/)).toBeInTheDocument()
@@ -161,11 +154,7 @@ describe('GameResultsPage - Edge Cases', () => {
       ],
     }
 
-    render(
-      <MemoryRouter>
-        <GameResultsPage />
-      </MemoryRouter>
-    )
+    renderWithProviders(<GameResultsPage />)
     expect(screen.getByText(/0%/)).toBeInTheDocument()
   })
 
@@ -178,22 +167,14 @@ describe('GameResultsPage - Edge Cases', () => {
       ],
     }
 
-    render(
-      <MemoryRouter>
-        <GameResultsPage />
-      </MemoryRouter>
-    )
+    renderWithProviders(<GameResultsPage />)
     expect(screen.getByText(/100%/)).toBeInTheDocument()
   })
 
   it('should handle missing route state gracefully', () => {
     mockLocationState = undefined
 
-    render(
-      <MemoryRouter>
-        <GameResultsPage />
-      </MemoryRouter>
-    )
+    renderWithProviders(<GameResultsPage />)
     // Should fallback to 0 score and empty results
     expect(screen.getByText(/0\/0/)).toBeInTheDocument()
   })
@@ -207,11 +188,7 @@ describe('GameResultsPage - Edge Cases', () => {
       ],
     }
 
-    render(
-      <MemoryRouter>
-        <GameResultsPage />
-      </MemoryRouter>
-    )
+    renderWithProviders(<GameResultsPage />)
     // When zero correct answers, speed should show "-"
     expect(screen.getByText(/Speed: -/)).toBeInTheDocument()
   })
@@ -225,11 +202,7 @@ describe('GameResultsPage - Edge Cases', () => {
       ],
     }
 
-    render(
-      <MemoryRouter>
-        <GameResultsPage />
-      </MemoryRouter>
-    )
+    renderWithProviders(<GameResultsPage />)
     // 1 correct answer in 60 seconds: 60/1 = 60.0"
     expect(screen.getByText(/Speed: 60\.0"/)).toBeInTheDocument()
   })
@@ -244,11 +217,7 @@ describe('GameResultsPage - Edge Cases', () => {
       ],
     }
 
-    render(
-      <MemoryRouter>
-        <GameResultsPage />
-      </MemoryRouter>
-    )
+    renderWithProviders(<GameResultsPage />)
     // 3 correct answers in 60 seconds: 60/3 = 20.0"
     expect(screen.getByText(/Speed: 20\.0"/)).toBeInTheDocument()
   })
@@ -271,11 +240,7 @@ describe('GameResultsPage - Keyboard Navigation', () => {
   })
 
   it('should navigate to homepage when ENTER key pressed', () => {
-    render(
-      <MemoryRouter>
-        <GameResultsPage />
-      </MemoryRouter>
-    )
+    renderWithProviders(<GameResultsPage />)
 
     const enterEvent = new KeyboardEvent('keydown', { key: 'Enter' })
     window.dispatchEvent(enterEvent)
@@ -286,11 +251,7 @@ describe('GameResultsPage - Keyboard Navigation', () => {
   it('should cleanup keyboard event listeners on unmount', () => {
     const removeEventListenerSpy = vi.spyOn(window, 'removeEventListener')
 
-    const { unmount } = render(
-      <MemoryRouter>
-        <GameResultsPage />
-      </MemoryRouter>
-    )
+    const { unmount } = renderWithProviders(<GameResultsPage />)
 
     unmount()
 
@@ -299,11 +260,7 @@ describe('GameResultsPage - Keyboard Navigation', () => {
   })
 
   it('should ignore non-navigation keys', () => {
-    render(
-      <MemoryRouter>
-        <GameResultsPage />
-      </MemoryRouter>
-    )
+    renderWithProviders(<GameResultsPage />)
 
     mockNavigate.mockClear()
 
@@ -324,11 +281,7 @@ describe('GameResultsPage - Mouse Navigation', () => {
   })
 
   it('should navigate to homepage when continue button clicked', () => {
-    render(
-      <MemoryRouter>
-        <GameResultsPage />
-      </MemoryRouter>
-    )
+    renderWithProviders(<GameResultsPage />)
 
     const continueButton = screen.getByRole('button', { name: /continue/i })
     fireEvent.click(continueButton)
@@ -347,22 +300,14 @@ describe('GameResultsPage - Jumping Arrow', () => {
   })
 
   it('should display jumping arrow next to Continue button', () => {
-    render(
-      <MemoryRouter>
-        <GameResultsPage />
-      </MemoryRouter>
-    )
+    renderWithProviders(<GameResultsPage />)
 
     // Arrow symbol should be visible
     expect(screen.getByText('▶')).toBeInTheDocument()
   })
 
   it('should navigate to player select when Escape key is pressed', () => {
-    render(
-      <MemoryRouter>
-        <GameResultsPage />
-      </MemoryRouter>
-    )
+    renderWithProviders(<GameResultsPage />)
 
     const escapeEvent = new KeyboardEvent('keydown', { key: 'Escape' })
     window.dispatchEvent(escapeEvent)
@@ -371,11 +316,7 @@ describe('GameResultsPage - Jumping Arrow', () => {
   })
 
   it('should keep arrow visible when arrow keys are pressed (single option)', () => {
-    render(
-      <MemoryRouter>
-        <GameResultsPage />
-      </MemoryRouter>
-    )
+    renderWithProviders(<GameResultsPage />)
 
     // Arrow keys should do nothing gracefully (single option)
     const arrowDownEvent = new KeyboardEvent('keydown', { key: 'ArrowDown' })
@@ -404,11 +345,7 @@ describe('GameResultsPage - Animation Lifecycle', () => {
   })
 
   it('should start with blinking animation enabled', () => {
-    const { container } = render(
-      <MemoryRouter>
-        <GameResultsPage />
-      </MemoryRouter>
-    )
+    const { container } = renderWithProviders(<GameResultsPage />)
 
     const mainContainer = container.firstChild as HTMLElement
     // Check for CSS Module class instead of inline style
@@ -416,11 +353,7 @@ describe('GameResultsPage - Animation Lifecycle', () => {
   })
 
   it('should stop blinking animation after 5 seconds', () => {
-    const { container } = render(
-      <MemoryRouter>
-        <GameResultsPage />
-      </MemoryRouter>
-    )
+    const { container } = renderWithProviders(<GameResultsPage />)
 
     const mainContainer = container.firstChild as HTMLElement
 
@@ -439,11 +372,7 @@ describe('GameResultsPage - Animation Lifecycle', () => {
   it('should cleanup timeout on unmount', () => {
     const clearTimeoutSpy = vi.spyOn(global, 'clearTimeout')
 
-    const { unmount } = render(
-      <MemoryRouter>
-        <GameResultsPage />
-      </MemoryRouter>
-    )
+    const { unmount } = renderWithProviders(<GameResultsPage />)
 
     unmount()
 

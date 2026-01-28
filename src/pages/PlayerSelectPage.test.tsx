@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
 import { BrowserRouter } from 'react-router-dom'
+import { MusicProvider } from '../contexts/MusicContext'
 import PlayerSelectPage from './PlayerSelectPage'
 
 // Mock react-router-dom's useNavigate
@@ -13,9 +14,28 @@ vi.mock('react-router-dom', async () => {
   }
 })
 
-// Helper to render component with Router
-const renderWithRouter = (component: React.ReactElement) => {
-  return render(<BrowserRouter>{component}</BrowserRouter>)
+// Mock Audio for MusicContext
+vi.stubGlobal(
+  'Audio',
+  class {
+    play = vi.fn().mockResolvedValue(undefined)
+    pause = vi.fn()
+    addEventListener = vi.fn()
+    removeEventListener = vi.fn()
+    currentTime = 0
+    volume = 1
+    loop = false
+    src = ''
+  }
+)
+
+// Helper to render component with Router and MusicProvider
+const renderWithProviders = (component: React.ReactElement) => {
+  return render(
+    <MusicProvider>
+      <BrowserRouter>{component}</BrowserRouter>
+    </MusicProvider>
+  )
 }
 
 describe('PlayerSelectPage', () => {
@@ -26,33 +46,33 @@ describe('PlayerSelectPage', () => {
   })
 
   it('should render the page title', () => {
-    renderWithRouter(<PlayerSelectPage />)
+    renderWithProviders(<PlayerSelectPage />)
     expect(screen.getByText('⭐ MATH QUEST ⭐')).toBeInTheDocument()
     expect(screen.getByText('Choose Your Player')).toBeInTheDocument()
   })
 
   it('should display two default players (Jules and Achille)', () => {
-    renderWithRouter(<PlayerSelectPage />)
+    renderWithProviders(<PlayerSelectPage />)
     expect(screen.getByText('Jules')).toBeInTheDocument()
     expect(screen.getByText('Achille')).toBeInTheDocument()
   })
 
   it('should display keyboard hints via KeyboardHints component', () => {
-    renderWithRouter(<PlayerSelectPage />)
+    renderWithProviders(<PlayerSelectPage />)
     // KeyboardHints component renders these for player-select screen
     expect(screen.getByText('Navigate')).toBeInTheDocument()
     expect(screen.getByText('Select')).toBeInTheDocument()
   })
 
   it('should show JumpingArrow on first player by default', () => {
-    renderWithRouter(<PlayerSelectPage />)
+    renderWithProviders(<PlayerSelectPage />)
     // JumpingArrow renders '▶' character
     const arrows = screen.getAllByText('▶')
     expect(arrows.length).toBe(1)
   })
 
   it('should navigate to next player with ArrowDown key', () => {
-    renderWithRouter(<PlayerSelectPage />)
+    renderWithProviders(<PlayerSelectPage />)
 
     // Press ArrowDown to select second player
     fireEvent.keyDown(window, { key: 'ArrowDown' })
@@ -63,7 +83,7 @@ describe('PlayerSelectPage', () => {
   })
 
   it('should navigate to previous player with ArrowUp key', () => {
-    renderWithRouter(<PlayerSelectPage />)
+    renderWithProviders(<PlayerSelectPage />)
 
     // Press ArrowDown first to move to second player
     fireEvent.keyDown(window, { key: 'ArrowDown' })
@@ -76,7 +96,7 @@ describe('PlayerSelectPage', () => {
   })
 
   it('should wrap around to last player when pressing ArrowUp at first', () => {
-    renderWithRouter(<PlayerSelectPage />)
+    renderWithProviders(<PlayerSelectPage />)
 
     // Press ArrowUp when already at first player - should wrap to last
     fireEvent.keyDown(window, { key: 'ArrowUp' })
@@ -86,7 +106,7 @@ describe('PlayerSelectPage', () => {
   })
 
   it('should wrap around to first player when pressing ArrowDown at last', () => {
-    renderWithRouter(<PlayerSelectPage />)
+    renderWithProviders(<PlayerSelectPage />)
 
     // Navigate to last player
     fireEvent.keyDown(window, { key: 'ArrowDown' })
@@ -99,7 +119,7 @@ describe('PlayerSelectPage', () => {
   })
 
   it('should select player and navigate to home on Enter key', () => {
-    renderWithRouter(<PlayerSelectPage />)
+    renderWithProviders(<PlayerSelectPage />)
 
     // Press Enter to select first player
     fireEvent.keyDown(window, { key: 'Enter' })
@@ -110,7 +130,7 @@ describe('PlayerSelectPage', () => {
   })
 
   it('should select player on click', () => {
-    renderWithRouter(<PlayerSelectPage />)
+    renderWithProviders(<PlayerSelectPage />)
 
     // Click on second player
     const achilleCard = screen.getByText('Achille').closest('div')
@@ -124,7 +144,7 @@ describe('PlayerSelectPage', () => {
   })
 
   it('should initialize default players in localStorage', () => {
-    renderWithRouter(<PlayerSelectPage />)
+    renderWithProviders(<PlayerSelectPage />)
 
     // Check that players are initialized in localStorage
     const players = JSON.parse(localStorage.getItem('players') || '[]')
