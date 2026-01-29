@@ -1,0 +1,98 @@
+/**
+ * Credits content scrolling area styles
+ * Contains sections with headers and attribution items
+ */
+
+.creditsContent {
+  position: relative;
+  width: 100%;
+  min-height: 400px;
+  overflow: visible;
+}
+
+.scrollContainer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px 0 100vh; // Extra padding at bottom for scroll-off
+}
+
+.section {
+  margin-bottom: 40px;
+  text-align: center;
+  width: 100%;
+  max-width: 600px;
+}
+
+.sectionHeader {
+  font-family: 'Press Start 2P', monospace, sans-serif;
+  font-size: 1.2rem;
+  color: #ffcc00;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+  text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.sectionIcon {
+  font-size: 1.4rem;
+}
+
+.attributionList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.attributionItem {
+  font-family: 'Press Start 2P', monospace, sans-serif;
+  font-size: 0.75rem;
+  color: #ffffff;
+  line-height: 1.6;
+}
+
+.attributionName {
+  color: #00ffff;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.attributionDescription {
+  color: #888888;
+  font-size: 0.65rem;
+}
+
+.attributionAuthor {
+  color: #ff88ff;
+  font-size: 0.65rem;
+
+  &::before {
+    content: '— ';
+  }
+}
+
+.separator {
+  width: 60%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #ffcc00, transparent);
+  margin: 30px auto;
+}
+
+.finalCredit {
+  font-family: 'Press Start 2P', monospace, sans-serif;
+  font-size: 1.5rem;
+  color: #ffffff;
+  text-align: center;
+  margin-top: 60px;
+  margin-bottom: 200px; // Extra space at bottom
+  text-shadow:
+    2px 2px 0 rgba(0, 0, 0, 0.5),
+    0 0 20px rgba(255, 255, 255, 0.3);
+}

@@ -1,0 +1,53 @@
+/**
+ * Rainbow animated title styles
+ * Creates a wave-like color animation using CSS gradient
+ */
+
+@keyframes rainbow-wave {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 200% 50%;
+  }
+}
+
+.rainbowTitle {
+  font-size: 3rem;
+  font-weight: bold;
+  font-family: 'Press Start 2P', monospace, sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  text-align: center;
+
+  // Rainbow gradient with 8-bit era colors
+  background: linear-gradient(
+    90deg,
+    #ff0000,
+    // Red
+    #ff7f00,
+    // Orange
+    #ffff00,
+    // Yellow
+    #00ff00,
+    // Green
+    #0000ff,
+    // Blue
+    #4b0082,
+    // Indigo
+    #9400d3,
+    // Violet
+    #ff0000 // Red (loop)
+  );
+  background-size: 200% auto;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+
+  animation: rainbow-wave 3s linear infinite;
+
+  // Pixel-perfect text shadow for depth
+  text-shadow:
+    3px 3px 0 rgba(0, 0, 0, 0.3),
+    -1px -1px 0 rgba(255, 255, 255, 0.1);
+}

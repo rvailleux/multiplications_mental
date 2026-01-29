@@ -1,0 +1,39 @@
+/**
+ * Starfield parallax background styles
+ * Creates a scrolling star effect with 3 layers at different speeds
+ */
+
+@keyframes starfield-scroll {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-50%);
+  }
+}
+
+.starfield {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.starLayer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 200%; // Double height for seamless loop
+  animation: starfield-scroll var(--animation-duration) linear infinite;
+}
+
+.star {
+  position: absolute;
+  border-radius: 50%;
+  background-color: var(--star-color, #ffffff);
+}

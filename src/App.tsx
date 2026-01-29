@@ -4,6 +4,7 @@ import PlayerSelectPage from './pages/PlayerSelectPage'
 import HomePage from './pages/HomePage'
 import PlayPage from './pages/PlayPage'
 import GameResultsPage from './pages/GameResultsPage'
+import CreditsPage from './pages/CreditsPage'
 
 /**
  * Root application component that sets up routing for the mental math game
@@ -20,6 +21,7 @@ export default function App() {
           <Route path="/home" element={<HomePage />} />
           <Route path="/play" element={<PlayPage />} />
           <Route path="/results" element={<GameResultsPage />} />
+          <Route path="/credits" element={<CreditsPage />} />
         </Routes>
       </Router>
     </MusicProvider>
