@@ -12,7 +12,7 @@ export interface CreditsContentProps {
   creditsData: CreditsSection[]
   /** Current scroll state from useCreditsScroll hook */
   scrollState: ScrollState
-  /** Callback when max scroll position is calculated (for stopping at final credit) */
+  /** Callback when max scroll position is calculated (for scrolling all content off screen) */
   onMaxScrollCalculated?: (maxScroll: number) => void
 }
 
@@ -45,7 +45,7 @@ export default function CreditsContent({
   const finalCreditRef = useRef<HTMLDivElement>(null)
 
   /**
-   * Calculate max scroll position when final credit should be centered
+   * Calculate max scroll position to scroll all content off screen
    * This runs once after initial render when refs are available
    */
   useEffect(() => {
@@ -56,14 +56,14 @@ export default function CreditsContent({
     // Get the container height (viewport area)
     const containerHeight = containerRef.current.offsetHeight
 
-    // Get the final credit element's position relative to scroll container
+    // Get the final credit element's position and size
     const finalCreditTop = finalCreditRef.current.offsetTop
-
-    // Calculate scroll position where final credit is centered
-    // We want: scrollPosition + containerHeight/2 = finalCreditTop + finalCreditHeight/2
-    // So: scrollPosition = finalCreditTop - containerHeight/2 + finalCreditHeight/2
     const finalCreditHeight = finalCreditRef.current.offsetHeight
-    const maxScroll = finalCreditTop - containerHeight / 2 + finalCreditHeight / 2
+
+    // Calculate scroll position where entire content (including final credit) exits the top
+    // We need to scroll until the bottom of the final credit moves past the top of viewport
+    // This requires scrolling by: finalCreditTop + finalCreditHeight + some extra buffer
+    const maxScroll = finalCreditTop + finalCreditHeight + containerHeight
 
     // Small delay to ensure layout is complete
     const timeoutId = setTimeout(() => {
@@ -113,7 +113,7 @@ export default function CreditsContent({
         {/* Separator before final credit */}
         <div className={styles.separator} />
 
-        {/* Final credit - stops in center */}
+        {/* Final credit - scrolls off screen with rest of content */}
         <div ref={finalCreditRef} className={styles.finalCredit} data-testid="final-credit">
           {FINAL_CREDIT}
         </div>
