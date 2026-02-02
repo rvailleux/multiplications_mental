@@ -198,14 +198,10 @@ describe('MusicContext', () => {
         await result.current.playMainTheme()
       })
 
-      // Verify interaction listeners were added
+      // Verify click interaction listener was added
+      // (keydown listener removed to avoid intercepting keyboard navigation)
       expect(addEventListenerSpy).toHaveBeenCalledWith(
         'click',
-        expect.any(Function),
-        expect.objectContaining({ once: true })
-      )
-      expect(addEventListenerSpy).toHaveBeenCalledWith(
-        'keydown',
         expect.any(Function),
         expect.objectContaining({ once: true })
       )

@@ -76,16 +76,17 @@ export function MusicProvider({ children }: MusicProviderProps) {
 
   /**
    * Helper function to setup user interaction listeners for autoplay fallback
+   * Only listens for click events to avoid intercepting keyboard navigation
+   * (keydown would capture Enter/Arrow keys before game handlers process them)
    */
   const setupInteractionListeners = useCallback((playFunction: () => Promise<void>) => {
     const handleInteraction = async () => {
       window.removeEventListener('click', handleInteraction)
-      window.removeEventListener('keydown', handleInteraction)
       setAutoplayBlocked(false)
       await playFunction()
     }
+    // Only use click - keydown interferes with keyboard navigation in the game
     window.addEventListener('click', handleInteraction, { once: true })
-    window.addEventListener('keydown', handleInteraction, { once: true })
   }, [])
 
   /**
