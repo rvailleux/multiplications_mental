@@ -4,7 +4,7 @@ import styles from './KeyboardHints.module.scss'
  * Screen identifiers for keyboard hint configuration
  * @public
  */
-export type ScreenId = 'player-select' | 'home' | 'play' | 'pause-menu' | 'results'
+export type ScreenId = 'player-select' | 'home' | 'play' | 'pause-menu' | 'results' | 'credits'
 
 /**
  * Individual keyboard hint
@@ -41,6 +41,7 @@ export const KEYBOARD_HINTS_CONFIG: Record<ScreenId, KeyboardHint[]> = {
   home: [
     { key: '↑↓', description: 'Navigate' },
     { key: 'Enter', description: 'Select' },
+    { key: 'Ctrl+C', description: 'Credits' },
     { key: 'ESC', description: 'Change Player' },
   ],
   play: [
@@ -58,6 +59,10 @@ export const KEYBOARD_HINTS_CONFIG: Record<ScreenId, KeyboardHint[]> = {
   results: [
     { key: 'Enter', description: 'Continue' },
     { key: 'ESC', description: 'Change Player' },
+  ],
+  credits: [
+    { key: '↑↓', description: 'Scroll Speed' },
+    { key: 'ESC', description: 'Back' },
   ],
 }
 

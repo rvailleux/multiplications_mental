@@ -1050,6 +1050,8 @@ This file helps Claude Code understand the project context, patterns, and conven
 - localStorage (client-side persistence for scores) (015-answer-feedback)
 - TypeScript 5.7.2 (strict mode enabled) + React 19.0.0, React Router DOM 7.5.0, HTML5 Audio API (016-main-theme-music)
 - N/A (no persistence required for music state) (016-main-theme-music)
+- TypeScript 5.7.2 (strict mode enabled) + React 19.0.0, React Router DOM 7.5.0, Sass (CSS Modules) (017-credits-screen)
+- N/A (no persistence required for credits screen state) (017-credits-screen)
 
 ## Recent Changes
 - 010-player-name-display: Added TypeScript 5.7.2 (strict mode enabled) + React 19.0.0, React Router DOM 7.5.0

@@ -5,6 +5,10 @@ import { VitePWA } from 'vite-plugin-pwa'
 
 export default defineConfig(({ mode }) => ({
   base: mode === 'production' ? '/multiplications_mental/' : '/',
+  server: {
+    port: 5172,
+    strictPort: true,
+  },
   plugins: [
     react(),
     VitePWA({

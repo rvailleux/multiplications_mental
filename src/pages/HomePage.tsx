@@ -171,13 +171,16 @@ export default function HomePage() {
     }
   }, [currentPlayer, navigate])
 
-  /** Keyboard navigation: ESC to go back, ENTER to start game */
+  /** Keyboard navigation: ESC to go back, ENTER to start game, Ctrl+C to credits */
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent): void => {
       if (e.key === 'Escape') {
         navigate('/')
       } else if (e.key === 'Enter') {
         navigate('/play')
+      } else if ((e.ctrlKey || e.metaKey) && e.key === 'c') {
+        e.preventDefault() // Prevent browser copy action
+        navigate('/credits')
       }
     }
 
