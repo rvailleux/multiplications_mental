@@ -47,7 +47,7 @@ jobs:
           path: playwright-report/
 
   test-github-hosted:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, Linux]
     timeout-minutes: 60
     env:
       SHARD_INDEX: 3

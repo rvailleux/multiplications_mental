@@ -52,30 +52,35 @@ export interface UseListNavigationReturn {
  * ```
  */
 export function useListNavigation<T>(config: ListNavigationConfig<T>): UseListNavigationReturn {
+  // Destructure config to get stable references for dependencies
+  // This prevents useCallback from recreating functions when config object changes
+  const { items, onSelect } = config
+  const itemsLength = items.length
+
   // Guard against empty lists
-  if (config.items.length === 0) {
+  if (itemsLength === 0) {
     throw new Error('useListNavigation: items array cannot be empty')
   }
 
   // Clamp defaultIndex to valid range
-  const clampedDefault = Math.max(0, Math.min(config.defaultIndex ?? 0, config.items.length - 1))
+  const clampedDefault = Math.max(0, Math.min(config.defaultIndex ?? 0, itemsLength - 1))
   const [selectedIndex, setSelectedIndex] = useState(clampedDefault)
 
   const navigateDown = useCallback((): void => {
     setSelectedIndex(current => {
-      return (current + 1) % config.items.length
+      return (current + 1) % itemsLength
     })
-  }, [config.items.length])
+  }, [itemsLength])
 
   const navigateUp = useCallback((): void => {
     setSelectedIndex(current => {
-      return current === 0 ? config.items.length - 1 : current - 1
+      return current === 0 ? itemsLength - 1 : current - 1
     })
-  }, [config.items.length])
+  }, [itemsLength])
 
   const confirmSelection = useCallback((): void => {
-    config.onSelect(selectedIndex)
-  }, [selectedIndex, config])
+    onSelect(selectedIndex)
+  }, [selectedIndex, onSelect])
 
   const resetToDefault = useCallback((): void => {
     setSelectedIndex(clampedDefault)
