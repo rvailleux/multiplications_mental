@@ -212,12 +212,26 @@
   align-items: center;
 }
 
-// === RESPONSIVE MIXIN ===
+// === RESPONSIVE MIXINS ===
 
 @mixin mobile {
   @media (max-width: $breakpoint-mobile) {
     @content;
   }
+}
+
+@mixin tablet {
+  @media (min-width: $breakpoint-tablet-min) and (max-width: $breakpoint-tablet) {
+    @content;
+  }
+}
+
+// === ACCESSIBILITY MIXINS ===
+
+// WCAG 2.5.5 minimum touch target size (44x44px)
+@mixin touch-target {
+  min-width: 44px;
+  min-height: 44px;
 }
 
 // === MODAL MIXINS ===
