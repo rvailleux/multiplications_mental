@@ -15,3 +15,15 @@ Here is a list of next changes to be made:
 [ ] Full design review for iPad responsiveness. Ensure all screens render correctly on iPad screen sizes (768x1024, 1024x1366). Test portrait and landscape orientations. Fix any layout issues, overflow problems, or touch target sizes.
 [ ] Replace keyboard input during game with on-screen numpad. Add a virtual numpad (0-9 digits), delete key, and clear key for answer input. Users tap/click numpad keys instead of using physical keyboard. Ensure design remains consistent with 8-bit aesthetic and maintains iPad responsiveness.
 [ ] Add adaptive difficulty based on multiplication table error rates. Track error percentage per multiplication table (e.g., table of 3, table of 8). Tables with higher error rates appear more frequently. Lower figure multiplications (like 9x1) are considered easier than higher figures (like 8x7). Implement weighted random selection favoring tables where player needs more practice.
+
+## Arcade Features Backlog
+
+[ ] Life Recovery on 10-Streak. When player achieves 10 consecutive correct answers, recover 1 life (max 3 lives). Display heart animation and sound effect. Combo counter shows progress toward next life. Implementation: Track streak in existing combo state, trigger at combo === 10, 20, 30... (every 10), clamp lives at max 3. Visual: Heart floats up with "+1 ❤️" animation. Audio: Life-up 8-bit sound effect.
+
+[ ] Weekly Leaderboard. Add a separate "This Week" leaderboard tab that resets every Monday at midnight. Shows only scores from current week alongside all-time leaderboard. Implementation: Add timestamp field to score entries, filter scores by current week (Monday-Sunday), tab toggle "All Time" | "This Week", auto-resets visually (no data deletion needed).
+
+[ ] New High Score Celebration. When player beats their personal best score, trigger special celebration on results screen: fanfare sound, "NEW HIGH SCORE!" banner, confetti animation, score pulses/glows. Implementation: Compare final score vs max in localStorage, trigger only when score > personalBest, 3-second celebration sequence, reuse existing 8-bit audio patterns.
+
+[ ] Achievement Badges. Unlock badges for milestones displayed on home screen. Examples: 🥇 First Win (complete first game), 🔥 Hot Streak (get 10 correct in a row), 💯 Perfect Game (finish with 0 mistakes), 🏃 Speed Demon (score 500+ points), 👑 Champion (reach #1 on leaderboard), 🎮 Dedicated (play 50 games). Implementation: Store unlocked badges in localStorage, check conditions at game end, badge showcase section on HomePage, toast notification when badge unlocked.
+
+[ ] Combo Particle Effects. Add visual juice to streaks and game events: 5+ streak gets sparkles around score, 10+ streak gets confetti burst + screen shake, wrong answer gets red flash + subtle shake, game over gets explosion particles. Implementation: CSS animations or lightweight particle library, performance-conscious (reduce on low-end), toggle in future settings menu.
