@@ -6,7 +6,7 @@ import { test, expect } from '@playwright/test'
  * User Stories: US1 (Game End), US2 (Overlay), US3 (Results)
  *
  * This test validates the complete game-over experience when lives are depleted:
- * - Game ends after 4th wrong answer (losing all 3 lives) (US1)
+ * - Game ends after 3rd wrong answer (losing all 3 lives) (US1)
  * - Game over overlay displays for 1.5 seconds (US2)
  * - Results page shows "No Lives Remaining" with red styling (US3)
  */
@@ -25,14 +25,14 @@ test.describe('Game Over - US1: Game Ends When Lives Depleted', () => {
     await expect(page.getByText('Score')).toBeVisible()
   })
 
-  test('E2E-US1-001: Game ends after 4th wrong answer (losing all 3 lives)', async ({ page }) => {
+  test('E2E-US1-001: Game ends after 3rd wrong answer (losing all 3 lives)', async ({ page }) => {
     const input = page.locator('input[inputmode="numeric"]')
 
     // Verify initial state: 3 hearts
     const initialHearts = await page.locator('text=❤️').count()
     expect(initialHearts).toBe(3)
 
-    // Submit 3 wrong answers to lose all lives (one life left for 4th answer)
+    // Submit 3 wrong answers to lose all 3 lives
     for (let i = 0; i < 3; i++) {
       await input.fill('999')
       await page.keyboard.press('Enter')
@@ -62,6 +62,7 @@ test.describe('Game Over - US1: Game Ends When Lives Depleted', () => {
     // Answer correctly first to get some score
     const questionText = await page.locator('text=/\\d+ x \\d+\\?/').textContent()
     const match = questionText?.match(/(\d+)\s*x\s*(\d+)/)
+    expect(match, 'Question should match multiplication format').toBeTruthy()
     if (match) {
       const correctAnswer = parseInt(match[1]) * parseInt(match[2])
       await input.click()
@@ -195,6 +196,7 @@ test.describe('Game Over - US3: Results Display', () => {
     // Get one correct answer first to have a score > 0
     const questionText = await page.locator('text=/\\d+ x \\d+\\?/').textContent()
     const match = questionText?.match(/(\d+)\s*x\s*(\d+)/)
+    expect(match, 'Question should match multiplication format').toBeTruthy()
     if (match) {
       const correctAnswer = parseInt(match[1]) * parseInt(match[2])
       await input.click()
@@ -231,6 +233,7 @@ test.describe('Game Over - US3: Results Display', () => {
     // Answer correctly once
     const questionText = await page.locator('text=/\\d+ x \\d+\\?/').textContent()
     const match = questionText?.match(/(\d+)\s*x\s*(\d+)/)
+    expect(match, 'Question should match multiplication format').toBeTruthy()
     if (match) {
       const correctAnswer = parseInt(match[1]) * parseInt(match[2])
       await input.click()
@@ -266,6 +269,7 @@ test.describe('Game Over - US3: Results Display', () => {
     // Get one correct answer first
     const questionText = await page.locator('text=/\\d+ x \\d+\\?/').textContent()
     const match = questionText?.match(/(\d+)\s*x\s*(\d+)/)
+    expect(match, 'Question should match multiplication format').toBeTruthy()
     if (match) {
       const correctAnswer = parseInt(match[1]) * parseInt(match[2])
       await input.click()
