@@ -200,7 +200,7 @@
 
 ### Phase Dependencies
 
-```
+```text
 Phase 1 (Setup)         → N/A (already complete)
          │
          ▼

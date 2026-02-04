@@ -70,6 +70,16 @@ export default function CreditsPage() {
   }, [decreaseSpeed, showSpeedChange])
 
   /**
+   * Redirect to player selection if no player is selected
+   * Maintains consistent flow with other pages (HomePage, PlayPage, GameResultsPage)
+   */
+  useEffect(() => {
+    if (!currentPlayer) {
+      navigate('/')
+    }
+  }, [currentPlayer, navigate])
+
+  /**
    * Keyboard navigation handler
    * - Escape: Navigate back to home
    * - ArrowUp: Increase scroll speed

@@ -28,6 +28,10 @@
     box-shadow 0.1s;
   user-select: none; // Prevent text selection on click
 
+  // WCAG 2.5.5 minimum touch target size for mobile accessibility
+  min-width: 44px;
+  min-height: 44px;
+
   // Hover state - retro cyan glow effect (8-bit aesthetic)
   &:hover {
     transform: scale(1.03);
@@ -42,8 +46,12 @@
   }
 
   // Focus state for keyboard navigation (accessibility)
+  // Uses white for high contrast against teal background (WCAG 2.4.7)
   &:focus-visible {
-    outline: 2px solid $color-teal;
+    outline: 3px solid $color-white;
     outline-offset: 2px;
+    box-shadow:
+      $box-shadow-inset-shine,
+      0 0 8px rgba(255, 255, 255, 0.8);
   }
 }
