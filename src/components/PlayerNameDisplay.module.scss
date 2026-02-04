@@ -19,3 +19,39 @@
   white-space: nowrap;
   font-weight: bold;
 }
+
+// Clickable state - applied when onClick prop is provided
+.clickable {
+  cursor: pointer;
+  transition:
+    transform 0.1s,
+    box-shadow 0.1s;
+  user-select: none; // Prevent text selection on click
+
+  // WCAG 2.5.5 minimum touch target size for mobile accessibility
+  min-width: 44px;
+  min-height: 44px;
+
+  // Hover state - retro cyan glow effect (8-bit aesthetic)
+  &:hover {
+    transform: scale(1.03);
+    box-shadow:
+      $box-shadow-inset-shine,
+      0 0 12px rgba(0, 255, 255, 0.6);
+  }
+
+  // Active/pressed state - subtle press-in effect for mouse and touch
+  &:active {
+    transform: scale(0.98);
+  }
+
+  // Focus state for keyboard navigation (accessibility)
+  // Uses white for high contrast against teal background (WCAG 2.4.7)
+  &:focus-visible {
+    outline: 3px solid $color-white;
+    outline-offset: 2px;
+    box-shadow:
+      $box-shadow-inset-shine,
+      0 0 8px rgba(255, 255, 255, 0.8);
+  }
+}

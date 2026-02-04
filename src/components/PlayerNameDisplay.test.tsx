@@ -1,5 +1,5 @@
-import { render, screen } from '@testing-library/react'
-import { describe, it, expect } from 'vitest'
+import { render, screen, fireEvent } from '@testing-library/react'
+import { describe, it, expect, vi } from 'vitest'
 import PlayerNameDisplay from './PlayerNameDisplay'
 
 describe('PlayerNameDisplay', () => {
@@ -59,5 +59,110 @@ describe('PlayerNameDisplay', () => {
     const player = { id: 'test', name: '日本語 🎮' }
     render(<PlayerNameDisplay player={player} />)
     expect(screen.getByText('日本語 🎮')).toBeInTheDocument()
+  })
+
+  // === User Story 1: Click Navigation Tests (T006-T008) ===
+
+  describe('onClick behavior', () => {
+    it('T006: should call onClick when clicked', () => {
+      const player = { id: 'jules', name: 'Jules' }
+      const handleClick = vi.fn()
+      render(<PlayerNameDisplay player={player} onClick={handleClick} />)
+
+      const container = screen.getByRole('button')
+      fireEvent.click(container)
+
+      expect(handleClick).toHaveBeenCalledTimes(1)
+    })
+
+    it('T007: should NOT call onClick when not provided (display-only mode)', () => {
+      const player = { id: 'jules', name: 'Jules' }
+      const { container } = render(<PlayerNameDisplay player={player} />)
+
+      const playerDiv = container.firstChild as HTMLElement
+      // Verify no role="button" when not clickable
+      expect(playerDiv.getAttribute('role')).toBeNull()
+      // Verify no tabIndex when not clickable
+      expect(playerDiv.getAttribute('tabIndex')).toBeNull()
+    })
+
+    it('T008: should trigger onClick on keyboard Enter press', () => {
+      const player = { id: 'jules', name: 'Jules' }
+      const handleClick = vi.fn()
+      render(<PlayerNameDisplay player={player} onClick={handleClick} />)
+
+      const container = screen.getByRole('button')
+      fireEvent.keyDown(container, { key: 'Enter' })
+
+      expect(handleClick).toHaveBeenCalledTimes(1)
+    })
+
+    it('should NOT trigger onClick on other keyboard keys', () => {
+      const player = { id: 'jules', name: 'Jules' }
+      const handleClick = vi.fn()
+      render(<PlayerNameDisplay player={player} onClick={handleClick} />)
+
+      const container = screen.getByRole('button')
+      fireEvent.keyDown(container, { key: 'Space' })
+      fireEvent.keyDown(container, { key: 'Escape' })
+      fireEvent.keyDown(container, { key: 'ArrowDown' })
+
+      expect(handleClick).not.toHaveBeenCalled()
+    })
+  })
+
+  // === User Story 2: Visual Feedback Tests (T019-T020) ===
+
+  describe('visual feedback', () => {
+    it('T019: should have clickable class when onClick provided', () => {
+      const player = { id: 'jules', name: 'Jules' }
+      const handleClick = vi.fn()
+      const { container } = render(<PlayerNameDisplay player={player} onClick={handleClick} />)
+
+      const playerDiv = container.firstChild as HTMLElement
+      expect(playerDiv.className).toContain('clickable')
+    })
+
+    it('T020: should NOT have clickable class when onClick NOT provided', () => {
+      const player = { id: 'jules', name: 'Jules' }
+      const { container } = render(<PlayerNameDisplay player={player} />)
+
+      const playerDiv = container.firstChild as HTMLElement
+      expect(playerDiv.className).not.toContain('clickable')
+    })
+
+    it('should have role="button" when onClick provided', () => {
+      const player = { id: 'jules', name: 'Jules' }
+      const handleClick = vi.fn()
+      render(<PlayerNameDisplay player={player} onClick={handleClick} />)
+
+      expect(screen.getByRole('button')).toBeInTheDocument()
+    })
+
+    it('should have tabIndex={0} when onClick provided for keyboard focus', () => {
+      const player = { id: 'jules', name: 'Jules' }
+      const handleClick = vi.fn()
+      render(<PlayerNameDisplay player={player} onClick={handleClick} />)
+
+      const button = screen.getByRole('button')
+      expect(button.getAttribute('tabIndex')).toBe('0')
+    })
+  })
+
+  // === User Story 3: Touch Support Test (T027) ===
+
+  describe('touch support', () => {
+    it('T027: should fire onClick on click event (unified mouse/touch behavior)', () => {
+      // React's onClick handles both mouse clicks and touch taps
+      const player = { id: 'jules', name: 'Jules' }
+      const handleClick = vi.fn()
+      render(<PlayerNameDisplay player={player} onClick={handleClick} />)
+
+      const container = screen.getByRole('button')
+      // Standard click event works for both mouse and touch
+      fireEvent.click(container)
+
+      expect(handleClick).toHaveBeenCalledTimes(1)
+    })
   })
 })
