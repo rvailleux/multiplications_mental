@@ -158,7 +158,7 @@ export default function GameResultsPage() {
 
   return (
     <div className={getContainerClass()}>
-      <PlayerNameDisplay player={currentPlayer} />
+      <PlayerNameDisplay player={currentPlayer} onClick={() => navigate('/')} />
 
       <div className={styles.card}>
         <h1 className={getHeadingClass()}>{getEndReasonText(endReason)}</h1>

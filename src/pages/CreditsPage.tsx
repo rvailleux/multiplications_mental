@@ -4,7 +4,9 @@ import Starfield from '../components/Starfield'
 import RainbowTitle from '../components/RainbowTitle'
 import CreditsContent from '../components/CreditsContent'
 import KeyboardHints from '../components/KeyboardHints'
+import PlayerNameDisplay from '../components/PlayerNameDisplay'
 import { useCreditsScroll } from '../hooks/useCreditsScroll'
+import { getCurrentPlayer } from '../types/player'
 import { CREDITS_DATA } from '../data/creditsData'
 import styles from './CreditsPage.module.scss'
 
@@ -27,6 +29,7 @@ import styles from './CreditsPage.module.scss'
  */
 export default function CreditsPage() {
   const navigate = useNavigate()
+  const currentPlayer = getCurrentPlayer()
   const { scrollState, increaseSpeed, decreaseSpeed, speedLabel, setMaxScroll } = useCreditsScroll()
   const [showSpeedIndicator, setShowSpeedIndicator] = useState(false)
   const [speedIndicatorTimeout, setSpeedIndicatorTimeout] = useState<NodeJS.Timeout | null>(null)
@@ -106,6 +109,9 @@ export default function CreditsPage() {
 
   return (
     <div className={styles.creditsContainer}>
+      {/* Player name display - clickable to return to player selection */}
+      <PlayerNameDisplay player={currentPlayer} onClick={() => navigate('/')} />
+
       {/* Parallax starfield background */}
       <Starfield />
 

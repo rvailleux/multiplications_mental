@@ -229,7 +229,7 @@ export default function HomePage() {
 
   return (
     <div className={styles.gameContainer}>
-      <PlayerNameDisplay player={currentPlayer} />
+      <PlayerNameDisplay player={currentPlayer} onClick={() => navigate('/')} />
       <div className={styles.clouds}>
         <div className={styles.cloud}>☁️</div>
         <div className={styles.cloud}>☁️</div>
