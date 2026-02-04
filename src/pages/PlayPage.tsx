@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { useTimer } from '../hooks/useTimer'
 import { useMusic } from '../contexts/MusicContext'
 import { usePauseMenu } from '../hooks/usePauseMenu'
@@ -8,11 +8,13 @@ import AnswerFeedback from '../components/AnswerFeedback'
 import ProgressBar from '../components/ProgressBar'
 import MultiplicationQuestion from '../components/MultiplicationQuestion'
 import PauseMenu from '../components/PauseMenu'
+import GameOverOverlay from '../components/GameOverOverlay'
 import JumpingArrow from '../components/JumpingArrow'
 import KeyboardHints from '../components/KeyboardHints'
 import { useNavigate } from 'react-router-dom'
 import { getCurrentPlayer } from '../types/player'
 import PlayerNameDisplay from '../components/PlayerNameDisplay'
+import type { GameEndReason } from '../types/score'
 import styles from './PlayPage.module.scss'
 
 /**
@@ -46,6 +48,8 @@ export default function PlayPage() {
   const [scorePopup, setScorePopup] = useState('')
   const [showPopup, setShowPopup] = useState(false)
   const [lives, setLives] = useState(3)
+  const [isGameOver, setIsGameOver] = useState(false)
+  const [gameEndReason, setGameEndReason] = useState<GameEndReason | null>(null)
 
   // Ref for form submission (allows Enter key to submit when Valider is selected)
   const formRef = useRef<HTMLFormElement>(null)
@@ -70,8 +74,53 @@ export default function PlayPage() {
     setResults([]) // Clear the results
     setCombo(0) // Reset combo
     setLives(3) // Reset lives
+    setIsGameOver(false) // Clear game over state
+    setGameEndReason(null) // Clear end reason
     playGameplayMusic() // Start new random gameplay music (never main theme)
   }
+
+  /**
+   * Saves current score to localStorage with player info and end reason
+   * Handles localStorage errors gracefully without blocking navigation
+   * @param endReason - The reason the game ended
+   */
+  const saveScoreToStorage = useCallback(
+    (endReason: GameEndReason): void => {
+      if (score <= 0) return // Don't save zero scores
+
+      try {
+        const previousScores = JSON.parse(localStorage.getItem('scores') || '[]')
+        localStorage.setItem(
+          'scores',
+          JSON.stringify([
+            ...previousScores,
+            {
+              score,
+              results,
+              playerId: currentPlayer?.id,
+              playerName: currentPlayer?.name,
+              endReason,
+            },
+          ])
+        )
+      } catch (error) {
+        console.error('Failed to save score to localStorage:', error)
+        // Continue to results page even if save fails
+      }
+    },
+    [score, results, currentPlayer]
+  )
+
+  /**
+   * Handler called when game over overlay animation completes
+   * Saves score and navigates to results page
+   */
+  const handleGameOverComplete = useCallback((): void => {
+    if (gameEndReason) {
+      saveScoreToStorage(gameEndReason)
+      navigate('/results', { state: { score, results, endReason: gameEndReason } })
+    }
+  }, [score, results, gameEndReason, navigate, saveScoreToStorage])
 
   // Setup navigable options for Valider/Restart selection
   const { selectedOption, navigateUp, navigateDown, executeSelectedOption, resetToDefault } =
@@ -110,6 +159,19 @@ export default function PlayPage() {
       navigate('/')
     }
   }, [currentPlayer, navigate])
+
+  /**
+   * Detect game over when all lives are lost
+   * Triggers game-over overlay and stops timer/music
+   */
+  useEffect(() => {
+    if (lives === 0 && !isGameOver) {
+      setIsGameOver(true)
+      setGameEndReason('lives_depleted')
+      pause() // Stop the timer
+      stopMusic() // Stop gameplay music
+    }
+  }, [lives, isGameOver, pause, stopMusic])
 
   /** Handle keyboard navigation: ESC for pause, Arrow keys for option navigation */
   useEffect(() => {
@@ -196,30 +258,15 @@ export default function PlayPage() {
 
   // Save score to local storage when time is up (only if score > 0)
   useEffect(() => {
-    if (secondsLeft === 0) {
+    // Skip if game already over (lives depleted handles its own navigation)
+    if (secondsLeft === 0 && !isGameOver) {
       stopMusic() // Stop music before navigation
+      const endReason: GameEndReason = 'timer_expired'
       // Only save scores greater than zero to prevent empty games cluttering leaderboard
       if (score > 0) {
-        try {
-          const previousScores = JSON.parse(localStorage.getItem('scores') || '[]')
-          localStorage.setItem(
-            'scores',
-            JSON.stringify([
-              ...previousScores,
-              {
-                score,
-                results,
-                playerId: currentPlayer?.id,
-                playerName: currentPlayer?.name,
-              },
-            ])
-          )
-        } catch (error) {
-          console.error('Failed to save score to localStorage:', error)
-          // Continue to results page even if save fails
-        }
-        // Navigate to results screen with game data
-        navigate('/results', { state: { score, results } })
+        saveScoreToStorage(endReason)
+        // Navigate to results screen with game data including end reason
+        navigate('/results', { state: { score, results, endReason } })
       } else {
         // Skip results screen for zero scores
         navigate('/home')
@@ -310,6 +357,12 @@ export default function PlayPage() {
 
       {/* Visual feedback overlay for answer feedback */}
       <AnswerFeedback type={feedbackType} isVisible={isPlaying} />
+
+      {/* Game over overlay when all lives are lost */}
+      <GameOverOverlay
+        isVisible={isGameOver && gameEndReason === 'lives_depleted'}
+        onAnimationComplete={handleGameOverComplete}
+      />
     </div>
   )
 }

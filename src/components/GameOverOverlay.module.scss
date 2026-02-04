@@ -1,0 +1,49 @@
+@use '../styles/tokens' as *;
+@use '../styles/mixins' as *;
+@use '../styles/animations';
+
+.overlay {
+  @include modal-overlay;
+  background-color: rgba($color-black, 0.85);
+}
+
+.content {
+  @include flex-column-center;
+  text-align: center;
+  animation: gameOverZoom 0.5s ease-out;
+}
+
+.title {
+  font-family: $font-family-pixel;
+  font-size: $font-size-6xl;
+  color: $color-red;
+  text-transform: uppercase;
+  letter-spacing: 8px;
+  margin: 0;
+  text-shadow:
+    0 0 20px rgba($color-red, 0.8),
+    0 0 40px rgba($color-red, 0.5),
+    $text-shadow-black-lg;
+  animation: gameOverPulse 0.8s ease-in-out infinite alternate;
+
+  @include mobile {
+    font-size: $font-size-4xl;
+    letter-spacing: 4px;
+  }
+}
+
+.subtitle {
+  font-family: $font-family-pixel;
+  font-size: $font-size-xl;
+  color: $color-white;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin: $spacing-xl 0 0;
+  text-shadow: $text-shadow-black-sm;
+  opacity: 0.9;
+
+  @include mobile {
+    font-size: $font-size-md;
+    letter-spacing: 1px;
+  }
+}

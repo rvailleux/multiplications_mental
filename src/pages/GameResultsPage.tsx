@@ -6,11 +6,12 @@ import JumpingArrow from '../components/JumpingArrow'
 import KeyboardHints from '../components/KeyboardHints'
 import { getCurrentPlayer } from '../types/player'
 import type { GameResult } from './PlayPage'
+import type { GameEndReason } from '../types/score'
 import styles from './GameResultsPage.module.scss'
 
 /**
  * Route state interface for GameResultsPage
- * Data passed from PlayPage when timer expires
+ * Data passed from PlayPage when game ends (timer expires or lives depleted)
  * @public
  */
 export interface GameResultsState {
@@ -18,6 +19,8 @@ export interface GameResultsState {
   score: number
   /** Array of all questions and their results */
   results: GameResult[]
+  /** Reason why the game ended (optional for backward compatibility) */
+  endReason?: GameEndReason
 }
 
 /**
@@ -37,10 +40,34 @@ export default function GameResultsPage() {
   const currentPlayer = getCurrentPlayer()
   const { playMainTheme } = useMusic()
 
-  // Extract score and results from route state with fallback defaults
+  // Extract score, results, and endReason from route state with fallback defaults
   const state = location.state as GameResultsState | undefined
   const score = state?.score ?? 0
   const results = state?.results ?? []
+  const endReason = state?.endReason
+
+  /**
+   * Get display text based on game end reason
+   * Returns contextual message for lives depleted, timer expired, or legacy fallback
+   * @param reason - The reason the game ended
+   * @returns Display text for the heading
+   */
+  const getEndReasonText = (reason?: GameEndReason): string => {
+    switch (reason) {
+      case 'lives_depleted':
+        return 'No Lives Remaining'
+      case 'timer_expired':
+        return "Time's Up!"
+      default:
+        return 'Game Over!' // Legacy fallback for old entries without endReason
+    }
+  }
+
+  /**
+   * Determine if the game ended due to lives being depleted
+   * Used for conditional styling (red vs gold heading)
+   */
+  const isLivesDepleted = endReason === 'lives_depleted'
 
   /** Redirect to player selection if no player is selected */
   useEffect(() => {
@@ -108,9 +135,24 @@ export default function GameResultsPage() {
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [navigate])
 
-  const getContainerClass = () => {
+  /**
+   * Generate container class name based on state
+   * Applies blinking animation and lives-depleted variant styling
+   */
+  const getContainerClass = (): string => {
     const classes = [styles.container]
     if (isBlinking) classes.push(styles.blinking)
+    if (isLivesDepleted) classes.push(styles.livesDepleted)
+    return classes.join(' ')
+  }
+
+  /**
+   * Generate heading class name based on end reason
+   * Uses red styling for lives depleted, gold for timer expired
+   */
+  const getHeadingClass = (): string => {
+    const classes = [styles.heading]
+    if (isLivesDepleted) classes.push(styles.headingRed)
     return classes.join(' ')
   }
 
@@ -119,7 +161,7 @@ export default function GameResultsPage() {
       <PlayerNameDisplay player={currentPlayer} />
 
       <div className={styles.card}>
-        <h1 className={styles.heading}>Game Over!</h1>
+        <h1 className={getHeadingClass()}>{getEndReasonText(endReason)}</h1>
 
         <div className={styles.score}>{score}</div>
 
