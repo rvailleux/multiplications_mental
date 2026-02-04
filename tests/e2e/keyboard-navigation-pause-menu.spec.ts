@@ -92,62 +92,78 @@ test.describe('Keyboard Navigation - Pause Menu', () => {
     // Navigate through to game
     await page.goto('/')
     await expect(page.getByText('Choose Your Player')).toBeVisible()
+    await page.waitForSelector('text=Jules', { state: 'visible' })
     await page.keyboard.press('Enter') // Select player
-    await page.waitForURL(/\/home/)
+    await page.waitForURL(/\/home/, { timeout: 10000 })
+
+    // Wait for home page to be fully rendered
+    await expect(page.getByText(/Welcome/i)).toBeVisible()
+
     // Note: force:true needed because pulse animation makes element "not stable"
     const startButton = page.getByRole('button', { name: /Start Game/i })
     await expect(startButton).toBeVisible()
     await startButton.click({ force: true })
-    await page.waitForURL(/\/play/)
+    await page.waitForURL(/\/play/, { timeout: 10000 })
 
     // Wait for game to be fully interactive
     await expect(page.getByText('Score')).toBeVisible()
+    await expect(page.locator('input[inputmode="numeric"]')).toBeVisible()
 
     // Open pause menu
     await page.keyboard.press('Escape')
-    await expect(page.getByText('⏸ PAUSE ⏸')).toBeVisible()
+    await expect(page.getByText('⏸ PAUSE ⏸')).toBeVisible({ timeout: 5000 })
+
+    // Verify Continue button is visible and selected
+    await expect(page.getByRole('button', { name: /▶ Continue/i })).toBeVisible()
 
     // Wait a moment (timer should be paused)
-    await page.waitForTimeout(2000)
+    await page.waitForTimeout(1000)
 
     // Continue with Enter key (Continue is selected by default)
     await page.keyboard.press('Enter')
 
     // Verify pause menu closed
-    await expect(page.getByText('⏸ PAUSE ⏸')).not.toBeVisible()
+    await expect(page.getByText('⏸ PAUSE ⏸')).not.toBeVisible({ timeout: 5000 })
 
     // Verify still on game page
     await expect(page).toHaveURL(/\/play/)
+    await expect(page.getByText('Score')).toBeVisible()
   })
 
   test('E2E-US1-003: Pause menu Quit functionality returns to home', async ({ page }) => {
     // Navigate through to game
     await page.goto('/')
     await expect(page.getByText('Choose Your Player')).toBeVisible()
+    await page.waitForSelector('text=Jules', { state: 'visible' })
     await page.keyboard.press('Enter') // Select player
-    await page.waitForURL(/\/home/)
+    await page.waitForURL(/\/home/, { timeout: 10000 })
+
+    // Wait for home page to be fully rendered
+    await expect(page.getByText(/Welcome/i)).toBeVisible()
+
     // Note: force:true needed because pulse animation makes element "not stable"
     const startButton = page.getByRole('button', { name: /Start Game/i })
     await expect(startButton).toBeVisible()
     await startButton.click({ force: true })
-    await page.waitForURL(/\/play/)
+    await page.waitForURL(/\/play/, { timeout: 10000 })
 
     // Wait for game to be fully interactive
     await expect(page.getByText('Score')).toBeVisible()
+    await expect(page.locator('input[inputmode="numeric"]')).toBeVisible()
 
     // Open pause menu
     await page.keyboard.press('Escape')
-    await expect(page.getByText('⏸ PAUSE ⏸')).toBeVisible()
+    await expect(page.getByText('⏸ PAUSE ⏸')).toBeVisible({ timeout: 5000 })
 
     // Navigate to Quit and confirm
     await page.keyboard.press('ArrowDown')
-    await expect(page.getByRole('button', { name: /▶ Quit/i })).toBeVisible()
+    await expect(page.getByRole('button', { name: /▶ Quit/i })).toBeVisible({ timeout: 5000 })
 
     // Press Enter to quit
     await page.keyboard.press('Enter')
 
     // Verify navigation to home page
-    await expect(page).toHaveURL(/\/home/)
+    await expect(page).toHaveURL(/\/home/, { timeout: 10000 })
     await expect(page.getByText(/Welcome Jules/i)).toBeVisible()
   })
 
