@@ -1,4 +1,12 @@
 /**
+ * Reason why the game ended
+ * - 'lives_depleted': Player lost all 3 lives (4 wrong answers)
+ * - 'timer_expired': 60-second timer ran out
+ * @public
+ */
+export type GameEndReason = 'lives_depleted' | 'timer_expired'
+
+/**
  * Represents a single game score entry with player information
  * @public
  */
@@ -16,6 +24,8 @@ export interface ScoreEntry {
   playerId?: string
   /** Display name of the player who achieved this score */
   playerName?: string
+  /** Reason why the game ended (optional for backward compatibility with legacy entries) */
+  endReason?: GameEndReason
 }
 
 /**

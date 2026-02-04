@@ -125,6 +125,36 @@
   }
 }
 
+// === GAME OVER ANIMATIONS ===
+
+@keyframes gameOverZoom {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes gameOverPulse {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(1.02);
+    text-shadow:
+      0 0 30px rgba(#ff6b6b, 0.8),
+      0 0 60px rgba(#ff6b6b, 0.5),
+      6px 6px 0 rgba(#000, 0.5);
+  }
+}
+
 // === ANSWER FEEDBACK ANIMATIONS ===
 
 @keyframes correctFlash {

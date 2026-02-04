@@ -12,6 +12,28 @@
   &.blinking {
     animation: goldFadingBlink 2s ease-in-out infinite;
   }
+
+  // Red background variant for lives depleted
+  &.livesDepleted {
+    background: linear-gradient(135deg, $color-red 0%, $color-red-dark 50%, $color-red 100%);
+
+    &.blinking {
+      animation: redFadingBlink 2s ease-in-out infinite;
+    }
+  }
+}
+
+// Red fading blink animation for lives depleted state
+@keyframes redFadingBlink {
+  0%,
+  100% {
+    opacity: 1;
+    box-shadow: 0 0 20px rgba($color-red, 0.8);
+  }
+  50% {
+    opacity: 0.8;
+    box-shadow: 0 0 40px rgba($color-red, 1);
+  }
 }
 
 .card {
@@ -24,6 +46,20 @@
   text-transform: uppercase;
   letter-spacing: 4px;
   text-shadow: $text-shadow-black-lg;
+
+  @include mobile {
+    font-size: $font-size-3xl;
+    letter-spacing: 2px;
+  }
+}
+
+// Red heading variant for lives depleted
+.headingRed {
+  color: $color-red;
+  text-shadow:
+    0 0 20px rgba($color-red, 0.8),
+    0 0 40px rgba($color-red, 0.5),
+    $text-shadow-black-lg;
 }
 
 .stat {
