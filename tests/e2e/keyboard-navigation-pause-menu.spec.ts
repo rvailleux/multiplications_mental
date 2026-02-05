@@ -167,35 +167,74 @@ test.describe('Keyboard Navigation - Pause Menu', () => {
     await expect(page.getByText(/Welcome Jules/i)).toBeVisible()
   })
 
-  test.skip('E2E-US1-004: Mouse interactions work alongside keyboard', async ({ page }) => {
+  test('E2E-US1-004: Mouse interactions work alongside keyboard', async ({ page }) => {
     // Navigate through to game
     await page.goto('/')
     await expect(page.getByText('Choose Your Player')).toBeVisible()
+    await page.waitForSelector('text=Jules', { state: 'visible' })
     await page.keyboard.press('Enter') // Select player
-    await page.waitForURL(/\/home/)
+    await page.waitForURL(/\/home/, { timeout: 10000 })
+
+    // Wait for home page to be fully rendered
+    await expect(page.getByText(/Welcome/i)).toBeVisible()
 
     // Note: force:true needed because pulse animation makes element "not stable"
     const startButton = page.getByRole('button', { name: /Start Game/i })
     await expect(startButton).toBeVisible()
     await startButton.click({ force: true })
-    await page.waitForURL(/\/play/)
+    await page.waitForURL(/\/play/, { timeout: 10000 })
 
     // Wait for game to be fully interactive
     await expect(page.getByText('Score')).toBeVisible()
+    await expect(page.locator('input[inputmode="numeric"]')).toBeVisible()
 
     // Open pause menu with keyboard
     await page.keyboard.press('Escape')
-    await expect(page.getByText('⏸ PAUSE ⏸')).toBeVisible()
+    await expect(page.getByText('⏸ PAUSE ⏸')).toBeVisible({ timeout: 5000 })
 
-    // Use keyboard to navigate
+    // Use keyboard to navigate to Quit
     await page.keyboard.press('ArrowDown')
-    await expect(page.getByRole('button', { name: /▶ Quit/i })).toBeVisible()
+    await expect(page.getByRole('button', { name: /▶ Quit/i })).toBeVisible({ timeout: 5000 })
 
-    // Click Continue button with mouse (should work even though Quit is selected)
+    // Click Continue button with mouse (should work even though Quit is selected via keyboard)
     await page.getByRole('button', { name: 'Continue' }).click()
 
     // Verify pause menu closed and game resumed
-    await expect(page.getByText('⏸ PAUSE ⏸')).not.toBeVisible()
+    await expect(page.getByText('⏸ PAUSE ⏸')).not.toBeVisible({ timeout: 5000 })
     await expect(page).toHaveURL(/\/play/)
+  })
+
+  test('E2E-US1-005: Mouse click on Quit button quits game without keyboard navigation', async ({
+    page,
+  }) => {
+    // Navigate to game
+    await page.goto('/')
+    await expect(page.getByText('Choose Your Player')).toBeVisible()
+    await page.waitForSelector('text=Jules', { state: 'visible' })
+    await page.keyboard.press('Enter')
+    await page.waitForURL(/\/home/, { timeout: 10000 })
+    await expect(page.getByText(/Welcome/i)).toBeVisible()
+
+    const startButton = page.getByRole('button', { name: /Start Game/i })
+    await expect(startButton).toBeVisible()
+    await startButton.click({ force: true })
+    await page.waitForURL(/\/play/, { timeout: 10000 })
+
+    // Wait for game to be fully interactive
+    await expect(page.getByText('Score')).toBeVisible()
+    await expect(page.locator('input[inputmode="numeric"]')).toBeVisible()
+
+    // Open pause menu with ESC
+    await page.keyboard.press('Escape')
+    await expect(page.getByText('⏸ PAUSE ⏸')).toBeVisible({ timeout: 5000 })
+
+    // IMPORTANT: Click Quit button directly with mouse WITHOUT using arrow keys
+    // This is the bug - clicking Quit should quit, not resume
+    const quitButton = page.getByRole('button', { name: /Quit/i })
+    await quitButton.click()
+
+    // Should navigate to home page
+    await expect(page).toHaveURL(/\/home/, { timeout: 10000 })
+    await expect(page.getByText(/Welcome Jules/i)).toBeVisible()
   })
 })
