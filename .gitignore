@@ -42,3 +42,6 @@ Thumbs.db
 /playwright/.cache/
 /playwright/.auth/
 .playwright-mcp/
+
+# Auto-generated documentation
+docs/api/

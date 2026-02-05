@@ -346,8 +346,15 @@ export default function PlayPage() {
       <PauseMenu
         isPaused={pauseMenu.state.isPaused}
         selectedOption={pauseMenu.state.selectedOption}
-        onContinue={pauseMenu.confirmSelection}
-        onQuit={pauseMenu.confirmSelection}
+        onContinue={() => {
+          pauseMenu.closePauseMenu()
+          resume()
+        }}
+        onQuit={() => {
+          pauseMenu.closePauseMenu()
+          stopMusic()
+          navigate('/home')
+        }}
         onToggle={pauseMenu.toggleOption}
         onClose={() => {
           pauseMenu.closePauseMenu()

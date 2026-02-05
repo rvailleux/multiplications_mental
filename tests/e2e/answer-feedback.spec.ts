@@ -17,18 +17,35 @@ test.describe('Answer Feedback - US1: Audio Feedback', () => {
     // Navigate to game page with a player selected
     await page.goto('/')
     await page.evaluate(() => localStorage.clear())
-    await page.keyboard.press('Enter') // Select default player
-    await page.waitForURL(/\/home/)
+
+    // Wait for player selection page to be fully loaded
+    await expect(page.getByText('Choose Your Player')).toBeVisible()
+    await page.waitForSelector('text=Jules', { state: 'visible' })
+
+    // Select player with Enter key
+    await page.keyboard.press('Enter')
+    await page.waitForURL(/\/home/, { timeout: 10000 })
+
+    // Wait for home page to be fully rendered
+    await expect(page.getByText(/Welcome/i)).toBeVisible()
+
     const startButton = page.getByRole('button', { name: /Start Game/i })
     await expect(startButton).toBeVisible()
     await startButton.click({ force: true })
-    await page.waitForURL(/\/play/)
+    await page.waitForURL(/\/play/, { timeout: 10000 })
+
+    // Wait for game UI to be fully interactive
     await expect(page.getByText('Score')).toBeVisible()
+    await expect(page.locator('input[inputmode="numeric"]')).toBeVisible()
   })
 
   test('E2E-US1-001: Correct answer triggers audio (keyboard submission)', async ({ page }) => {
+    // Wait for question to be visible and stable
+    const questionLocator = page.locator('text=/\\d+ x \\d+\\?/')
+    await expect(questionLocator).toBeVisible()
+
     // Get the multiplication question
-    const questionText = await page.locator('text=/\\d+ x \\d+\\?/').textContent()
+    const questionText = await questionLocator.textContent()
     const match = questionText?.match(/(\d+)\s*x\s*(\d+)/)
 
     if (!match) {
@@ -45,18 +62,24 @@ test.describe('Answer Feedback - US1: Audio Feedback', () => {
       }
     })
 
-    // Focus, clear, and type correct answer character by character
+    // Wait for input to be ready and focused
     const input = page.locator('input[inputmode="numeric"]')
+    await expect(input).toBeVisible()
+    await expect(input).toBeEnabled()
     await input.click()
     await input.clear()
-    await input.pressSequentially(correctAnswer.toString())
-    await expect(input).toHaveValue(correctAnswer.toString())
+
+    // Type answer with small delay between characters for stability
+    await input.pressSequentially(correctAnswer.toString(), { delay: 50 })
+
+    // Verify the value was entered correctly before submitting
+    await expect(input).toHaveValue(correctAnswer.toString(), { timeout: 5000 })
 
     // Submit with Enter key
     await page.keyboard.press('Enter')
 
     // Verify score increased (indicates correct answer processed)
-    await expect(page.getByText(/\+\d+/)).toBeVisible()
+    await expect(page.getByText(/\+\d+/)).toBeVisible({ timeout: 5000 })
 
     // Take screenshot showing correct answer feedback
     await page.screenshot({ path: 'test-results/answer-feedback/01-correct-answer-submitted.png' })
@@ -117,28 +140,34 @@ test.describe('Answer Feedback - US1: Audio Feedback', () => {
   })
 
   test('E2E-US1-004: Keyboard submission works (Enter key)', async ({ page }) => {
+    // Wait for question to be visible and stable
+    const questionLocator = page.locator('text=/\\d+ x \\d+\\?/')
+    await expect(questionLocator).toBeVisible()
+
     // Get correct answer
-    const questionText = await page.locator('text=/\\d+ x \\d+\\?/').textContent()
+    const questionText = await questionLocator.textContent()
     const match = questionText?.match(/(\d+)\s*x\s*(\d+)/)
     if (!match) throw new Error('Could not extract question factors')
     const correctAnswer = parseInt(match[1]) * parseInt(match[2])
 
-    // Focus and clear the input first
+    // Wait for input to be ready
     const input = page.locator('input[inputmode="numeric"]')
+    await expect(input).toBeVisible()
+    await expect(input).toBeEnabled()
     await input.click()
     await input.clear()
 
-    // Type answer character by character (more reliable than fill for numeric inputs)
-    await input.pressSequentially(correctAnswer.toString())
+    // Type answer character by character with delay for stability
+    await input.pressSequentially(correctAnswer.toString(), { delay: 50 })
 
     // Verify the answer was typed correctly before pressing Enter
-    await expect(input).toHaveValue(correctAnswer.toString())
+    await expect(input).toHaveValue(correctAnswer.toString(), { timeout: 5000 })
 
     // Submit with keyboard
     await page.keyboard.press('Enter')
 
     // Score should increase - wait for popup with any positive number
-    await expect(page.getByText(/\+\d+/)).toBeVisible()
+    await expect(page.getByText(/\+\d+/)).toBeVisible({ timeout: 5000 })
   })
 
   test('E2E-US1-005: Mouse submission works (Valider click)', async ({ page }) => {
@@ -175,12 +204,21 @@ test.describe('Answer Feedback - US2: Visual Animations', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/')
     await page.evaluate(() => localStorage.clear())
+
+    // Wait for player selection page to be fully loaded
+    await expect(page.getByText('Choose Your Player')).toBeVisible()
+    await page.waitForSelector('text=Jules', { state: 'visible' })
+
     await page.keyboard.press('Enter')
-    await page.waitForURL(/\/home/)
+    await page.waitForURL(/\/home/, { timeout: 10000 })
+    await expect(page.getByText(/Welcome/i)).toBeVisible()
+
     const startButton = page.getByRole('button', { name: /Start Game/i })
+    await expect(startButton).toBeVisible()
     await startButton.click({ force: true })
-    await page.waitForURL(/\/play/)
+    await page.waitForURL(/\/play/, { timeout: 10000 })
     await expect(page.getByText('Score')).toBeVisible()
+    await expect(page.locator('input[inputmode="numeric"]')).toBeVisible()
   })
 
   test('E2E-US2-001: Correct answer shows positive feedback popup', async ({ page }) => {
@@ -234,12 +272,21 @@ test.describe('Answer Feedback - US3: Hearts Layout', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/')
     await page.evaluate(() => localStorage.clear())
+
+    // Wait for player selection page to be fully loaded
+    await expect(page.getByText('Choose Your Player')).toBeVisible()
+    await page.waitForSelector('text=Jules', { state: 'visible' })
+
     await page.keyboard.press('Enter')
-    await page.waitForURL(/\/home/)
+    await page.waitForURL(/\/home/, { timeout: 10000 })
+    await expect(page.getByText(/Welcome/i)).toBeVisible()
+
     const startButton = page.getByRole('button', { name: /Start Game/i })
+    await expect(startButton).toBeVisible()
     await startButton.click({ force: true })
-    await page.waitForURL(/\/play/)
+    await page.waitForURL(/\/play/, { timeout: 10000 })
     await expect(page.getByText('Score')).toBeVisible()
+    await expect(page.locator('input[inputmode="numeric"]')).toBeVisible()
   })
 
   test('E2E-US3-001: Hearts display shows correct initial state', async ({ page }) => {
