@@ -163,21 +163,36 @@ multiplication_game/
 
 ## Future Improvements
 
-### In Progress (todo.md)
-- ✅ Player selection screen with keyboard navigation (Completed!)
-- 🔄 Display last game score above leaderboard with stats
-- 🔄 Add positive/negative feedback sound effects (8-bit style)
-- 🔄 Enable adding new players dynamically
-- 🔄 Separate score histories per player
+### Recently Completed
+- ✅ Player selection screen with keyboard navigation
+- ✅ Ranked leaderboard with gold/silver/bronze medals
+- ✅ Game results screen with score, accuracy, and stats
+- ✅ Pause menu (ESC key) with continue/quit options
+- ✅ Jumping arrow UI for all selectable options
+- ✅ Sound effects and visual feedback for answers
+- ✅ Main theme music with gameplay playlist
+- ✅ Credits screen (Ctrl+C) with starfield animation
+- ✅ Game over when all lives depleted
+- ✅ Player card navigation back to selection
+
+### In Progress
+- 🔄 **iPad Responsive Design**: Full design review for iPad screen sizes (768x1024, 1024x1366) with touch target optimization
+- 🔄 **On-Screen Numpad**: Virtual numpad for touch input on tablets, replacing keyboard input during gameplay
 
 ### Planned Features
+- 🎯 **Adaptive Difficulty**: Track error rates per multiplication table, prioritize tables needing practice
+- ❤️ **Life Recovery**: Earn back lives with 10-streak combos (max 3 lives)
+- 📅 **Weekly Leaderboard**: Separate "This Week" tab that resets every Monday
+- 🎉 **High Score Celebration**: Fanfare, confetti, and "NEW HIGH SCORE!" banner when beating personal best
+- 🏅 **Achievement Badges**: Unlock milestones (First Win, Hot Streak, Perfect Game, Speed Demon, Champion, Dedicated)
+- ✨ **Combo Particle Effects**: Sparkles at 5+ streak, confetti burst at 10+ streak, screen shake effects
+
+### Future Roadmap
 - Difficulty levels (easy, medium, hard number ranges)
 - Other math operations (division, addition, subtraction)
 - Statistics page with performance analytics
 - PWA capabilities for offline play
-- User authentication for cross-device syncing
 - Multiplayer mode with real-time competition
-- Achievement system and badges
 
 ## License
 
