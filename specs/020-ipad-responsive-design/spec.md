@@ -179,7 +179,7 @@ Users with larger iPad Pro devices (1024x1366 in portrait) have a similarly poli
 
 ### Key Entities
 
-- **Viewport Breakpoints**: iPad (768x1024), iPad Landscape (1024x768), iPad Pro (1024x1366), iPad Pro Landscape (1366x1024)
+- **Viewport Breakpoints**: iPad (768x1024), iPad Landscape (1024x768), iPad Pro (1024x1366), iPad Pro Landscape (1366x1024). *Note: iPad Pro 11" (834x1194) is informational only—not covered by E2E tests as it falls within the tablet breakpoint range and behavior is extrapolated from primary targets.*
 - **Touch Target**: Minimum interactive area size (44x44px) for accessibility compliance
 
 ## Success Criteria *(mandatory)*

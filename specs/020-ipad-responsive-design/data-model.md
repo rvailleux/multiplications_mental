@@ -8,13 +8,13 @@
 
 ### Supported Devices
 
-| Device | Orientation | Width | Height | Pixel Ratio | Notes |
-|--------|-------------|-------|--------|-------------|-------|
-| iPad 10th Gen | Portrait | 768px | 1024px | 2x | Primary target |
-| iPad 10th Gen | Landscape | 1024px | 768px | 2x | Secondary target |
-| iPad Pro 11" | Portrait | 834px | 1194px | 2x | Similar to standard iPad |
-| iPad Pro 12.9" | Portrait | 1024px | 1366px | 2x | Large tablet |
-| iPad Pro 12.9" | Landscape | 1366px | 1024px | 2x | Wide viewport |
+| Device | Orientation | Width | Height | Pixel Ratio | E2E Scope | Notes |
+|--------|-------------|-------|--------|-------------|-----------|-------|
+| iPad 10th Gen | Portrait | 768px | 1024px | 2x | ✅ In scope | Primary target |
+| iPad 10th Gen | Landscape | 1024px | 768px | 2x | ✅ In scope | Secondary target |
+| iPad Pro 11" | Portrait | 834px | 1194px | 2x | ℹ️ Informational | Not covered by E2E — falls within tablet breakpoint range (601-1024px), behavior extrapolated from primary targets |
+| iPad Pro 12.9" | Portrait | 1024px | 1366px | 2x | ✅ In scope | Large tablet |
+| iPad Pro 12.9" | Landscape | 1366px | 1024px | 2x | ✅ In scope | Wide viewport |
 
 ### Breakpoint Tokens (New)
 

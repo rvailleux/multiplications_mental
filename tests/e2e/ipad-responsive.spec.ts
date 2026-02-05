@@ -261,21 +261,27 @@ test.describe('Touch Target Audit', () => {
     await page.evaluate(() => localStorage.clear())
     await expect(page.getByText('Choose Your Player')).toBeVisible()
     const playerSelectUndersized = await getUndersizedTouchTargets(page)
-    playerSelectUndersized.forEach((el) => allUndersized.push({ screen: 'PlayerSelect', ...el }))
+    for (const el of playerSelectUndersized) {
+      allUndersized.push({ screen: 'PlayerSelect', ...el })
+    }
 
     // Screen 2: Home
     await page.click('text=Jules', { force: true })
     await page.waitForURL(/\/home/, { timeout: 10000 })
     await expect(page.getByText(/Welcome/i)).toBeVisible()
     const homeUndersized = await getUndersizedTouchTargets(page)
-    homeUndersized.forEach((el) => allUndersized.push({ screen: 'Home', ...el }))
+    for (const el of homeUndersized) {
+      allUndersized.push({ screen: 'Home', ...el })
+    }
 
     // Screen 3: Play
     await page.click('text=Start Game', { force: true })
     await page.waitForURL(/\/play/, { timeout: 10000 })
     await expect(page.getByText(/Temps/i)).toBeVisible()
     const playUndersized = await getUndersizedTouchTargets(page)
-    playUndersized.forEach((el) => allUndersized.push({ screen: 'Play', ...el }))
+    for (const el of playUndersized) {
+      allUndersized.push({ screen: 'Play', ...el })
+    }
 
     // Screen 4: Credits (via navigation)
     await page.goto('/')
@@ -288,7 +294,9 @@ test.describe('Touch Target Audit', () => {
       await creditsLink.click({ force: true })
       await page.waitForURL(/\/credits/, { timeout: 10000 })
       const creditsUndersized = await getUndersizedTouchTargets(page)
-      creditsUndersized.forEach((el) => allUndersized.push({ screen: 'Credits', ...el }))
+      for (const el of creditsUndersized) {
+        allUndersized.push({ screen: 'Credits', ...el })
+      }
     }
 
     // Log all undersized elements
