@@ -1,0 +1,124 @@
+@use '../styles/tokens' as *;
+@use '../styles/mixins' as *;
+
+.gameContainer {
+  @include main-game-container;
+  @include flex-column-center;
+}
+
+.clouds {
+  position: absolute;
+  top: $spacing-lg;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-around;
+  pointer-events: none;
+}
+
+.cloud {
+  font-size: $font-size-xl;
+  opacity: 0.7;
+  animation: float 8s ease-in-out infinite;
+}
+
+.gameHeader {
+  @include header-container;
+  margin-bottom: $spacing-xl;
+}
+
+.gameTitle {
+  color: $color-white;
+  font-size: $font-size-lg;
+  text-shadow: $text-shadow-dual;
+  margin-bottom: $spacing-md;
+  letter-spacing: 2px;
+}
+
+.subtitle {
+  color: $color-white;
+  font-size: $font-size-sm;
+  text-shadow: $text-shadow-black-sm;
+}
+
+// === MODULE LIST ===
+
+.moduleList {
+  @include flex-column-center;
+  gap: $spacing-lg;
+  width: 100%;
+  margin-bottom: $spacing-xl;
+}
+
+.moduleCard {
+  @include card-sky;
+  padding: $spacing-lg $spacing-xl;
+  display: flex;
+  align-items: center;
+  position: relative;
+  cursor: pointer;
+  transition: $transition-fast;
+  width: 100%;
+
+  &:hover {
+    transform: scale(1.02);
+    box-shadow:
+      $box-shadow-container,
+      0 0 20px rgba($color-gold, 0.3);
+  }
+}
+
+.moduleCard_teal {
+  background: $gradient-teal;
+  border-color: $color-teal-dark;
+}
+
+.moduleCard_orange {
+  background: linear-gradient(180deg, #ff9800 0%, #e65100 100%);
+  border-color: #b23c00;
+}
+
+.moduleCardSelected {
+  border-color: $color-gold;
+  box-shadow: $box-shadow-container, $box-shadow-gold-glow-strong;
+  animation: goldGlow 2s ease-in-out infinite alternate;
+}
+
+.moduleContent {
+  display: flex;
+  align-items: center;
+  gap: $spacing-lg;
+  flex: 1;
+}
+
+.moduleIcon {
+  font-size: $font-size-3xl;
+  min-width: 48px;
+  text-align: center;
+}
+
+.moduleText {
+  flex: 1;
+}
+
+.moduleTitle {
+  font-family: $font-family-pixel;
+  font-size: $font-size-base;
+  color: $color-white;
+  text-shadow: $text-shadow-black-sm;
+  letter-spacing: 1px;
+  margin-bottom: $spacing-xs;
+}
+
+.moduleDescription {
+  font-size: $font-size-xs;
+  color: rgba($color-white, 0.9);
+  text-shadow: $text-shadow-black-sm;
+  line-height: 1.4;
+}
+
+.characterSprite {
+  font-size: $font-size-4xl;
+  margin-top: $spacing-xl;
+  animation: float 4s ease-in-out infinite;
+}

@@ -37,7 +37,7 @@ export default function PlayerSelectPage() {
   const handlePlayerSelect = useCallback(
     (index: number): void => {
       selectPlayer(index)
-      navigate('/home')
+      navigate('/select-game')
     },
     [selectPlayer, navigate]
   )

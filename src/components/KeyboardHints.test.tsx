@@ -28,7 +28,7 @@ describe('KeyboardHints', () => {
     expect(screen.getByText('Enter')).toBeInTheDocument()
     expect(screen.getByText('Select')).toBeInTheDocument()
     expect(screen.getByText('ESC')).toBeInTheDocument()
-    expect(screen.getByText('Change Player')).toBeInTheDocument()
+    expect(screen.getByText('Back')).toBeInTheDocument()
   })
 
   it('should render pause menu hints', () => {

@@ -1,0 +1,159 @@
+@use '../styles/tokens' as *;
+@use '../styles/mixins' as *;
+
+.gameContainer {
+  @include main-game-container;
+  @include flex-column-center;
+}
+
+.clouds {
+  position: absolute;
+  top: $spacing-lg;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-around;
+  pointer-events: none;
+}
+
+.cloud {
+  font-size: $font-size-xl;
+  opacity: 0.7;
+  animation: float 8s ease-in-out infinite;
+}
+
+.gameHeader {
+  @include header-container;
+  margin-bottom: $spacing-xl;
+}
+
+.gameTitle {
+  color: $color-white;
+  font-size: $font-size-lg;
+  text-shadow: $text-shadow-dual;
+  margin-bottom: $spacing-md;
+  letter-spacing: 2px;
+}
+
+.subtitle {
+  color: $color-white;
+  font-size: $font-size-sm;
+  text-shadow: $text-shadow-black-sm;
+}
+
+.startButtonContainer {
+  margin-bottom: $spacing-xl;
+}
+
+.pixelButton {
+  @include pixel-button-unified;
+  @include pixel-button-selected; // Single button = always selected
+}
+
+.scoresTitle {
+  color: $color-red;
+  font-size: $font-size-md;
+  margin-bottom: $spacing-lg;
+  text-align: center;
+}
+
+.scoresContainer {
+  @include flex-column-center;
+  gap: $spacing-md;
+  margin-bottom: $spacing-lg;
+  width: 100%;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.scoreCard {
+  @include card-sky;
+  padding: $spacing-base;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+  width: 100%;
+
+  &.topRank {
+    @include card-gold;
+    border-color: $color-gold-dark;
+    animation: goldGlow 2s ease-in-out infinite alternate;
+  }
+}
+
+.scoreCardLeft {
+  @include flex-row-between;
+}
+
+.scoreLeftGroup {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.scoreNumber {
+  font-size: $font-size-base;
+  color: $color-black;
+  font-weight: bold;
+
+  &.topRank {
+    color: $color-brown;
+    font-size: $font-size-md;
+    text-shadow: 2px 2px 0 $color-white;
+  }
+}
+
+.playerName {
+  font-size: 22px;
+  color: $color-brown;
+  font-weight: bold;
+  font-family: $font-family-mono;
+  text-shadow: $text-shadow-gold;
+  letter-spacing: 0.5px;
+}
+
+.scoreValue {
+  font-size: $font-size-base;
+  color: $color-gold;
+  text-shadow: $text-shadow-black-sm;
+
+  &.topRank {
+    color: $color-red-bright;
+    font-size: $font-size-md;
+    text-shadow: 2px 2px 0 $color-white;
+    font-weight: bold;
+  }
+}
+
+.characterSprite {
+  position: absolute;
+  bottom: -50px;
+  right: $spacing-lg;
+  font-size: $font-size-6xl;
+  animation: bounce 1s ease-in-out infinite;
+}
+
+.metricsContainer {
+  display: flex;
+  gap: $spacing-sm;
+  align-items: center;
+  font-size: $font-size-sm;
+  color: $color-grey-dark;
+  font-family: $font-family-mono;
+}
+
+.metricText {
+  color: $color-grey-dark;
+  font-weight: bold;
+
+  &.best {
+    color: $color-red-bright;
+    text-shadow: $text-shadow-red;
+    animation: softBlink 2s ease-in-out infinite;
+  }
+}
+
+.metricSeparator {
+  color: $color-grey-dark;
+  opacity: 0.5;
+}

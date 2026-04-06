@@ -81,3 +81,63 @@
   @include pixel-button-selected; // Single button = always selected
   margin-top: $spacing-2xl;
 }
+
+// === LEADERBOARD SECTION ===
+.leaderboard {
+  width: 100%;
+  max-width: 500px;
+  margin: $spacing-xl auto $spacing-lg;
+}
+
+.leaderboardTitle {
+  color: $color-gold;
+  font-size: $font-size-md;
+  text-align: center;
+  text-shadow: $text-shadow-black-sm;
+  margin-bottom: $spacing-lg;
+}
+
+.leaderboardList {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.leaderboardRow {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  background: rgba($color-black, 0.5);
+  border: $border-width-thin $border-style $color-black;
+  padding: $spacing-sm $spacing-base;
+  font-size: $font-size-sm;
+  color: $color-white;
+}
+
+.leaderboardRowCurrent {
+  border-color: $color-gold;
+  background: rgba($color-gold, 0.2);
+  box-shadow: $box-shadow-gold-glow;
+  color: $color-gold;
+  font-weight: bold;
+}
+
+.leaderboardMedal {
+  font-size: $font-size-base;
+  min-width: 28px;
+  text-align: center;
+}
+
+.leaderboardName {
+  flex: 1;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.leaderboardScore {
+  font-weight: bold;
+  white-space: nowrap;
+}

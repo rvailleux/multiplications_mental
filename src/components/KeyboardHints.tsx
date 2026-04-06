@@ -4,7 +4,16 @@ import styles from './KeyboardHints.module.scss'
  * Screen identifiers for keyboard hint configuration
  * @public
  */
-export type ScreenId = 'player-select' | 'home' | 'play' | 'pause-menu' | 'results' | 'credits'
+export type ScreenId =
+  | 'player-select'
+  | 'game-select'
+  | 'home'
+  | 'complement10'
+  | 'play'
+  | 'complement10-play'
+  | 'pause-menu'
+  | 'results'
+  | 'credits'
 
 /**
  * Individual keyboard hint
@@ -38,13 +47,29 @@ export const KEYBOARD_HINTS_CONFIG: Record<ScreenId, KeyboardHint[]> = {
     { key: 'Enter', description: 'Select' },
     { key: 'ESC', description: 'Exit' },
   ],
+  'game-select': [
+    { key: '↑↓', description: 'Navigate' },
+    { key: 'Enter', description: 'Select' },
+    { key: 'ESC', description: 'Change Player' },
+  ],
   home: [
     { key: '↑↓', description: 'Navigate' },
     { key: 'Enter', description: 'Select' },
     { key: 'Ctrl+C', description: 'Credits' },
-    { key: 'ESC', description: 'Change Player' },
+    { key: 'ESC', description: 'Back' },
+  ],
+  complement10: [
+    { key: 'Enter', description: 'Start Game' },
+    { key: 'ESC', description: 'Back' },
   ],
   play: [
+    { key: '0-9', description: 'Type Answer' },
+    { key: 'Backspace', description: 'Delete' },
+    { key: '↑↓', description: 'Navigate Options' },
+    { key: 'Enter', description: 'Confirm' },
+    { key: 'ESC', description: 'Pause' },
+  ],
+  'complement10-play': [
     { key: '0-9', description: 'Type Answer' },
     { key: 'Backspace', description: 'Delete' },
     { key: '↑↓', description: 'Navigate Options' },

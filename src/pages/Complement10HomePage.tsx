@@ -8,17 +8,22 @@ import type { RankedScore } from '../utils/scoreUtils'
 import PlayerNameDisplay from '../components/PlayerNameDisplay'
 import JumpingArrow from '../components/JumpingArrow'
 import KeyboardHints from '../components/KeyboardHints'
-import styles from './HomePage.module.scss'
+import styles from './Complement10HomePage.module.scss'
 
 /**
- * Landing page for the Multiplications module.
- * Displays a start button and score history (leaderboard) for the current player.
- * @returns {JSX.Element} Home page with start game button and previous scores list
- * @example
- * // Used in React Router as the multiplication home route
- * <Route path="/home" element={<HomePage />} />
+ * localStorage key for complement-to-10 scores
+ * @public
  */
-export default function HomePage() {
+export const COMPLEMENT10_SCORES_KEY = 'complement10_scores'
+
+/**
+ * Home page for the "Compléments" game module.
+ * Shows a start button and leaderboard for complement-to-10 scores.
+ * @returns {JSX.Element} Complement10 home page
+ * @example
+ * <Route path="/complement10" element={<Complement10HomePage />} />
+ */
+export default function Complement10HomePage() {
   const navigate = useNavigate()
   const currentPlayer = getCurrentPlayer()
 
@@ -29,16 +34,13 @@ export default function HomePage() {
     }
   }, [currentPlayer, navigate])
 
-  /** Keyboard navigation: ESC to go back, ENTER to start game, Ctrl+C to credits */
+  /** Keyboard navigation: ESC → game select, ENTER → start game */
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent): void => {
       if (e.key === 'Escape') {
         navigate('/select-game')
       } else if (e.key === 'Enter') {
-        navigate('/play')
-      } else if ((e.ctrlKey || e.metaKey) && e.key === 'c') {
-        e.preventDefault() // Prevent browser copy action
-        navigate('/credits')
+        navigate('/play/complement10')
       }
     }
 
@@ -46,8 +48,14 @@ export default function HomePage() {
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [navigate])
 
-  /** Load score history from localStorage and limit to top 100 */
-  const scores: ScoreEntry[] = JSON.parse(localStorage.getItem('scores') || '[]').slice(-100) // Keep only last 100 scores to prevent memory issues
+  /** Load complement10 score history from localStorage (last 100) */
+  const scores: ScoreEntry[] = (() => {
+    try {
+      return JSON.parse(localStorage.getItem(COMPLEMENT10_SCORES_KEY) || '[]').slice(-100)
+    } catch {
+      return []
+    }
+  })()
 
   /** Calculate ranks and sort by score (highest first) */
   const rankedScores = calculateRanks(scores)
@@ -95,12 +103,12 @@ export default function HomePage() {
       </div>
 
       <div className={styles.gameHeader}>
-        <h1 className={styles.gameTitle}>⭐ MATH QUEST ⭐</h1>
+        <h1 className={styles.gameTitle}>➕ COMPLÉMENTS ➕</h1>
         <div className={styles.subtitle}>Welcome {currentPlayer.name}!</div>
       </div>
 
       <div className={styles.startButtonContainer}>
-        <button className={styles.pixelButton} onClick={() => navigate('/play')}>
+        <button className={styles.pixelButton} onClick={() => navigate('/play/complement10')}>
           <JumpingArrow visible={true} />
           🚀 Start Game
         </button>
@@ -162,7 +170,7 @@ export default function HomePage() {
 
       <div className={styles.characterSprite}>🍄</div>
 
-      <KeyboardHints screenId="home" />
+      <KeyboardHints screenId="complement10" />
     </div>
   )
 }
