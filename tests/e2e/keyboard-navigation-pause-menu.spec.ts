@@ -34,7 +34,14 @@ test.describe('Keyboard Navigation - Pause Menu', () => {
     // Use keyboard to confirm player selection (Jules is selected by default)
     await page.keyboard.press('Enter')
 
-    // Step 2: Verify navigation to home page
+    // Step 2: Verify navigation to game select page
+    await expect(page).toHaveURL(/\/select-game/)
+    await expect(page.getByText('Choose Your Game')).toBeVisible()
+
+    // Select Multiplications game (first option, selected by default)
+    await page.keyboard.press('Enter')
+
+    // Verify navigation to home page
     await expect(page).toHaveURL(/\/home/)
     await expect(page.getByText(/Welcome Jules/i)).toBeVisible()
     await page.screenshot({ path: 'test-results/pause-menu/02-home-page.png' })
@@ -94,6 +101,8 @@ test.describe('Keyboard Navigation - Pause Menu', () => {
     await expect(page.getByText('Choose Your Player')).toBeVisible()
     await page.waitForSelector('text=Jules', { state: 'visible' })
     await page.keyboard.press('Enter') // Select player
+    await page.waitForURL(/\/select-game/, { timeout: 10000 })
+    await page.keyboard.press('Enter') // Select Multiplications game
     await page.waitForURL(/\/home/, { timeout: 10000 })
 
     // Wait for home page to be fully rendered
@@ -136,6 +145,8 @@ test.describe('Keyboard Navigation - Pause Menu', () => {
     await expect(page.getByText('Choose Your Player')).toBeVisible()
     await page.waitForSelector('text=Jules', { state: 'visible' })
     await page.keyboard.press('Enter') // Select player
+    await page.waitForURL(/\/select-game/, { timeout: 10000 })
+    await page.keyboard.press('Enter') // Select Multiplications game
     await page.waitForURL(/\/home/, { timeout: 10000 })
 
     // Wait for home page to be fully rendered
@@ -173,6 +184,8 @@ test.describe('Keyboard Navigation - Pause Menu', () => {
     await expect(page.getByText('Choose Your Player')).toBeVisible()
     await page.waitForSelector('text=Jules', { state: 'visible' })
     await page.keyboard.press('Enter') // Select player
+    await page.waitForURL(/\/select-game/, { timeout: 10000 })
+    await page.keyboard.press('Enter') // Select Multiplications game
     await page.waitForURL(/\/home/, { timeout: 10000 })
 
     // Wait for home page to be fully rendered
@@ -211,7 +224,9 @@ test.describe('Keyboard Navigation - Pause Menu', () => {
     await page.goto('/')
     await expect(page.getByText('Choose Your Player')).toBeVisible()
     await page.waitForSelector('text=Jules', { state: 'visible' })
-    await page.keyboard.press('Enter')
+    await page.keyboard.press('Enter') // Select player
+    await page.waitForURL(/\/select-game/, { timeout: 10000 })
+    await page.keyboard.press('Enter') // Select Multiplications game
     await page.waitForURL(/\/home/, { timeout: 10000 })
     await expect(page.getByText(/Welcome/i)).toBeVisible()
 

@@ -85,6 +85,8 @@ async function selectPlayerAndGoHome(page: Page): Promise<void> {
   await page.evaluate(() => localStorage.clear())
   await page.waitForSelector('text=Jules', { timeout: 10000 })
   await page.click('text=Jules', { force: true })
+  await page.waitForURL(/\/select-game/, { timeout: 10000 })
+  await page.keyboard.press('Enter') // Select Multiplications game
   await page.waitForURL(/\/home/, { timeout: 10000 })
 }
 
@@ -113,6 +115,8 @@ test.describe('iPad Portrait (768x1024)', () => {
 
     // Navigate to Home
     await page.click('text=Jules', { force: true })
+    await page.waitForURL(/\/select-game/, { timeout: 10000 })
+    await page.keyboard.press('Enter') // Select Multiplications game
     await page.waitForURL(/\/home/, { timeout: 10000 })
 
     // Screen 2: Home Page
@@ -145,6 +149,8 @@ test.describe('iPad Portrait (768x1024)', () => {
 
     // Navigate to Home Page
     await page.click('text=Jules', { force: true })
+    await page.waitForURL(/\/select-game/, { timeout: 10000 })
+    await page.keyboard.press('Enter') // Select Multiplications game
     await page.waitForURL(/\/home/, { timeout: 10000 })
 
     // Check Home Page touch targets
@@ -187,6 +193,8 @@ test.describe('iPad Landscape (1024x768)', () => {
 
     // Navigate to Home
     await page.click('text=Jules', { force: true })
+    await page.waitForURL(/\/select-game/, { timeout: 10000 })
+    await page.keyboard.press('Enter') // Select Multiplications game
     await page.waitForURL(/\/home/, { timeout: 10000 })
 
     // Screen 2: Home Page
@@ -267,6 +275,8 @@ test.describe('Touch Target Audit', () => {
 
     // Screen 2: Home
     await page.click('text=Jules', { force: true })
+    await page.waitForURL(/\/select-game/, { timeout: 10000 })
+    await page.keyboard.press('Enter') // Select Multiplications game
     await page.waitForURL(/\/home/, { timeout: 10000 })
     await expect(page.getByText(/Welcome/i)).toBeVisible()
     const homeUndersized = await getUndersizedTouchTargets(page)
@@ -286,6 +296,8 @@ test.describe('Touch Target Audit', () => {
     // Screen 4: Credits (via navigation)
     await page.goto('/')
     await page.click('text=Jules', { force: true })
+    await page.waitForURL(/\/select-game/, { timeout: 10000 })
+    await page.keyboard.press('Enter') // Select Multiplications game
     await page.waitForURL(/\/home/, { timeout: 10000 })
 
     // Navigate to credits if the link exists
@@ -329,6 +341,8 @@ test.describe('iPad Pro Portrait (1024x1366)', () => {
 
     // Screen 2: Home
     await page.click('text=Jules', { force: true })
+    await page.waitForURL(/\/select-game/, { timeout: 10000 })
+    await page.keyboard.press('Enter') // Select Multiplications game
     await page.waitForURL(/\/home/, { timeout: 10000 })
     await expect(page.getByText(/Welcome/i)).toBeVisible()
     expect(await hasHorizontalOverflow(page)).toBe(false)
@@ -356,6 +370,8 @@ test.describe('iPad Pro Landscape (1366x1024)', () => {
 
     // Screen 2: Home
     await page.click('text=Jules', { force: true })
+    await page.waitForURL(/\/select-game/, { timeout: 10000 })
+    await page.keyboard.press('Enter') // Select Multiplications game
     await page.waitForURL(/\/home/, { timeout: 10000 })
     await expect(page.getByText(/Welcome/i)).toBeVisible()
     expect(await hasHorizontalOverflow(page)).toBe(false)

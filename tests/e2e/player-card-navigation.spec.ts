@@ -28,6 +28,8 @@ test.describe('Player Card Navigation', () => {
     await page.waitForSelector('text=Jules')
     // Click on player to select and navigate (force:true for animation stability)
     await page.click('text=Jules', { force: true })
+    await page.waitForURL(/\/select-game/, { timeout: 10000 })
+    await page.keyboard.press('Enter') // Select Multiplications game
     await page.waitForURL(/\/home/, { timeout: 10000 })
   }
 
@@ -232,6 +234,8 @@ test.describe('Player Card Navigation', () => {
       await expect(page.getByText('Choose Your Player')).toBeVisible()
       await page.waitForSelector('text=Jules')
       await page.click('text=Jules', { force: true })
+      await page.waitForURL(/\/select-game/, { timeout: 10000 })
+      await page.keyboard.press('Enter') // Select Multiplications game
       await page.waitForURL(/\/home/, { timeout: 10000 })
 
       await page.screenshot({ path: 'test-results/player-card-navigation/10-ipad-homepage.png' })
@@ -264,11 +268,11 @@ test.describe('Player Card Navigation', () => {
       // Click somewhere to ensure body has keyboard focus
       await page.locator('body').click({ position: { x: 10, y: 10 }, force: true })
 
-      // Press ESC (should also navigate to player selection)
+      // Press ESC (should navigate to game selection)
       await page.keyboard.press('Escape')
 
-      // Verify navigation to player selection
-      await expect(page.getByText('Choose Your Player')).toBeVisible({ timeout: 10000 })
+      // Verify navigation to game select page
+      await expect(page.getByText('Choose Your Game')).toBeVisible({ timeout: 10000 })
     })
 
     test('E2E-EDGE-002: Double click does not cause issues', async ({ page }) => {

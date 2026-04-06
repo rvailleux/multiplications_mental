@@ -29,6 +29,8 @@ test.describe('Credits Screen', () => {
     await page.waitForSelector('text=Jules')
     // Click on player to select and navigate (force:true for animation stability)
     await page.click('text=Jules', { force: true })
+    await page.waitForURL(/\/select-game/, { timeout: 10000 })
+    await page.keyboard.press('Enter') // Select Multiplications game
     await page.waitForURL(/\/home/, { timeout: 10000 })
     // Click somewhere to ensure body has keyboard focus
     await page.locator('body').click({ position: { x: 10, y: 10 }, force: true })

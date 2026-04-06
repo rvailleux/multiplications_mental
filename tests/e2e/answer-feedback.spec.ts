@@ -23,7 +23,9 @@ test.describe('Answer Feedback - US1: Audio Feedback', () => {
     await page.waitForSelector('text=Jules', { state: 'visible' })
 
     // Select player with Enter key
-    await page.keyboard.press('Enter')
+    await page.keyboard.press('Enter') // Select default player
+    await page.waitForURL(/\/select-game/, { timeout: 10000 })
+    await page.keyboard.press('Enter') // Select Multiplications game
     await page.waitForURL(/\/home/, { timeout: 10000 })
 
     // Wait for home page to be fully rendered
@@ -209,7 +211,9 @@ test.describe('Answer Feedback - US2: Visual Animations', () => {
     await expect(page.getByText('Choose Your Player')).toBeVisible()
     await page.waitForSelector('text=Jules', { state: 'visible' })
 
-    await page.keyboard.press('Enter')
+    await page.keyboard.press('Enter') // Select default player
+    await page.waitForURL(/\/select-game/, { timeout: 10000 })
+    await page.keyboard.press('Enter') // Select Multiplications game
     await page.waitForURL(/\/home/, { timeout: 10000 })
     await expect(page.getByText(/Welcome/i)).toBeVisible()
 
@@ -277,7 +281,9 @@ test.describe('Answer Feedback - US3: Hearts Layout', () => {
     await expect(page.getByText('Choose Your Player')).toBeVisible()
     await page.waitForSelector('text=Jules', { state: 'visible' })
 
-    await page.keyboard.press('Enter')
+    await page.keyboard.press('Enter') // Select default player
+    await page.waitForURL(/\/select-game/, { timeout: 10000 })
+    await page.keyboard.press('Enter') // Select Multiplications game
     await page.waitForURL(/\/home/, { timeout: 10000 })
     await expect(page.getByText(/Welcome/i)).toBeVisible()
 
