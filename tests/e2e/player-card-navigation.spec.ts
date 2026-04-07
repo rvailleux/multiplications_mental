@@ -29,7 +29,7 @@ test.describe('Player Card Navigation', () => {
     // Click on player to select and navigate (force:true for animation stability)
     await page.click('text=Jules', { force: true })
     await page.waitForURL(/\/select-game/, { timeout: 10000 })
-    await page.keyboard.press('Enter') // Select Multiplications game
+    await page.click('text=MULTIPLICATIONS', { force: true })
     await page.waitForURL(/\/home/, { timeout: 10000 })
   }
 
@@ -239,7 +239,7 @@ test.describe('Player Card Navigation', () => {
       await page.waitForSelector('text=Jules')
       await page.click('text=Jules', { force: true })
       await page.waitForURL(/\/select-game/, { timeout: 10000 })
-      await page.keyboard.press('Enter') // Select Multiplications game
+      await page.click('text=MULTIPLICATIONS', { force: true })
       await page.waitForURL(/\/home/, { timeout: 10000 })
 
       await page.screenshot({ path: 'test-results/player-card-navigation/10-ipad-homepage.png' })

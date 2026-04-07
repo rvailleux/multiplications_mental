@@ -77,7 +77,7 @@ test.describe('Main Theme Music - User Story 1: Main Theme on Menu Screens', () 
 
     // Step 3: Navigate through game select to home
     await expect(page).toHaveURL(/\/select-game/)
-    await page.keyboard.press('Enter') // Select Multiplications game
+    await page.click('text=MULTIPLICATIONS', { force: true })
     await expect(page).toHaveURL(/\/home/)
     await expect(page.getByText(/Welcome/i)).toBeVisible()
 
@@ -121,7 +121,7 @@ test.describe('Main Theme Music - User Story 2: Gameplay Music Without Main Them
     await page.waitForTimeout(300)
     await page.keyboard.press('Enter')
     await expect(page).toHaveURL(/\/select-game/)
-    await page.keyboard.press('Enter') // Select Multiplications game
+    await page.click('text=MULTIPLICATIONS', { force: true })
     await expect(page).toHaveURL(/\/home/)
 
     // Step 2: Start game with click (force due to pulse animation)
@@ -161,7 +161,7 @@ test.describe('Main Theme Music - User Story 2: Gameplay Music Without Main Them
     await page.waitForTimeout(300)
     await page.keyboard.press('Enter')
     await expect(page).toHaveURL(/\/select-game/)
-    await page.keyboard.press('Enter') // Select Multiplications game
+    await page.click('text=MULTIPLICATIONS', { force: true })
     await expect(page).toHaveURL(/\/home/)
 
     // Start game
@@ -230,7 +230,7 @@ test.describe('Main Theme Music - User Story 3: Music Continuity Across Navigati
     // Step 3: Select player and navigate to Home
     await page.keyboard.press('Enter')
     await expect(page).toHaveURL(/\/select-game/)
-    await page.keyboard.press('Enter') // Select Multiplications game
+    await page.click('text=MULTIPLICATIONS', { force: true })
     await expect(page).toHaveURL(/\/home/)
 
     // Step 4: Verify no audio errors (music didn't restart would cause no new errors)

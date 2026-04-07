@@ -102,7 +102,7 @@ test.describe('Keyboard Navigation - Pause Menu', () => {
     await page.waitForSelector('text=Jules', { state: 'visible' })
     await page.keyboard.press('Enter') // Select player
     await page.waitForURL(/\/select-game/, { timeout: 10000 })
-    await page.keyboard.press('Enter') // Select Multiplications game
+    await page.click('text=MULTIPLICATIONS', { force: true })
     await page.waitForURL(/\/home/, { timeout: 10000 })
 
     // Wait for home page to be fully rendered
@@ -146,7 +146,7 @@ test.describe('Keyboard Navigation - Pause Menu', () => {
     await page.waitForSelector('text=Jules', { state: 'visible' })
     await page.keyboard.press('Enter') // Select player
     await page.waitForURL(/\/select-game/, { timeout: 10000 })
-    await page.keyboard.press('Enter') // Select Multiplications game
+    await page.click('text=MULTIPLICATIONS', { force: true })
     await page.waitForURL(/\/home/, { timeout: 10000 })
 
     // Wait for home page to be fully rendered
@@ -185,7 +185,7 @@ test.describe('Keyboard Navigation - Pause Menu', () => {
     await page.waitForSelector('text=Jules', { state: 'visible' })
     await page.keyboard.press('Enter') // Select player
     await page.waitForURL(/\/select-game/, { timeout: 10000 })
-    await page.keyboard.press('Enter') // Select Multiplications game
+    await page.click('text=MULTIPLICATIONS', { force: true })
     await page.waitForURL(/\/home/, { timeout: 10000 })
 
     // Wait for home page to be fully rendered
@@ -226,7 +226,7 @@ test.describe('Keyboard Navigation - Pause Menu', () => {
     await page.waitForSelector('text=Jules', { state: 'visible' })
     await page.keyboard.press('Enter') // Select player
     await page.waitForURL(/\/select-game/, { timeout: 10000 })
-    await page.keyboard.press('Enter') // Select Multiplications game
+    await page.click('text=MULTIPLICATIONS', { force: true })
     await page.waitForURL(/\/home/, { timeout: 10000 })
     await expect(page.getByText(/Welcome/i)).toBeVisible()
 

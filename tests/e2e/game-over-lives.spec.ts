@@ -18,7 +18,7 @@ test.describe('Game Over - US1: Game Ends When Lives Depleted', () => {
     await page.evaluate(() => localStorage.clear())
     await page.keyboard.press('Enter') // Select default player
     await page.waitForURL(/\/select-game/)
-    await page.keyboard.press('Enter') // Select Multiplications game
+    await page.click('text=MULTIPLICATIONS', { force: true })
     await page.waitForURL(/\/home/)
     const startButton = page.getByRole('button', { name: /Start Game/i })
     await expect(startButton).toBeVisible()
@@ -124,7 +124,7 @@ test.describe('Game Over - US2: Overlay Display', () => {
     await page.evaluate(() => localStorage.clear())
     await page.keyboard.press('Enter') // Select default player
     await page.waitForURL(/\/select-game/)
-    await page.keyboard.press('Enter') // Select Multiplications game
+    await page.click('text=MULTIPLICATIONS', { force: true })
     await page.waitForURL(/\/home/)
     const startButton = page.getByRole('button', { name: /Start Game/i })
     await startButton.click({ force: true })
@@ -188,7 +188,7 @@ test.describe('Game Over - US3: Results Display', () => {
     await page.evaluate(() => localStorage.clear())
     await page.keyboard.press('Enter') // Select default player
     await page.waitForURL(/\/select-game/)
-    await page.keyboard.press('Enter') // Select Multiplications game
+    await page.click('text=MULTIPLICATIONS', { force: true })
     await page.waitForURL(/\/home/)
     const startButton = page.getByRole('button', { name: /Start Game/i })
     await startButton.click({ force: true })
