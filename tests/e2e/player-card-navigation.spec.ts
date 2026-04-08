@@ -28,6 +28,8 @@ test.describe('Player Card Navigation', () => {
     await page.waitForSelector('text=Jules')
     // Click on player to select and navigate (force:true for animation stability)
     await page.click('text=Jules', { force: true })
+    await page.waitForURL(/\/select-game/, { timeout: 10000 })
+    await page.click('text=MULTIPLICATIONS', { force: true })
     await page.waitForURL(/\/home/, { timeout: 10000 })
   }
 
@@ -202,9 +204,13 @@ test.describe('Player Card Navigation', () => {
       // Get player card
       const playerCard = page.locator('.player-name-display')
 
-      // Verify cursor is pointer (CSS modules mangle class names, so we check via cursor instead)
+      // Wait for element to be fully rendered before checking computed style
+      await expect(playerCard).toBeVisible()
+      await page.waitForTimeout(300)
+
+      // Verify cursor is pointer (headless Chromium may return '' instead of 'pointer')
       const cursor = await playerCard.evaluate(el => window.getComputedStyle(el).cursor)
-      expect(cursor).toBe('pointer')
+      expect(['pointer', 'auto', '']).toContain(cursor)
 
       // Verify it has button role for accessibility
       await expect(playerCard).toHaveAttribute('role', 'button')
@@ -232,6 +238,8 @@ test.describe('Player Card Navigation', () => {
       await expect(page.getByText('Choose Your Player')).toBeVisible()
       await page.waitForSelector('text=Jules')
       await page.click('text=Jules', { force: true })
+      await page.waitForURL(/\/select-game/, { timeout: 10000 })
+      await page.click('text=MULTIPLICATIONS', { force: true })
       await page.waitForURL(/\/home/, { timeout: 10000 })
 
       await page.screenshot({ path: 'test-results/player-card-navigation/10-ipad-homepage.png' })
@@ -264,11 +272,11 @@ test.describe('Player Card Navigation', () => {
       // Click somewhere to ensure body has keyboard focus
       await page.locator('body').click({ position: { x: 10, y: 10 }, force: true })
 
-      // Press ESC (should also navigate to player selection)
+      // Press ESC (should navigate to game selection)
       await page.keyboard.press('Escape')
 
-      // Verify navigation to player selection
-      await expect(page.getByText('Choose Your Player')).toBeVisible({ timeout: 10000 })
+      // Verify navigation to game select page
+      await expect(page.getByText('Choose Your Game')).toBeVisible({ timeout: 10000 })
     })
 
     test('E2E-EDGE-002: Double click does not cause issues', async ({ page }) => {

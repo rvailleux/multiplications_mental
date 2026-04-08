@@ -339,8 +339,8 @@ describe('HomePage - Keyboard Navigation', () => {
     const escapeEvent = new KeyboardEvent('keydown', { key: 'Escape' })
     window.dispatchEvent(escapeEvent)
 
-    // Should navigate back to player selection
-    expect(mockNavigate).toHaveBeenCalledWith('/')
+    // Should navigate back to game select (not player select directly)
+    expect(mockNavigate).toHaveBeenCalledWith('/select-game')
   })
 
   it('should start game when ENTER key is pressed', () => {

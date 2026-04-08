@@ -124,9 +124,9 @@ describe('PlayerSelectPage', () => {
     // Press Enter to select first player
     fireEvent.keyDown(window, { key: 'Enter' })
 
-    // Should save to localStorage and navigate to /home
+    // Should save to localStorage and navigate to /select-game
     expect(localStorage.getItem('currentPlayer')).toBe('jules')
-    expect(mockNavigate).toHaveBeenCalledWith('/home')
+    expect(mockNavigate).toHaveBeenCalledWith('/select-game')
   })
 
   it('should select player on click', () => {
@@ -138,9 +138,9 @@ describe('PlayerSelectPage', () => {
       fireEvent.click(achilleCard)
     }
 
-    // Should save to localStorage and navigate to /home
+    // Should save to localStorage and navigate to /select-game
     expect(localStorage.getItem('currentPlayer')).toBe('achille')
-    expect(mockNavigate).toHaveBeenCalledWith('/home')
+    expect(mockNavigate).toHaveBeenCalledWith('/select-game')
   })
 
   it('should initialize default players in localStorage', () => {

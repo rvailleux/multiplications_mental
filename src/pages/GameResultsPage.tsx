@@ -6,8 +6,15 @@ import JumpingArrow from '../components/JumpingArrow'
 import KeyboardHints from '../components/KeyboardHints'
 import { getCurrentPlayer } from '../types/player'
 import type { GameResult } from './PlayPage'
-import type { GameEndReason } from '../types/score'
+import type { GameEndReason, ScoreEntry } from '../types/score'
+import { getScorePlayerName } from '../types/score'
 import styles from './GameResultsPage.module.scss'
+
+/**
+ * Supported game module identifiers
+ * @public
+ */
+export type GameModule = 'multiplication' | 'complement10'
 
 /**
  * Route state interface for GameResultsPage
@@ -21,6 +28,8 @@ export interface GameResultsState {
   results: GameResult[]
   /** Reason why the game ended (optional for backward compatibility) */
   endReason?: GameEndReason
+  /** Which game module was played */
+  gameModule?: GameModule
 }
 
 /**
@@ -40,11 +49,18 @@ export default function GameResultsPage() {
   const currentPlayer = getCurrentPlayer()
   const { playMainTheme } = useMusic()
 
-  // Extract score, results, and endReason from route state with fallback defaults
+  // Extract score, results, endReason, and gameModule from route state with fallback defaults
   const state = location.state as GameResultsState | undefined
   const score = state?.score ?? 0
   const results = state?.results ?? []
   const endReason = state?.endReason
+  const gameModule = state?.gameModule ?? 'multiplication'
+
+  /** Home path to navigate to based on which game was played */
+  const homePath = gameModule === 'complement10' ? '/complement10' : '/home'
+
+  /** localStorage key for the current game module's scores */
+  const scoresKey = gameModule === 'complement10' ? 'complement10_scores' : 'scores'
 
   /**
    * Get display text based on game end reason
@@ -119,13 +135,13 @@ export default function GameResultsPage() {
   }, [])
 
   /**
-   * Keyboard navigation: ENTER navigates to homepage, ESC to player select
+   * Keyboard navigation: ENTER navigates to appropriate home, ESC to player select
    * Cleanup event listener on unmount
    */
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent): void => {
       if (e.key === 'Enter') {
-        navigate('/home')
+        navigate(homePath)
       } else if (e.key === 'Escape') {
         navigate('/')
       }
@@ -133,7 +149,7 @@ export default function GameResultsPage() {
 
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [navigate])
+  }, [navigate, homePath])
 
   /**
    * Generate container class name based on state
@@ -156,6 +172,24 @@ export default function GameResultsPage() {
     return classes.join(' ')
   }
 
+  /** Load top scores for the leaderboard from the current game module */
+  const topScores: ScoreEntry[] = (() => {
+    try {
+      const raw = localStorage.getItem(scoresKey) || '[]'
+      const all: ScoreEntry[] = JSON.parse(raw)
+      return [...all].sort((a, b) => b.score - a.score).slice(0, 5)
+    } catch {
+      return []
+    }
+  })()
+
+  const getMedalForRank = (rank: number): string => {
+    if (rank === 0) return '🥇'
+    if (rank === 1) return '🥈'
+    if (rank === 2) return '🥉'
+    return `${rank + 1}.`
+  }
+
   return (
     <div className={getContainerClass()}>
       <PlayerNameDisplay player={currentPlayer} onClick={() => navigate('/')} />
@@ -173,11 +207,34 @@ export default function GameResultsPage() {
 
         <div className={styles.stat}>Speed: {speed}</div>
 
-        <button onClick={() => navigate('/home')} className={styles.button}>
+        <button onClick={() => navigate(homePath)} className={styles.button}>
           <JumpingArrow visible={true} />
           Continue
         </button>
       </div>
+
+      {topScores.length > 0 && (
+        <div className={styles.leaderboard}>
+          <h2 className={styles.leaderboardTitle}>🏆 Leaderboard 🏆</h2>
+          <div className={styles.leaderboardList}>
+            {topScores.map((entry, index) => {
+              const playerName = getScorePlayerName(entry)
+              const isCurrentScore =
+                entry.score === score && entry.playerName === currentPlayer?.name
+              return (
+                <div
+                  key={index}
+                  className={`${styles.leaderboardRow} ${isCurrentScore ? styles.leaderboardRowCurrent : ''}`}
+                >
+                  <span className={styles.leaderboardMedal}>{getMedalForRank(index)}</span>
+                  <span className={styles.leaderboardName}>{playerName}</span>
+                  <span className={styles.leaderboardScore}>{entry.score} pts</span>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      )}
 
       <KeyboardHints screenId="results" />
     </div>
